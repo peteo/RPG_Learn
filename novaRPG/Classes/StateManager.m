@@ -193,7 +193,7 @@ static StateManager* _sharedStateManager = nil;
 	NSArray *saveStates = [self loadStates];
 	
 	//Add every state to the root element as it was exceeept....
-	NSUInteger index = 1;
+	//NSUInteger index = 1;
 	for (GDataXMLElement *currentSave in saveStates) {
 		if ([[[currentSave attributeForName:@"id"] stringValue] intValue] ==  stateID) {
 			//It's the state we want to delete. And in that case, we delete it. duh.
