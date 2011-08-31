@@ -1,0 +1,29 @@
+novaRPG, an RPG engine based on the Cocos2D framework
+
+
+This is novaRPG, a game engine developed and maintained by myself, nova :)
+If you want to contribute or have any questions concerning my code, send me a message on github or hit me up on the cocos2d forums, I'm active there.
+
+There currently is no external documentation for novaRPG. This is because the enginge is far from finished, the first thing that is going to be released is the basic tilemap and menu interface. As soon as it is ready I will write some documentation, it's pretty easy to use though.
+
+The engine features right now include:
+-Support for easy tilemap loading, character loading and easy animations
+-Easy textboxes!
+-Weather and daytime conditions(WIP)
+-NPCs and NPC reactions
+-Cutscenes
+-Tilemap transitions ("doors")
+-A simple menu structure
+-Game saving/loading (in XML! Yay!)
+-An example tilemap using pokemon tilesets.
+
+What I'm working on right now:
+-The saving/loading system.
+-The battle system.
+
+What is planned for the future:
+-Stats and a leveling system that can easily be modded
+-Multiple modular battle systems
+-Err... Suggest something? I'm open for everything :)
+
+This code is released under the MIT License. You can use everything you find as long as you include a copy of the license in your release and dont remove the copyright remarks in the source files!

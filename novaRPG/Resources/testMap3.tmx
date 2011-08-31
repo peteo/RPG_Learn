@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="" value="testMap3"/>
+  <property name="map_left" value="testMap3"/>
+ </properties>
+ <tileset firstgid="11" name="testtiles" tilewidth="32" tileheight="32">
+  <image source="testtiles.png" width="160" height="64"/>
+ </tileset>
+ <tileset firstgid="1" name="metatiles" tilewidth="32" tileheight="32">
+  <image source="metatiles.png" width="160" height="64"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="True"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Collidable" value="False"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="Collidable" value="False"/>
+    <property name="Transition" value="Down"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="Collidable" value="False"/>
+    <property name="Transition" value="Up"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="Collidable" value="False"/>
+    <property name="Transition" value="Left"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="Collidable" value="False"/>
+    <property name="Transition" value="Right"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="bg" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJzjYmBgYAJiZiBmAWIuPJgdiDmAmBOPGjYoBrEZkWg2JJoNTQ8jEmZDEyOkjguHOmT34HMfunnY3IfLbFpgADzmAwE=
+  </data>
+ </layer>
+ <layer name="fg" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFgwkAAAGQAAE=
+  </data>
+ </layer>
+ <objectgroup name="go" width="10" height="10">
+  <object name="playerspawn" x="112" y="240"/>
+  <object name="npc_0" type="NPC" x="145" y="177">
+   <properties>
+    <property name="" value="text"/>
+    <property name="animspeed" value="0.3"/>
+    <property name="behaviour" value="2"/>
+    <property name="displayid" value="playersprite_female"/>
+    <property name="lookdirection" value="3"/>
+    <property name="movearea_x" value="4"/>
+    <property name="movearea_y" value="4"/>
+    <property name="moveinterval" value="2.0"/>
+    <property name="movespeed" value="0.6"/>
+   </properties>
+  </object>
+  <object name="testdoor" type="door" x="16" y="80">
+   <properties>
+    <property name="map" value="testMap3"/>
+    <property name="spawn" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="meta" width="10" height="10" opacity="0.23">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAu4IZibOL45NHVEWMPOeoodR+tAQB8SACQ
+  </data>
+ </layer>
+ <layer name="extras" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFgwkAAAGQAAE=
+  </data>
+ </layer>
+</map>

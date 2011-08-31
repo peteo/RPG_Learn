@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="40" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="houses" tilewidth="32" tileheight="32">
+  <image source="houses_tiles.png" trans="ff00ff" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="bgtiles" tilewidth="32" tileheight="32">
+  <image source="bgtiles.png" trans="ff00ff" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="129" name="fgtiles" tilewidth="32" tileheight="32">
+  <image source="fgtiles.png" trans="ff00ff" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="193" name="meta" tilewidth="32" tileheight="32">
+  <image source="metatiles.png" width="160" height="64"/>
+ </tileset>
+ <layer name="bg" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt0TEKwCAMQNFczrGdTCfrPbx9U4ggxbUY4Q9v//CbiDQAwLaySeYK0ELff32vw50BumZ9nQ6tq5uLuZ1OWrsI/8fWrxqgDwAAAACA3TyrjO0z
+  </data>
+ </layer>
+ <layer name="fg" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt01tLAkEYgOExO6CZUpriocRDhYfqpvRG87fphVteLOiF4r/1JXZkYXcVxHFAvhcePljn4oMZlZIkpWK4QByXuLK7TqAEkrhFCnd21wl0jwdkkcOj3XXUGBPfLKKEMip4Cjmjp+l+8YeZb9ZQRwNNvISc0dN0LuZY+GYLbXTQxXvIGT1Nt4TjWWGKtfebnvvu8gOfuMaNmTW3uSHf9F1Gvb0e+kgjY2E/fZdRb+8HI+RRsLCfLurtfeEbz6iaW+2/XftFNcAQr3g77jqBDtnvlPn/z47lXSRJkiRJkiRJkiTpHNsAWtwpfw==
+  </data>
+ </layer>
+ <objectgroup name="go" width="40" height="40">
+  <object name="playerspawn" x="464" y="464"/>
+ </objectgroup>
+ <layer name="meta" width="40" height="40" opacity="0.26">
+  <data encoding="base64" compression="zlib">
+   eJzt1MEJwCAQRUH77yqdSe7qIgHzkRnYo/hYxNYg3zOYJPq+teyMvvm9ae/uNWqqdnVyp6u+WcfffVVHSt/qTHLfSSn/MgAAANyqA8DFRJw=
+  </data>
+ </layer>
+ <layer name="extras" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20PBxQAAAAAAMCXARkAAAE=
+  </data>
+ </layer>
+</map>

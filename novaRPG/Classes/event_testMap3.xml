@@ -1,0 +1,8 @@
+<event name="npc_0">
+	<action type="camera" duration="2" position="1,4" />
+	<action type="camera" duration="2" position="5,5" />
+	<action type="camera" duration="2" position="1,4" />
+	<action type="camera" duration="1.5" position="2,4" />
+	<action type="text" content="Test textbox!!" />
+	<action type="return" />
+</event>
