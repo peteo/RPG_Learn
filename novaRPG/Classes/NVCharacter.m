@@ -26,7 +26,8 @@
 
 
 // Load .plist into FrameChache and .png into a Batchnode, then spawn the Sprite and its AnimStates
--(id) initWithSpritesheet:(NSString *) spriteName onMap:(NVMap *) currentMap {
+-(id) initWithSpritesheet:(NSString *) spriteName onMap:(NVMap *) currentMap 
+{
 	_spriteName = spriteName;
 	self.lookDirection = 1;
 	[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:[NSString stringWithFormat:@"%@.plist",spriteName]];
@@ -73,7 +74,7 @@
 
 	self.moveState = kStateIdle;
 	
-	_currentMap = currentMap;
+	_currentMap  = currentMap;
 	_previousGID = 2;
 	
 	return self;
@@ -110,22 +111,27 @@
 	
 
 
--(void) update {
-	switch (self.moveState) {
+-(void) update 
+{
+	switch (self.moveState) 
+	{
 		case kStateIdle:
 			break;
 		case kStateDown:
 			// Move Down
 			[self lookInDirection:1];
-			if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) {
+			if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+			{
 				[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
 				_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
 				[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
 				[_characterSprite runAction:[CCMoveBy actionWithDuration:self.moveSpeed position:ccp(0,-32)]];
 				[_characterSprite runAction:[CCAnimate actionWithAnimation:_walkDownAnim]]; 
 			}
-			else {
-				for (NSDictionary *properties in _currentMap.doors) {
+			else 
+			{
+				for (NSDictionary *properties in _currentMap.doors) 
+				{
 					if (CGPointEqualToPoint([_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)], [_currentMap tileCoordForPosition:ccp([[properties valueForKey:@"x"] floatValue],[[properties valueForKey:@"y"] floatValue])])) {
 						[[StateManager sharedStateManager] setCurrentMap:[properties valueForKey:@"map"]];
 						[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
@@ -176,7 +182,8 @@
 
 }
 
--(void) dealloc {
+-(void) dealloc
+{
 	self.characterSprite = nil;
 	self.spriteSheet = nil;
 	self.walkDownAnim = nil;

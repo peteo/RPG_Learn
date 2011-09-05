@@ -10,7 +10,8 @@
 #import "NVMap.h"
 #import "StateManager.h"
 
-typedef enum {
+typedef enum 
+{
 	kStateIdle = 0,
 	kStateDown,
 	kStateUp,
@@ -18,7 +19,8 @@ typedef enum {
 	kStateRight
 } _moveState;
 
-@interface NVCharacter : CCNode {
+@interface NVCharacter : CCNode 
+{
 	CCSprite *_characterSprite;
 	CCSpriteBatchNode *_spriteSheet;
 	CCAnimation *_walkDownAnim;

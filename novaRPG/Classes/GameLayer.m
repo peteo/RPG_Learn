@@ -9,7 +9,6 @@
 // Import the interfaces
 #import "GameLayer.h"
 
-// HelloWorld implementation
 @implementation GameLayer
 
 +(id) gameScene
@@ -37,8 +36,8 @@
 // on "init" you need to initialize your instance
 -(id) init
 {
-	if( (self=[super init] )) {
-
+	if( (self=[super init] )) 
+	{
 		// Load Tilemap
 		_tileMap = [[NVMap alloc] initWithMap:[[StateManager sharedStateManager] getCurrentMap]];
 		[self addChild:_tileMap.tileMap];
@@ -52,22 +51,23 @@
 		self.isTouchEnabled = YES;
 		
 		// Initializing the V-Pad
-		_dDown1 = CGRectMake(0, 0, 200, 90);
-		_dDown2 = CGRectMake(280, 0, 200, 90);
-		_dUp1 = CGRectMake(0, 230, 200, 90);
-		_dUp2 = CGRectMake(280, 230, 200, 90);
-		_dLeft = CGRectMake(0, 90, 240, 140);
-		_dRight = CGRectMake(240, 90, 240, 140);
+		_dDown1 = CGRectMake(0,   0,   240, 90);
+		_dDown2 = CGRectMake(240, 0,   240, 90);
+		_dUp1	= CGRectMake(0,   230, 240, 90);
+		_dUp2	= CGRectMake(240, 230, 240, 90);
+		_dLeft	= CGRectMake(0,   90,  240, 140);
+		_dRight = CGRectMake(240, 90,  240, 140);
 		
-		_dTop = CGRectMake(200, 230, 80, 90);
-		_dBot = CGRectMake(200, 0, 80, 90);
+		//_dTop = CGRectMake(200, 230, 80, 90);
+		//_dBot = CGRectMake(200, 0, 80, 90);
 		
 		_loopSpeed = 0;
 		
 		_npcarray = [[CCArray alloc] init];
 
 		//Load NPCs on Map
-		for (int i = 0;i < [_tileMap.npcs count]; i += 1) {
+		for (int i = 0;i < [_tileMap.npcs count]; i += 1) 
+		{
 			NVNpc *npc = [[NVNpc alloc] initWithID:i onMap:_tileMap];
 			[self addChild:npc.spriteSheet z:i + 1];
 			[_npcarray addObject:npc];
@@ -128,11 +128,14 @@
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
 }
 	
--(void) checkForEvent {
-	switch (_playerChar.lookDirection) {
+-(void) checkForEvent 
+{
+	switch (_playerChar.lookDirection) 
+	{
 		case kStateDown:
 			//Check down, lookdirection is 1
-			for (NVNpc *npc in _npcarray) {
+			for (NVNpc *npc in _npcarray) 
+			{
 				CGPoint npcpos = [_tileMap tileCoordForPosition:npc.characterSprite.position];
 				if (CGPointEqualToPoint([_tileMap tileCoordForPosition:ccp(_playerChar.characterSprite.position.x,_playerChar.characterSprite.position.y - 32)],npcpos) == YES) {
 					[self triggerNPCEvent:npc withDirection:2];
@@ -141,7 +144,8 @@
 			break;
 		case kStateUp:
 			//check up, lookdirection is 2
-			for (NVNpc *npc in _npcarray) {
+			for (NVNpc *npc in _npcarray) 
+			{
 				CGPoint npcpos = [_tileMap tileCoordForPosition:npc.characterSprite.position];
 				if (CGPointEqualToPoint([_tileMap tileCoordForPosition:ccp(_playerChar.characterSprite.position.x,_playerChar.characterSprite.position.y + 32)],npcpos) == YES) {
 					[self triggerNPCEvent:npc withDirection:1];
@@ -225,36 +229,48 @@
 }
 
 // Actual Touch Handling happens here
--(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event {
-	if (!textBox) {
+-(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event 
+{
+	if (!textBox) 
+	{
 		CGPoint touchLocation = [touch locationInView: [touch view]];		
 		touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
 		
-		if (CGRectContainsPoint(_dDown1, touchLocation) || CGRectContainsPoint(_dDown2, touchLocation)) {
-			_playerChar.moveState = 1;
+		if (CGRectContainsPoint(_dDown1, touchLocation) 
+			|| CGRectContainsPoint(_dDown2, touchLocation)) 
+		{
+			_playerChar.moveState = kStateDown;
 		}
 		
-		if (CGRectContainsPoint(_dUp1, touchLocation) || CGRectContainsPoint(_dUp2, touchLocation)) {
-			_playerChar.moveState = 2;
+		else if (CGRectContainsPoint(_dUp1, touchLocation) 
+			|| CGRectContainsPoint(_dUp2, touchLocation)) 
+		{
+			_playerChar.moveState = kStateUp;
 		}
 		
-		if (CGRectContainsPoint(_dLeft, touchLocation)) {
-			_playerChar.moveState = 3;
+		else if (CGRectContainsPoint(_dLeft, touchLocation)) 
+		{
+			_playerChar.moveState = kStateLeft;
 		}
 		
-		if (CGRectContainsPoint(_dRight, touchLocation)) {
-			_playerChar.moveState = 4;
+		else if (CGRectContainsPoint(_dRight, touchLocation)) 
+		{
+			_playerChar.moveState = kStateRight;
 		}
-		
-		if (CGRectContainsPoint(_dTop, touchLocation)) {
+		/*
+		if (CGRectContainsPoint(_dTop, touchLocation)) 
+		{
 			//Supposed to open the menu later on
 		}
 		
-		if (CGRectContainsPoint(_dBot, touchLocation)) {
+		if (CGRectContainsPoint(_dBot, touchLocation)) 
+		{
 			[self checkForEvent];
-		}	
+		}
+		*/
 	}
-	else {
+	else 
+	{
 		[textBox advanceText];
 	}
 
@@ -262,49 +278,64 @@
 	return YES;
 }
 
--(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
+-(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event 
+{
 	CGPoint touchLocation = [touch locationInView: [touch view]];		
     touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
 	
-		if (CGRectContainsPoint(_dDown1, touchLocation) || CGRectContainsPoint(_dDown2, touchLocation)) {
-			_playerChar.moveState = kStateDown;
-		}
-		
-		if (CGRectContainsPoint(_dUp1, touchLocation) || CGRectContainsPoint(_dUp2, touchLocation)) {
-			_playerChar.moveState = kStateUp;
-		}
-		
-		if (CGRectContainsPoint(_dLeft, touchLocation)) {
-			_playerChar.moveState = kStateLeft;
-		}
-		
-		if (CGRectContainsPoint(_dRight, touchLocation)) {
-			_playerChar.moveState = kStateRight;
-		}
+	if (CGRectContainsPoint(_dDown1, touchLocation) 
+		|| CGRectContainsPoint(_dDown2, touchLocation)) 
+	{
+		_playerChar.moveState = kStateDown;
+	}
 	
+	else if (CGRectContainsPoint(_dUp1, touchLocation) 
+		|| CGRectContainsPoint(_dUp2, touchLocation)) 
+	{
+		_playerChar.moveState = kStateUp;
+	}
 	
-		if (CGRectContainsPoint(_dTop, touchLocation)) {
-			CCLOG(@"V-Pad Top");
-		}
+	else if (CGRectContainsPoint(_dLeft, touchLocation)) 
+	{
+		_playerChar.moveState = kStateLeft;
+	}
 	
-		if (CGRectContainsPoint(_dBot, touchLocation)) {
-			CCLOG(@"V-Pad Bot");
-		}
+	else if (CGRectContainsPoint(_dRight, touchLocation)) 
+	{
+		_playerChar.moveState = kStateRight;
+	}
+
+	/*
+	if (CGRectContainsPoint(_dTop, touchLocation)) 
+	{
+		CCLOG(@"V-Pad Top");
+	}
+
+	if (CGRectContainsPoint(_dBot, touchLocation)) 
+	{
+		CCLOG(@"V-Pad Bot");
+	}
+	*/
 }
 
 // Stop all Movement on TouchEnded
--(void) ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event {
-		_playerChar.moveState = kStateIdle;
+-(void) ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event 
+{
+	_playerChar.moveState = kStateIdle;
 }
 
 // Gameloop and loop method start here
--(void) gameLoop:(ccTime) dt {
-	if ([_playerChar.characterSprite numberOfRunningActions] == 0 || !_playerChar.moveState) {
+-(void) gameLoop:(ccTime) dt 
+{
+	if ([_playerChar.characterSprite numberOfRunningActions] == 0 
+				&& _playerChar.moveState != kStateIdle)
+	{
 		[_playerChar update];
 	}
 }
 
--(void) textBoxUpdate:(ccTime) dt {
+-(void) textBoxUpdate:(ccTime) dt 
+{
 	[textBox update:dt];
 }
 
@@ -320,8 +351,9 @@
 
 - (void) dealloc
 {
-	_tileMap = nil;
+	_tileMap	= nil;
 	_playerChar = nil;
+	
 	[super dealloc];
 }
 @end

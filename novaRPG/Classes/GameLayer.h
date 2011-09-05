@@ -19,12 +19,13 @@
 #import "NVAction.h"
 #import "EnvironmentLayer.h"
 
-// HelloWorld Layer
+
 @interface GameLayer : CCLayer <TextBoxDelegate>
 {
 	TextBoxLayer *textBox;
 	
 	NVMap *_tileMap;
+	
 	NVCharacter *_playerChar;
 	
 	CGRect _dDown1;
@@ -34,8 +35,8 @@
 	CGRect _dLeft;
 	CGRect _dRight;
 	
-	CGRect _dTop;
-	CGRect _dBot;
+	//CGRect _dTop;
+	//CGRect _dBot;
 	
 	float _loopSpeed;
 	

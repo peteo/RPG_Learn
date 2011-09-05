@@ -27,7 +27,9 @@
 @synthesize loadedMap = _loadedMap;
 
 // Initialize and load map
--(id) initWithMap:(NSString *) mapName {
+-(id) initWithMap:(NSString *) mapName 
+{
+	CCLOG(@"tiledMapWithTMXFile[%@]",[NSString stringWithFormat:@"%@.tmx",mapName]);
 	self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:[NSString stringWithFormat:@"%@.tmx",mapName]];
 	
 	// Load layers and make the meta Layer invisible
@@ -53,7 +55,6 @@
 					CCLOG(@"Door count is %i",[_doors count]);
 				}
 			}
-
 		}
 	}
 	
@@ -95,7 +96,8 @@
     return ccp(x, y);
 }
 
--(BOOL) checkCollisionForPosition:(CGPoint) position {
+-(BOOL) checkCollisionForPosition:(CGPoint) position 
+{
 	BOOL collidable = NO;
 	position = [self tileCoordForPosition:position];
 	int tileGID = [_metaLayer tileGIDAt:position];

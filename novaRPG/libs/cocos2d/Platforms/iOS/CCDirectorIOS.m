@@ -2,6 +2,7 @@
  * cocos2d for iPhone: http://www.cocos2d-iphone.org
  *
  * Copyright (c) 2010 Ricardo Quesada
+ * Copyright (c) 2011 Zynga Inc.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -182,7 +183,9 @@ CGFloat	__ccContentScaleFactor = 1;
 	
 	glPopMatrix();
 	
-	[openGLView_ swapBuffers];
+	totalFrames_++;
+
+	[openGLView_ swapBuffers];	
 }
 
 -(void) setProjection:(ccDirectorProjection)projection
@@ -200,17 +203,22 @@ CGFloat	__ccContentScaleFactor = 1;
 			break;
 			
 		case kCCDirectorProjection3D:
+		{
+			float zeye = [self getZEye];
+
 			glViewport(0, 0, size.width, size.height);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500.0f);
-			
+//			gluPerspective(60, (GLfloat)size.width/size.height, zeye-size.height/2, zeye+size.height/2 );
+			gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500);
+
 			glMatrixMode(GL_MODELVIEW);	
 			glLoadIdentity();
-			gluLookAt( size.width/2, size.height/2, [self getZEye],
+			gluLookAt( size.width/2, size.height/2, zeye,
 					  size.width/2, size.height/2, 0,
-					  0.0f, 1.0f, 0.0f);			
+					  0.0f, 1.0f, 0.0f);
 			break;
+		}
 			
 		case kCCDirectorProjectionCustom:
 			if( projectionDelegate_ )
@@ -403,7 +411,7 @@ CGFloat	__ccContentScaleFactor = 1;
 				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait animated:NO];
 				break;
 			case CCDeviceOrientationPortraitUpsideDown:
-				[[UIApplication sharedApplication] setStatusBarOrientation: UIDeviceOrientationPortraitUpsideDown animated:NO];
+				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown animated:NO];
 				break;
 			case CCDeviceOrientationLandscapeLeft:
 				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight animated:NO];
@@ -541,6 +549,8 @@ CGFloat	__ccContentScaleFactor = 1;
 
 - (void) startAnimation
 {
+	NSAssert( isRunning == NO, @"isRunning must be NO. Calling startAnimation twice?");
+
 	// XXX:
 	// XXX: release autorelease objects created
 	// XXX: between "use fast director" and "runWithScene"
@@ -627,7 +637,8 @@ CGFloat	__ccContentScaleFactor = 1;
 
 - (void) startAnimation
 {
-	
+	NSAssert( isRunning == NO, @"isRunning must be NO. Calling startAnimation twice?");
+
 	if ( gettimeofday( &lastUpdate_, NULL) != 0 ) {
 		CCLOG(@"cocos2d: ThreadedFastDirector: Error on gettimeofday");
 	}
@@ -688,6 +699,8 @@ CGFloat	__ccContentScaleFactor = 1;
 
 - (void) startAnimation
 {
+	NSAssert( displayLink == nil, @"displayLink must be nil. Calling startAnimation twice?");
+
 	if ( gettimeofday( &lastUpdate_, NULL) != 0 ) {
 		CCLOG(@"cocos2d: DisplayLinkDirector: Error on gettimeofday");
 	}

@@ -39,9 +39,9 @@
 
 #define CCARRAY_FOREACH(__array__, __object__)												\
 if (__array__ && __array__->data->num > 0)													\
-for(id *arr = __array__->data->arr, *end = __array__->data->arr + __array__->data->num-1;	\
-	arr <= end && ((__object__ = *arr) != nil || true);										\
-	arr++)
+for(id *__arr__ = __array__->data->arr, *end = __array__->data->arr + __array__->data->num-1;	\
+	__arr__ <= end && ((__object__ = *__arr__) != nil || true);										\
+	__arr__++)
 
 @interface CCArray : NSObject <NSFastEnumeration, NSCoding, NSCopying>
 {
@@ -94,7 +94,8 @@ for(id *arr = __array__->data->arr, *end = __array__->data->arr + __array__->dat
 
 - (void) exchangeObject:(id)object1 withObject:(id)object2;
 - (void) exchangeObjectAtIndex:(NSUInteger)index1 withObjectAtIndex:(NSUInteger)index2;
-
+- (void) reverseObjects;
+- (void) reduceMemoryFootprint;
 
 // Sending Messages to Elements
 
