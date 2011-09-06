@@ -14,6 +14,8 @@
 		2165E2651414DBC200B53F99 /* houses_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2601414DBC200B53F99 /* houses_tiles.png */; };
 		2165E2661414DBC200B53F99 /* metatiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2611414DBC200B53F99 /* metatiles.png */; };
 		2165E2671414DBC200B53F99 /* testmapFinal.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2621414DBC200B53F99 /* testmapFinal.tmx */; };
+		21828DF81415E6460054605A /* NVLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 21828DF71415E6460054605A /* NVLink.m */; };
+		21828E3E1415F9600054605A /* NVCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 21828E3D1415F9600054605A /* NVCode.m */; };
 		21B8EABB1414D20F00A56478 /* CCAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8EA141414D20F00A56478 /* CCAction.m */; };
 		21B8EABC1414D20F00A56478 /* CCActionCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8EA161414D20F00A56478 /* CCActionCamera.m */; };
 		21B8EABD1414D20F00A56478 /* CCActionEase.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8EA181414D20F00A56478 /* CCActionEase.m */; };
@@ -199,6 +201,10 @@
 		2165E2601414DBC200B53F99 /* houses_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = houses_tiles.png; sourceTree = "<group>"; };
 		2165E2611414DBC200B53F99 /* metatiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = metatiles.png; sourceTree = "<group>"; };
 		2165E2621414DBC200B53F99 /* testmapFinal.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = testmapFinal.tmx; sourceTree = "<group>"; };
+		21828DF61415E6460054605A /* NVLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVLink.h; sourceTree = "<group>"; };
+		21828DF71415E6460054605A /* NVLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NVLink.m; sourceTree = "<group>"; };
+		21828E3C1415F9600054605A /* NVCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVCode.h; sourceTree = "<group>"; };
+		21828E3D1415F9600054605A /* NVCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NVCode.m; sourceTree = "<group>"; };
 		21B8EA131414D20F00A56478 /* CCAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAction.h; sourceTree = "<group>"; };
 		21B8EA141414D20F00A56478 /* CCAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCAction.m; sourceTree = "<group>"; };
 		21B8EA151414D20F00A56478 /* CCActionCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCActionCamera.h; sourceTree = "<group>"; };
@@ -944,6 +950,10 @@
 				98AE6888136084DF00B142F8 /* NVCharacter.m */,
 				98AE6889136084DF00B142F8 /* NVMap.h */,
 				98AE688A136084DF00B142F8 /* NVMap.m */,
+				21828DF61415E6460054605A /* NVLink.h */,
+				21828DF71415E6460054605A /* NVLink.m */,
+				21828E3C1415F9600054605A /* NVCode.h */,
+				21828E3D1415F9600054605A /* NVCode.m */,
 			);
 			name = NVHelpers;
 			sourceTree = "<group>";
@@ -1192,6 +1202,8 @@
 				21B8EB041414D20F00A56478 /* TGAlib.m in Sources */,
 				21B8EB051414D20F00A56478 /* TransformUtils.m in Sources */,
 				21B8EB061414D20F00A56478 /* ZipUtils.m in Sources */,
+				21828DF81415E6460054605A /* NVLink.m in Sources */,
+				21828E3E1415F9600054605A /* NVCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

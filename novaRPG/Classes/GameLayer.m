@@ -8,6 +8,7 @@
 
 // Import the interfaces
 #import "GameLayer.h"
+#import "novaRPGv2AppDelegate.h"
 
 @implementation GameLayer
 
@@ -36,8 +37,14 @@
 // on "init" you need to initialize your instance
 -(id) init
 {
-	if( (self=[super init] )) 
+	if( (self=[super init] ))
 	{
+		novaRPGv2AppDelegate * app = [novaRPGv2AppDelegate getAppDelegate];
+		
+		app.Link.dataReceiver = self;
+		
+		_Link = app.Link;
+		
 		// Load Tilemap
 		_tileMap = [[NVMap alloc] initWithMap:[[StateManager sharedStateManager] getCurrentMap]];
 		[self addChild:_tileMap.tileMap];
@@ -46,6 +53,13 @@
 		_playerChar = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 		_playerChar.characterSprite.position = [_tileMap spawnPoint];
 		[self addChild:_playerChar.spriteSheet];
+		
+		
+		// Remote Player
+		_Remoteplayer = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
+		_Remoteplayer.characterSprite.position = [_tileMap spawnPoint];
+		[self addChild:_Remoteplayer.spriteSheet];
+		
 		
 		//Enable Touch Support
 		self.isTouchEnabled = YES;
@@ -78,6 +92,8 @@
 		[self reorderChild:_tileMap.fgLayer z:[_npcarray count] + 5];
 		[self reorderChild:_tileMap.extraLayer z:[_npcarray count] + 6];
 		[self reorderChild:_playerChar.spriteSheet z:[_npcarray count] + 1];
+		[self reorderChild:_Remoteplayer.spriteSheet z:[_npcarray count] + 2];
+		
 		
 		// Register to the Notification Center for a possible Mapchange
 		[[NSNotificationCenter defaultCenter] addObserver: self
@@ -331,6 +347,8 @@
 				&& _playerChar.moveState != kStateIdle)
 	{
 		[_playerChar update];
+		
+		//CCLOG(@"playerChar[%f][%f]",_playerChar.characterSprite.position.x,_playerChar.characterSprite.position.y);
 	}
 }
 
@@ -356,4 +374,10 @@
 	
 	[super dealloc];
 }
+
+- (void)receivePacket:(int)packetID objectIndex:(int)objectIndex data:(NSDictionary*)returnValues
+{
+	
+}
+
 @end

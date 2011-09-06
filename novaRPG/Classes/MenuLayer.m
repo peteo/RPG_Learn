@@ -7,7 +7,7 @@
 //
 
 #import "MenuLayer.h"
-
+#import "novaRPGv2AppDelegate.h"
 
 @implementation MenuLayer
 
@@ -95,15 +95,39 @@
 -(void) onAbout:(id)sender {
 }
 
--(void) onSelect:(id)sender {
-	CCMenuItem *item = (CCMenuItem *) sender;
-	[[StateManager sharedStateManager] setActiveSaveState:item.tag];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
+-(void) onSelect:(id)sender 
+{
+	novaRPGv2AppDelegate * app = [novaRPGv2AppDelegate getAppDelegate];
+	
+	if(app.Link.IsWaiting)
+	{
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示！" message:@"正在连接服务器!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+		[alert show];
+		[alert release];
+	}
+	else
+	{
+		CCMenuItem *item = (CCMenuItem *) sender;
+		[[StateManager sharedStateManager] setActiveSaveState:item.tag];
+		[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
+	}
 }
 
--(void) newGame:(id)sender {
-	[[StateManager sharedStateManager] createNewState];
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
+-(void) newGame:(id)sender 
+{
+	novaRPGv2AppDelegate * app = [novaRPGv2AppDelegate getAppDelegate];
+	
+	if(app.Link.IsWaiting)
+	{
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示！" message:@"正在连接服务器!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+		[alert show];
+		[alert release];
+	}
+	else 
+	{
+		[[StateManager sharedStateManager] createNewState];
+		[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
+	}
 }
 
 @end

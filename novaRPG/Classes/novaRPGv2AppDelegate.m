@@ -20,6 +20,7 @@
 @implementation novaRPGv2AppDelegate
 
 @synthesize window;
+@synthesize Link = _Link;
 
 - (void) removeStartupFlicker
 {
@@ -112,6 +113,9 @@
 	// Removes the startup flicker
 	[self removeStartupFlicker];
 	
+	//初始化Link
+	_Link = [[NVLink alloc] init];
+	
 	// Run the intro Scene
 	[[CCDirector sharedDirector] runWithScene: [MenuLayer menuScene]];
 }
@@ -153,10 +157,17 @@
 	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 }
 
-- (void)dealloc {
+- (void)dealloc 
+{
+	[_Link release];
 	[[CCDirector sharedDirector] release];
 	[window release];
 	[super dealloc];
+}
+
++ (novaRPGv2AppDelegate * ) getAppDelegate
+{
+	return (novaRPGv2AppDelegate*)[UIApplication sharedApplication].delegate;
 }
 
 @end

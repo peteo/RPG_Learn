@@ -9,24 +9,29 @@
 
 // When you import this file, you import all the cocos2d classes
 #import "cocos2d.h"
+
 #import "NVMap.h"
 #import "NVCharacter.h"
 #import "NVNpc.h"
+#import "NVEventManager.h"
+#import "NVAction.h"
+#import "NVLink.h"
+
 #import "StateManager.h"
 #import "TextBoxLayer.h"
 #import "GDataXMLNode.h"
-#import "NVEventManager.h"
-#import "NVAction.h"
 #import "EnvironmentLayer.h"
 
 
-@interface GameLayer : CCLayer <TextBoxDelegate>
+@interface GameLayer : CCLayer < TextBoxDelegate , DataReceiver >
 {
 	TextBoxLayer *textBox;
 	
 	NVMap *_tileMap;
 	
 	NVCharacter *_playerChar;
+	
+	NVCharacter *_Remoteplayer;
 	
 	CGRect _dDown1;
 	CGRect _dDown2;
@@ -41,6 +46,9 @@
 	float _loopSpeed;
 	
 	CCArray *_npcarray;
+	
+	NVLink  *_Link;
+	
 }
 
 // returns a Scene that contains the HelloWorld as the only child

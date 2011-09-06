@@ -126,7 +126,7 @@
 				_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
 				[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
 				[_characterSprite runAction:[CCMoveBy actionWithDuration:self.moveSpeed position:ccp(0,-32)]];
-				[_characterSprite runAction:[CCAnimate actionWithAnimation:_walkDownAnim]]; 
+				[_characterSprite runAction:[CCAnimate actionWithAnimation:_walkDownAnim]];
 			}
 			else 
 			{
