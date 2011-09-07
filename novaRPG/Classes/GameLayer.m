@@ -12,6 +12,8 @@
 
 @implementation GameLayer
 
+@synthesize ItemID = _ItemID;
+
 +(id) gameScene
 {
 	// 'scene' is an autorelease object.
@@ -40,6 +42,14 @@
 	if( (self=[super init] ))
 	{
 		novaRPGv2AppDelegate * app = [novaRPGv2AppDelegate getAppDelegate];
+		
+		UIDevice *myDevice = [UIDevice currentDevice];
+		
+		NSString *deviceID = [myDevice uniqueIdentifier];
+		
+		NSLog(@"deviceID[%@]",deviceID);
+		
+		self.ItemID = deviceID;
 		
 		app.Link.dataReceiver = self;
 		
@@ -103,6 +113,13 @@
 		// Start the GameLoop
 		[self schedule:@selector(gameLoop:) interval: _loopSpeed];
 		[self runAction:[CCFollow actionWithTarget:_playerChar.characterSprite]];
+		
+		
+		[_Link EnterWorld:_playerChar.characterSprite.position :_ItemID];
+		
+		
+		CCLOG(@"float[%@]",[NSString stringWithUTF8String:@encode(float)]);
+		
 	}
 	return self;
 }
@@ -349,6 +366,42 @@
 		[_playerChar update];
 		
 		//CCLOG(@"playerChar[%f][%f]",_playerChar.characterSprite.position.x,_playerChar.characterSprite.position.y);
+		
+		float pPos[3];
+		
+		switch (_playerChar.moveState) 
+		{
+			case kStateDown:
+			{
+				pPos[0] = _playerChar.characterSprite.position.x;
+				pPos[1] = _playerChar.characterSprite.position.y - 32;
+			}
+				break;
+			case kStateUp:
+			{
+				pPos[0] = _playerChar.characterSprite.position.x;
+				pPos[1] = _playerChar.characterSprite.position.y + 32;
+			}
+				break;
+			case kStateLeft:
+			{
+				pPos[0] = _playerChar.characterSprite.position.x - 32;
+				pPos[1] = _playerChar.characterSprite.position.y;
+			}
+				break;
+			case kStateRight:
+			{
+				pPos[0] = _playerChar.characterSprite.position.x + 32;
+				pPos[1] = _playerChar.characterSprite.position.y;
+			}
+				break;
+			default:
+				break;
+		}
+		
+		pPos[2] = _playerChar.moveState;
+		
+		[_Link MoveAbsolute:pPos : _ItemID];
 	}
 }
 
@@ -372,12 +425,163 @@
 	_tileMap	= nil;
 	_playerChar = nil;
 	
+	[_ItemID release];
+	
 	[super dealloc];
 }
+
+#pragma mark -
+#pragma mark Link Delegate
 
 - (void)receivePacket:(int)packetID objectIndex:(int)objectIndex data:(NSDictionary*)returnValues
 {
 	
+}
+
+- (void)LinkOperationResult:(nByte)opCode :(int)returnCode :(NSMutableDictionary*)returnValues :(short)invocID
+{
+	switch(opCode)
+	{
+		case CreateWorld:
+		{
+			if(returnCode == Ok)
+			{
+				_Link.state = stateCreateWorlded;
+				//创建世界成功
+				[_Link EnterWorld:_playerChar.characterSprite.position :_ItemID];
+			}
+		}
+			break;
+			
+		case EnterWorld:
+		{
+			if(returnCode == WorldNotFound)
+			{
+				[_Link CreateWorld];
+			}
+			else if(returnCode == Ok)
+			{
+				_Link.state = stateEnterWorlded;
+				//加入世界成功
+				CCLOG(@"EnterWorld_Succeed");
+			}
+		}
+			break;
+			
+		case ExitWorld:
+		{
+			
+		}
+			break;
+			
+		default:
+			break;
+	}
+}
+
+- (void)LinkEventAction:(nByte)eventCode :(NSMutableDictionary*)photonEvent
+{
+	switch (eventCode) 
+	{
+		case ItemMoved:
+		{
+			EGArray* OldPositionArry = nil;
+			EGArray* PositionArry    = nil;
+			
+			OldPositionArry = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)OldPosition]];
+			PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
+			
+			//if([ary.Type compare:[NSString stringWithUTF8String:@encode(float)]])
+			//	DEBUG_RELEASE(NSAssert(false, "ERROR: unexpected type"), break);
+			
+			float Pos[3];
+			//坐标X
+			[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
+			
+			//坐标Y
+			[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+			
+			//移动方向 moveState
+			[[PositionArry objectAtIndex:2] getValue:&Pos[2]];
+			
+			int pMoveState = (int)Pos[2];
+			
+			CGPoint pPoint = CGPointMake(Pos[0], Pos[1]);
+			
+			CCLOG(@"RemotePlayer[%f][%f]",pPoint.x,pPoint.y);
+			
+			_Remoteplayer.moveState = pMoveState;
+			
+			switch (pMoveState)
+			{
+				case kStateIdle:
+					break;
+				case kStateDown:
+					// Move Down
+					[_Remoteplayer lookInDirection:1];
+					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+					{
+						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(0,-32)*/]];
+						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkDownAnim]];
+					}
+					break;
+				case kStateUp:
+					// Move Up
+					[_Remoteplayer lookInDirection:2];
+					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]) 
+					{
+						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(0,32)*/]];
+						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkUpAnim]];
+					}
+					break;
+				case kStateLeft:
+					// Move Left
+					[_Remoteplayer lookInDirection:3];
+					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]) 
+					{
+						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(-32,0)*/]];
+						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkLeftAnim]];
+					}
+					break;
+				case kStateRight:
+					// Move Right
+					[_Remoteplayer lookInDirection:4];
+					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]) 
+					{
+						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(32,0)*/]];
+						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkRightAnim]];
+					}
+					break;
+				default:
+					break;
+			}
+		}
+			break;
+		case ItemSubscribed:
+		{
+			
+		}
+			break;
+		case ItemUnsubscribed:
+		{
+			
+		}
+			break;
+		default:
+			break;
+	}
 }
 
 @end

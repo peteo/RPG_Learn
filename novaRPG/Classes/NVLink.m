@@ -8,10 +8,17 @@
 
 #import "NVLink.h"
 
+#define URL_TEST_SERVER	 L"172.18.19.73:5055"
+
+//#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
+
+#define WORLD_NAME		 @"WORLD2"
+
 @implementation NVLink
 
 @synthesize dataReceiver = _dataReceiver;
-@synthesize IsWaiting = _IsWaiting;
+@synthesize IsWaiting    = _IsWaiting;
+@synthesize state        = _state;
 
 -(void) onTime:(NSTimer*)Timer
 {
@@ -72,7 +79,7 @@
 			break;
 		case stateConnected:
 			// exchanging keys
-			NSLog(@"stateConnected");
+			//NSLog(@"stateConnected");
 			//[self ExchangeKeys];
 			//_state = stateKeysExchanging;
 			break;
@@ -110,24 +117,9 @@
 	
 	NSLog(@"%@", [Utils hashToString:returnValues :true]);
 	
-	switch(opCode)
+	if(_dataReceiver)
 	{
-		case OPC_RT_JOIN:
-			_state = stateJoined;
-			NSLog(@"stateJoined");
-			break;
-		case OPC_RT_LEAVE:
-			_state = stateLeft;
-			NSLog(@"stateLeft");
-			break;
-		case OPC_RT_RAISE_EV:
-			break;
-		case OPC_RT_EXCHANGEKEYSFORENCRYPTION:
-			[_LitePeer deriveSharedKey:(nByte*)((EGArray*)[returnValues objectForKey:[KeyObject withByteValue:P_SERVER_KEY]]).CArray];
-			_state = stateKeysExchanged;
-			break;
-		default:
-			break;
+		[_dataReceiver LinkOperationResult:opCode:returnCode:returnValues:invocID];
 	}
 }
 
@@ -166,7 +158,10 @@
 	
 	NSLog(@"%@", [Utils hashToString:photonEvent :true]);
 	
-	//NSMutableDictionary * eventData = nil;
+	if(_dataReceiver)
+	{
+		[_dataReceiver LinkEventAction:eventCode :photonEvent];
+	}
 }
 
 -(void) PhotonPeerDebugReturn:(PhotonPeer_DebugLevel)debugLevel :(NSString*)string
@@ -198,8 +193,6 @@
 
 #pragma mark -
 #pragma mark Photon Methods
-
-#define URL_TEST_SERVER	 L"172.18.19.73:5055"
 
 -(void) CreateConnection
 {
@@ -258,14 +251,34 @@
 	[data setObject:worldName forKey:[KeyObject withByteValue:(nByte)WorldName]];
 	[data setObject:username  forKey:[KeyObject withByteValue:(nByte)Username]];
 	
-	NSValue * valArray[2];
+	NSValue * PositionArray[3];
 	
-	for(int i = 0; i < 2; i ++)
+	for(int i = 0; i < 3; i ++)
 	{
-		valArray[i] = [NSValue valueWithBytes:&position[i] objCType:@encode(float)];
+		PositionArray[i] = [NSValue valueWithBytes:&position[i] objCType:@encode(float)];
 	}
 	
-	[data setObject:[EGArray arrayWithObjects:valArray count:2] forKey:[KeyObject withByteValue:(nByte)Position]];
+	[data setObject:[EGArray arrayWithObjects:PositionArray count:3] forKey:[KeyObject withByteValue:(nByte)Position]];
+	
+	
+	NSValue * DistanceEnterArray[3];
+	
+	for(int i = 0; i < 3; i ++)
+	{
+		DistanceEnterArray[i] = [NSValue valueWithBytes:&viewDistanceEnter[i] objCType:@encode(float)];
+	}
+	
+	[data setObject:[EGArray arrayWithObjects:DistanceEnterArray count:3] forKey:[KeyObject withByteValue:(nByte)ViewDistanceEnter]];
+	
+	
+	NSValue * DistanceExitArray[3];
+	
+	for(int i = 0; i < 3; i ++)
+	{
+		DistanceExitArray[i] = [NSValue valueWithBytes:&viewDistanceExit[i] objCType:@encode(float)];
+	}
+	
+	[data setObject:[EGArray arrayWithObjects:DistanceExitArray count:3] forKey:[KeyObject withByteValue:(nByte)ViewDistanceExit]];
 	
 	
 	if (properties != nil)
@@ -280,10 +293,39 @@
 	}
 	*/
 	
-	[self SendOperation:EnterWorld :data :true :_OperationChannel ];
+	[self SendOperation:EnterWorld :data :true :_OperationChannel];
 	
 	[data release];
 }
+
+-(void) EnterWorld:(CGPoint)pos :(NSString*) username
+{
+	float positionArry[3];
+	float DistanceEnterArry[3];
+	float DistanceExitArry[3];
+	
+	positionArry[0] = pos.x;
+	positionArry[1] = pos.y;
+	positionArry[2] = 0.0f;
+	
+	//positionArry[0] = [_tileMap tileCoordForPosition:_playerChar.characterSprite.position].x;
+	//positionArry[1] = [_tileMap tileCoordForPosition:_playerChar.characterSprite.position].y;
+
+	DistanceEnterArry[0] = 240.0f;
+	DistanceEnterArry[1] = 160.0f;
+	DistanceEnterArry[2] = 0.0f;
+	
+	DistanceExitArry[0] = 480.0f;
+	DistanceExitArry[1] = 320.0f;
+	DistanceExitArry[2] = 0.0f;
+	
+	_state = stateEnterWorlding;
+	
+	[self EnterWorld:WORLD_NAME :username :nil :positionArry :NULL :DistanceEnterArry :DistanceExitArry];
+	
+}
+
+
 
 -(void) CreateWorld:(NSString*) worldName : (float[]) topLeftCorner : (float[]) bottomRightCorner : (float[]) tileDimensions
 {
@@ -301,9 +343,58 @@
 	
 	[data setObject:worldName forKey:[KeyObject withByteValue:(nByte)WorldName]];
 	
+	
+	NSValue * TopLeftCornerArray[3];
+	for(int i = 0; i < 3; i ++)
+	{
+		TopLeftCornerArray[i] = [NSValue valueWithBytes:&topLeftCorner[i] objCType:@encode(float)];
+	}
+	[data setObject:[EGArray arrayWithObjects:TopLeftCornerArray count:3] forKey:[KeyObject withByteValue:(nByte)TopLeftCorner]];
+	
+	
+	NSValue * BottomRightCornerArray[3];
+	for(int i = 0; i < 3; i ++)
+	{
+		BottomRightCornerArray[i] = [NSValue valueWithBytes:&bottomRightCorner[i] objCType:@encode(float)];
+	}
+	[data setObject:[EGArray arrayWithObjects:BottomRightCornerArray count:3] forKey:[KeyObject withByteValue:(nByte)BottomRightCorner]];
+	
+	
+	NSValue * TileDimensionsArray[3];
+	for(int i = 0; i < 3; i ++)
+	{
+		TileDimensionsArray[i] = [NSValue valueWithBytes:&tileDimensions[i] objCType:@encode(float)];
+	}
+	[data setObject:[EGArray arrayWithObjects:TileDimensionsArray count:3] forKey:[KeyObject withByteValue:(nByte)TileDimensions]];
+	
+	
 	[self SendOperation:CreateWorld :data :true :_OperationChannel];
 	
 	[data release];
+}
+
+-(void) CreateWorld
+{
+	float topLeftCornerArry[3];
+	float bottomRightCornerArry[3];
+	float tileDimensionsArry[3];
+	
+	topLeftCornerArry[0] = 16.0f;
+	topLeftCornerArry[1] = 16.0f;
+	topLeftCornerArry[2] =  0.0f;
+	
+	bottomRightCornerArry[0] = 624.0f;
+	bottomRightCornerArry[1] = 624.0f;
+	bottomRightCornerArry[2] =   0.0f;
+	
+	tileDimensionsArry[0] = 1.0f;
+	tileDimensionsArry[1] = 1.0f;
+	tileDimensionsArry[2] = 0.0f;
+	
+	_state = stateCreateWorlding;
+	
+	[self CreateWorld:WORLD_NAME :topLeftCornerArry :bottomRightCornerArry :tileDimensionsArry];
+	
 }
 
 -(void) ExitWorld
@@ -319,14 +410,12 @@
 {
 	NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
 	
-	NSValue * valArray[2];
-	
-	for(int i = 0; i < 2; i ++)
+	NSValue * valArray[3];
+	for(int i = 0; i < 3; i ++)
 	{
 		valArray[i] = [NSValue valueWithBytes:&position[i] objCType:@encode(float)];
 	}
-	
-	[data setObject:[EGArray arrayWithObjects:valArray count:2] forKey:[KeyObject withByteValue:(nByte)Position]];
+	[data setObject:[EGArray arrayWithObjects:valArray count:3] forKey:[KeyObject withByteValue:(nByte)Position]];
 	
 	//var data = new Hashtable { { (byte)ParameterCode.Position, position } };
 	
@@ -347,9 +436,42 @@
 	}
 	*/
 	
+	CCLOG(@"Move[%f][%f]",position[0],position[1]);
+	
 	[self SendOperation:Move :data :sendReliable :_ItemChannel];
 	
 	[data release];
+}
+
+-(BOOL) MoveAbsolute:(float[])newPosition /*float[] rotation */ :(NSString*)itemId
+{
+	if (newPosition[0] < 16.0f /*this.Game.WorldData.TopLeftCorner[0]*/)
+	{
+		return NO;
+	}
+	
+	if (newPosition[0] > 624.0f /*this.Game.WorldData.BottomRightCorner[0]*/)
+	{
+		return NO;
+	}
+	
+	if (newPosition[1] < 16.0f /*this.Game.WorldData.TopLeftCorner[1]*/)
+	{
+		return NO;
+	}
+	
+	if (newPosition[1] > 624.0f /*this.Game.WorldData.BottomRightCorner[1]*/)
+	{
+		return NO;
+	}
+	
+	//this.SetPositions(newPosition, this.Position, rotation, this.Rotation);
+	
+	[self Move:itemId :newPosition :NULL :/*false*/ true];
+	
+	//Operations.Move(this.Game, this.Id, this.Type, newPosition, rotation, this.Game.Settings.SendReliable);
+	
+	return YES;
 }
 
 @end

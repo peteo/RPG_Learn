@@ -36,13 +36,23 @@ typedef enum States
 	stateDisconnected,
 	
 	stateEnterLobbying,
-	stateEnterLobbyed
+	stateEnterLobbyed,
+	
+	stateCreateWorlding,
+	stateCreateWorlded,
+	
+	stateEnterWorlding,
+	stateEnterWorlded
 	
 }States;
 
 @protocol DataReceiver
 
 - (void)receivePacket:(int)packetID objectIndex:(int)objectIndex data:(NSDictionary*)returnValues;
+
+- (void)LinkOperationResult:(nByte)opCode :(int)returnCode :(NSMutableDictionary*)returnValues :(short)invocID;
+
+- (void)LinkEventAction:(nByte)eventCode :(NSMutableDictionary*)photonEvent;
 
 @end
 
@@ -70,6 +80,7 @@ typedef enum States
 
 @property(nonatomic, assign)   id<DataReceiver> dataReceiver;
 @property(nonatomic, readonly) BOOL IsWaiting;
+@property(nonatomic, assign)   States state;
 
 -(void) Run;
 -(void) CreateConnection;
@@ -123,6 +134,7 @@ typedef enum States
 /// </param>
 
 -(void) EnterWorld:(NSString*) worldName :(NSString*) username : (NSMutableDictionary*) properties : (float[]) position : (float[]) rotation : (float[]) viewDistanceEnter : (float[]) viewDistanceExit;	
+-(void) EnterWorld:(CGPoint)pos :(NSString*) username;
 
 /// <summary>
 /// The create world.
@@ -144,6 +156,7 @@ typedef enum States
 /// </param>
 
 -(void) CreateWorld:(NSString*) worldName : (float[]) topLeftCorner : (float[]) bottomRightCorner : (float[]) tileDimensions;
+-(void) CreateWorld;
 
 /// <summary>
 /// The exit world.
@@ -178,5 +191,19 @@ typedef enum States
 
 -(void) Move:(NSString*)itemId /*: byte? itemType*/ : (float[]) position : (float[]) rotation : (bool) sendReliable;
 
+/// <summary>
+/// The move operation.
+/// </summary>
+/// <param name="newPosition">
+/// The new position.
+/// </param>
+/// <param name="rotation">
+/// The rotation.
+/// </param>
+/// <returns>
+/// The move absolute.
+/// </returns>
+
+-(BOOL) MoveAbsolute:(float[])newPosition /*float[] rotation */ :(NSString*)itemId ;
 
 @end

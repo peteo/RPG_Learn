@@ -49,7 +49,11 @@
 	
 	NVLink  *_Link;
 	
+	NSString *_ItemID;
+	
 }
+
+@property (nonatomic,retain) NSString * ItemID;
 
 // returns a Scene that contains the HelloWorld as the only child
 +(id) gameScene;
