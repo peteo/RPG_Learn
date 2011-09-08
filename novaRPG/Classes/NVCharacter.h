@@ -40,11 +40,14 @@ typedef enum
 	NVMap *_currentMap;
 	
 	int _previousGID;
+	
+	NSString *_ItemID;
 }
 
 // Sprite and Spritesheet
 @property (nonatomic,retain) CCSprite *characterSprite;
 @property (nonatomic,retain) CCSpriteBatchNode *spriteSheet;
+
 
 // Animations
 @property (nonatomic,retain) CCAnimation *walkDownAnim;
@@ -60,6 +63,7 @@ typedef enum
 @property (readwrite,assign) int moveState;
 @property (readwrite,assign) int lookDirection;
 
+@property (nonatomic,retain) NSString * ItemID;
 
 -(id) initWithSpritesheet:(NSString *)spriteName onMap:(NVMap *) currentMap;
 -(void) loadExtraAnimations;

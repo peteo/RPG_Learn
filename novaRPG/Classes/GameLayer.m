@@ -7,12 +7,12 @@
 //
 
 // Import the interfaces
+
 #import "GameLayer.h"
 #import "novaRPGv2AppDelegate.h"
+#import "WaitLayer.h"
 
 @implementation GameLayer
-
-@synthesize ItemID = _ItemID;
 
 +(id) gameScene
 {
@@ -36,6 +36,13 @@
 	return gameScene;
 }
 
+
+-(void) onExit:(id)sender
+{
+	[_Link DestroyItem:_playerChar.ItemID];
+	//[_Link ExitWorld];
+}
+
 // on "init" you need to initialize your instance
 -(id) init
 {
@@ -49,8 +56,6 @@
 		
 		NSLog(@"deviceID[%@]",deviceID);
 		
-		self.ItemID = deviceID;
-		
 		app.Link.dataReceiver = self;
 		
 		_Link = app.Link;
@@ -63,13 +68,7 @@
 		_playerChar = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 		_playerChar.characterSprite.position = [_tileMap spawnPoint];
 		[self addChild:_playerChar.spriteSheet];
-		
-		
-		// Remote Player
-		_Remoteplayer = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
-		_Remoteplayer.characterSprite.position = [_tileMap spawnPoint];
-		[self addChild:_Remoteplayer.spriteSheet];
-		
+		_playerChar.ItemID = deviceID;
 		
 		//Enable Touch Support
 		self.isTouchEnabled = YES;
@@ -87,7 +86,8 @@
 		
 		_loopSpeed = 0;
 		
-		_npcarray = [[CCArray alloc] init];
+		_npcarray		   = [[CCArray alloc] init];
+		_RemoteplayerArray = [[CCArray alloc] init];
 
 		//Load NPCs on Map
 		for (int i = 0;i < [_tileMap.npcs count]; i += 1) 
@@ -95,6 +95,7 @@
 			NVNpc *npc = [[NVNpc alloc] initWithID:i onMap:_tileMap];
 			[self addChild:npc.spriteSheet z:i + 1];
 			[_npcarray addObject:npc];
+			[npc release];
 		}
 		
 		// Reorder Children
@@ -102,8 +103,6 @@
 		[self reorderChild:_tileMap.fgLayer z:[_npcarray count] + 5];
 		[self reorderChild:_tileMap.extraLayer z:[_npcarray count] + 6];
 		[self reorderChild:_playerChar.spriteSheet z:[_npcarray count] + 1];
-		[self reorderChild:_Remoteplayer.spriteSheet z:[_npcarray count] + 2];
-		
 		
 		// Register to the Notification Center for a possible Mapchange
 		[[NSNotificationCenter defaultCenter] addObserver: self
@@ -114,36 +113,47 @@
 		[self schedule:@selector(gameLoop:) interval: _loopSpeed];
 		[self runAction:[CCFollow actionWithTarget:_playerChar.characterSprite]];
 		
+		_bIsEnterWorlded = NO;
 		
-		[_Link EnterWorld:_playerChar.characterSprite.position :_ItemID];
+		[_Link EnterWorld:_playerChar.characterSprite.position :_playerChar.ItemID];
 		
+		//test
+		CCMenuItem *menuItem = [CCMenuItemFont itemFromString:@"Exit" target:self selector:@selector(onExit:)];
 		
-		CCLOG(@"float[%@]",[NSString stringWithUTF8String:@encode(float)]);
+        CCMenu * mainMenu = [CCMenu menuWithItems:menuItem,nil];
+        mainMenu.position = ccp(50,50);
+		
+        [self addChild:mainMenu z:100];
 		
 	}
 	return self;
 }
 
 // Camera actions go here
--(void) followPlayer:(id) sender {
+-(void) followPlayer:(id) sender 
+{
 	[self runAction:[CCFollow actionWithTarget:_playerChar.characterSprite]];
 }
 	
--(void) centerCamera:(CGPoint) point {
+-(void) centerCamera:(CGPoint) point 
+{
 	CGSize winSize = [[CCDirector sharedDirector] winSize];
 	self.position = ccp(-point.x+winSize.width/2,-point.y+winSize.height/2);
 }
 
--(void) moveCameraByTile:(CGPoint)point withDuration:(int) duration {
+-(void) moveCameraByTile:(CGPoint)point withDuration:(int) duration 
+{
 	[self runAction:[CCMoveBy actionWithDuration:duration position:ccp(_tileMap.tileMap.tileSize.width*-point.x,_tileMap.tileMap.tileSize.height*-point.y)]];
 }
 
--(void) moveCameraToPos:(CGPoint)point withDuration:(int) duration {
+-(void) moveCameraToPos:(CGPoint)point withDuration:(int) duration 
+{
 	CGSize winSize = [[CCDirector sharedDirector] winSize];
 	[self runAction:[CCMoveTo actionWithDuration:duration position:ccp(-point.x+winSize.width/2,-point.y+winSize.height/2)]];
 }
 
--(void) displayTextbox:(NSString *)displayText {
+-(void) displayTextbox:(NSString *)displayText 
+{
 	//WIP, textbox is working perfectly but needs a new background. 
 	// It will be inserted in the class "TextBoxLayer" so it's default and can be used anywhere.
 	textBox = [[TextBoxLayer alloc] initWithColor:ccc4(0, 0, 255, 255) width:480 height:40 padding:10 text:displayText];
@@ -152,12 +162,14 @@
 	[self addChild:textBox z:20];
 	[self schedule:@selector(textBoxUpdate:) interval:0];
 	[self unschedule:@selector(gameLoop:)];
-	for (NVNpc *npc in _npcarray) {
+	for (NVNpc *npc in _npcarray) 
+	{
 		[npc pauseSchedulerAndActions];
 	}
 }
 
--(void) mapChange:(id)sender {
+-(void) mapChange:(id)sender
+{
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];
 }
 	
@@ -257,14 +269,20 @@
 
 // Touch Handling methods start here
 // Set up Touch Dispatcher
--(void) registerWithTouchDispatcher {
+-(void) registerWithTouchDispatcher 
+{
 	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
 }
 
 // Actual Touch Handling happens here
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event 
 {
-	if (!textBox) 
+	if(_bIsEnterWorlded == NO)
+	{
+		return YES;
+	}
+	
+	if (!textBox)
 	{
 		CGPoint touchLocation = [touch locationInView: [touch view]];		
 		touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
@@ -313,6 +331,11 @@
 
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event 
 {
+	if(_bIsEnterWorlded == NO)
+	{
+		return;
+	}
+	
 	CGPoint touchLocation = [touch locationInView: [touch view]];		
     touchLocation = [[CCDirector sharedDirector] convertToGL: touchLocation];
 	
@@ -401,7 +424,7 @@
 		
 		pPos[2] = _playerChar.moveState;
 		
-		[_Link MoveAbsolute:pPos : _ItemID];
+		[_Link MoveAbsolute:pPos : _playerChar.ItemID];
 	}
 }
 
@@ -422,10 +445,15 @@
 
 - (void) dealloc
 {
-	_tileMap	= nil;
-	_playerChar = nil;
+	//[_Link ExitWorld];
 	
-	[_ItemID release];
+	[_Link DestroyItem:_playerChar.ItemID];
+	[_Link SendOutgoingCommands];
+	
+	[_tileMap			 release];
+	[_playerChar		 release];
+	[_npcarray			 release];
+	[_RemoteplayerArray  release];
 	
 	[super dealloc];
 }
@@ -448,7 +476,7 @@
 			{
 				_Link.state = stateCreateWorlded;
 				//创建世界成功
-				[_Link EnterWorld:_playerChar.characterSprite.position :_ItemID];
+				[_Link EnterWorld:_playerChar.characterSprite.position :_playerChar.ItemID];
 			}
 		}
 			break;
@@ -464,6 +492,8 @@
 				_Link.state = stateEnterWorlded;
 				//加入世界成功
 				CCLOG(@"EnterWorld_Succeed");
+				
+				_bIsEnterWorlded = YES;
 			}
 		}
 			break;
@@ -485,6 +515,14 @@
 	{
 		case ItemMoved:
 		{
+			NSString * pItemID = nil;
+			pItemID = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)ItemId]];
+			
+			if(pItemID == nil)
+			{
+				return;
+			}
+			
 			EGArray* OldPositionArry = nil;
 			EGArray* PositionArry    = nil;
 			
@@ -510,73 +548,158 @@
 			
 			CCLOG(@"RemotePlayer[%f][%f]",pPoint.x,pPoint.y);
 			
-			_Remoteplayer.moveState = pMoveState;
-			
-			switch (pMoveState)
+			for (NVCharacter *Character in _RemoteplayerArray)
 			{
-				case kStateIdle:
-					break;
-				case kStateDown:
-					// Move Down
-					[_Remoteplayer lookInDirection:1];
-					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+				if([Character.ItemID isEqual:pItemID])
+				{
+					Character.moveState = pMoveState;
+					
+					switch (pMoveState)
 					{
-						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
-						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
-						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
-						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(0,-32)*/]];
-						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkDownAnim]];
+						case kStateIdle:
+							break;
+						case kStateDown:
+							// Move Down
+							[Character lookInDirection:1];
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+							[Character.characterSprite runAction:[CCMoveTo  actionWithDuration:Character.moveSpeed position:pPoint]];
+							[Character.characterSprite runAction:[CCAnimate actionWithAnimation:Character.walkDownAnim]];
+						}
+							break;
+						case kStateUp:
+							// Move Up
+							[Character lookInDirection:2];
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+							[Character.characterSprite runAction:[CCMoveTo  actionWithDuration:Character.moveSpeed position:pPoint]];
+							[Character.characterSprite runAction:[CCAnimate actionWithAnimation:Character.walkUpAnim]];
+						}
+							break;
+						case kStateLeft:
+							// Move Left
+							[Character lookInDirection:3];
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+							[Character.characterSprite runAction:[CCMoveTo  actionWithDuration:Character.moveSpeed position:pPoint]];
+							[Character.characterSprite runAction:[CCAnimate actionWithAnimation:Character.walkLeftAnim]];
+						}
+							break;
+						case kStateRight:
+							// Move Right
+							[Character lookInDirection:4];
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+							[Character.characterSprite runAction:[CCMoveTo  actionWithDuration:Character.moveSpeed position:pPoint]];
+							[Character.characterSprite runAction:[CCAnimate actionWithAnimation:Character.walkRightAnim]];
+						}
+							break;
+						default:
+							break;
 					}
-					break;
-				case kStateUp:
-					// Move Up
-					[_Remoteplayer lookInDirection:2];
-					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]) 
-					{
-						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
-						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
-						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
-						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(0,32)*/]];
-						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkUpAnim]];
-					}
-					break;
-				case kStateLeft:
-					// Move Left
-					[_Remoteplayer lookInDirection:3];
-					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]) 
-					{
-						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
-						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
-						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
-						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(-32,0)*/]];
-						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkLeftAnim]];
-					}
-					break;
-				case kStateRight:
-					// Move Right
-					[_Remoteplayer lookInDirection:4];
-					//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]) 
-					{
-						//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
-						//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
-						//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
-						[_Remoteplayer.characterSprite runAction:[CCMoveTo  actionWithDuration:_Remoteplayer.moveSpeed position:pPoint /*ccp(32,0)*/]];
-						[_Remoteplayer.characterSprite runAction:[CCAnimate actionWithAnimation:_Remoteplayer.walkRightAnim]];
-					}
-					break;
-				default:
-					break;
+					
+					return;
+				}
 			}
+		}
+			break;
+		case ItemDestroyed:
+		{
+			CCLOG(@"ItemDestroyed");
+			
+			NSString * pItemID = nil;
+			pItemID = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)ItemId]];
+			
+			if(pItemID)
+			{
+				for (NVCharacter *Character in _RemoteplayerArray)
+				{
+					if([Character.ItemID isEqual:pItemID])
+					{
+						[self removeChild:Character.spriteSheet cleanup:YES];
+						
+						[_RemoteplayerArray removeObject:Character];
+						
+						return;
+					}
+				}
+			}
+			
 		}
 			break;
 		case ItemSubscribed:
 		{
+			CCLOG(@"ItemSubscribed");
 			
+			NSString * pItemID = nil;
+			pItemID = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)ItemId]];
+			
+			if(pItemID)
+			{
+				for (NVCharacter *Character in _RemoteplayerArray)
+				{
+					if([Character.ItemID isEqual:pItemID])
+					{
+						[Character.spriteSheet setVisible:YES];
+						return;
+					}
+				}
+				
+				//新的玩家加入
+				EGArray* PositionArry    = nil;
+				PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
+				
+				float Pos[3];
+				//坐标X
+				[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
+				
+				//坐标Y
+				[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+				
+				NVCharacter * pRemoteplayer = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
+				pRemoteplayer.characterSprite.position = CGPointMake(Pos[0], Pos[1]);
+				pRemoteplayer.ItemID = pItemID;
+				[self addChild:pRemoteplayer.spriteSheet];
+				
+				[_RemoteplayerArray addObject:pRemoteplayer];
+				
+				[self reorderChild:pRemoteplayer.spriteSheet z:[_npcarray count] + [_RemoteplayerArray count] + 2];
+				
+				[pRemoteplayer release];
+				
+			}
 		}
 			break;
 		case ItemUnsubscribed:
 		{
+			CCLOG(@"ItemUnsubscribed");
 			
+			NSString * pItemID = nil;
+			pItemID = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)ItemId]];
+			
+			if(pItemID)
+			{
+				for (NVCharacter *Character in _RemoteplayerArray)
+				{
+					if([Character.ItemID isEqual:pItemID])
+					{
+						[Character.spriteSheet setVisible:NO];
+						return;
+					}
+				}
+			}
 		}
 			break;
 		default:

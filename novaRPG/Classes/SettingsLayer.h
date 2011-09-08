@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"	
 
-@interface SettingsLayer : CCLayer {
+@interface SettingsLayer : CCLayer 
+{
 	CCMenu *_settingsMenu;
 }
 
 +(id) settingsScene;
+
 -(void) onSelect:(id) sender;
 
 @end

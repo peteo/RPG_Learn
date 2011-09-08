@@ -14,6 +14,7 @@
 		2165E2651414DBC200B53F99 /* houses_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2601414DBC200B53F99 /* houses_tiles.png */; };
 		2165E2661414DBC200B53F99 /* metatiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2611414DBC200B53F99 /* metatiles.png */; };
 		2165E2671414DBC200B53F99 /* testmapFinal.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2621414DBC200B53F99 /* testmapFinal.tmx */; };
+		2165E8921418940400AC6D35 /* WaitLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2165E8911418940400AC6D35 /* WaitLayer.m */; };
 		21828DF81415E6460054605A /* NVLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 21828DF71415E6460054605A /* NVLink.m */; };
 		21828E3E1415F9600054605A /* NVCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 21828E3D1415F9600054605A /* NVCode.m */; };
 		21B8EABB1414D20F00A56478 /* CCAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 21B8EA141414D20F00A56478 /* CCAction.m */; };
@@ -201,6 +202,8 @@
 		2165E2601414DBC200B53F99 /* houses_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = houses_tiles.png; sourceTree = "<group>"; };
 		2165E2611414DBC200B53F99 /* metatiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = metatiles.png; sourceTree = "<group>"; };
 		2165E2621414DBC200B53F99 /* testmapFinal.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = testmapFinal.tmx; sourceTree = "<group>"; };
+		2165E8901418940400AC6D35 /* WaitLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitLayer.h; sourceTree = "<group>"; };
+		2165E8911418940400AC6D35 /* WaitLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaitLayer.m; sourceTree = "<group>"; };
 		21828DF61415E6460054605A /* NVLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVLink.h; sourceTree = "<group>"; };
 		21828DF71415E6460054605A /* NVLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NVLink.m; sourceTree = "<group>"; };
 		21828E3C1415F9600054605A /* NVCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVCode.h; sourceTree = "<group>"; };
@@ -778,15 +781,9 @@
 			children = (
 				98A0CAF5138D7BEF00491259 /* GameState */,
 				98AE6886136084DF00B142F8 /* NVHelpers */,
-				98A0CCE7138E9FD800491259 /* Menu */,
+				98A0CCE7138E9FD800491259 /* Layer */,
 				98DA8F6E1392EE5A004BC559 /* EventEngine */,
 				E0F80F5D120A0182005866B8 /* GameConfig.h */,
-				98AE688D136084DF00B142F8 /* GameLayer.h */,
-				98AE688E136084DF00B142F8 /* GameLayer.m */,
-				9846F7DD13A4E52C0015E2F3 /* EnvironmentLayer.h */,
-				9846F7DE13A4E52C0015E2F3 /* EnvironmentLayer.m */,
-				98A0CC55138E89F800491259 /* BattleLayer.h */,
-				98A0CC56138E89F800491259 /* BattleLayer.m */,
 				E0F80F5E120A0182005866B8 /* RootViewController.h */,
 				E0F80F5F120A0182005866B8 /* RootViewController.m */,
 				1F3B9A2C0EF2145700286867 /* novaRPGv2AppDelegate.h */,
@@ -930,15 +927,23 @@
 			name = GameState;
 			sourceTree = "<group>";
 		};
-		98A0CCE7138E9FD800491259 /* Menu */ = {
+		98A0CCE7138E9FD800491259 /* Layer */ = {
 			isa = PBXGroup;
 			children = (
+				98AE688D136084DF00B142F8 /* GameLayer.h */,
+				98AE688E136084DF00B142F8 /* GameLayer.m */,
+				9846F7DD13A4E52C0015E2F3 /* EnvironmentLayer.h */,
+				9846F7DE13A4E52C0015E2F3 /* EnvironmentLayer.m */,
+				98A0CC55138E89F800491259 /* BattleLayer.h */,
+				98A0CC56138E89F800491259 /* BattleLayer.m */,
 				98A0CC50138E89DA00491259 /* MenuLayer.h */,
 				98A0CC51138E89DA00491259 /* MenuLayer.m */,
 				98A0CCE8138EA0B400491259 /* SettingsLayer.h */,
 				98A0CCE9138EA0B400491259 /* SettingsLayer.m */,
+				2165E8901418940400AC6D35 /* WaitLayer.h */,
+				2165E8911418940400AC6D35 /* WaitLayer.m */,
 			);
-			name = Menu;
+			name = Layer;
 			sourceTree = "<group>";
 		};
 		98AE6886136084DF00B142F8 /* NVHelpers */ = {
@@ -1204,6 +1209,7 @@
 				21B8EB061414D20F00A56478 /* ZipUtils.m in Sources */,
 				21828DF81415E6460054605A /* NVLink.m in Sources */,
 				21828E3E1415F9600054605A /* NVCode.m in Sources */,
+				2165E8921418940400AC6D35 /* WaitLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

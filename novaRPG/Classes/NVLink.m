@@ -233,6 +233,11 @@
 	}
 }
 
+-(void) SendOutgoingCommands
+{
+	[_LitePeer sendOutgoingCommands];
+}
+
 -(void) EnterWorld:(NSString*) worldName :(NSString*) username : (NSMutableDictionary*) properties : (float[]) position : (float[]) rotation : (float[]) viewDistanceEnter : (float[]) viewDistanceExit
 {
 	/*
@@ -304,8 +309,14 @@
 	float DistanceEnterArry[3];
 	float DistanceExitArry[3];
 	
+	CCLOG(@"EnterWorld_POS[%f][%f]",pos.x,pos.y);
+	
 	positionArry[0] = pos.x;
 	positionArry[1] = pos.y;
+	
+	//positionArry[0] = 16.0f;
+	//positionArry[1] = 16.0f;
+	
 	positionArry[2] = 0.0f;
 	
 	//positionArry[0] = [_tileMap tileCoordForPosition:_playerChar.characterSprite.position].x;
@@ -404,6 +415,25 @@
 	[self SendOperation:ExitWorld :data :true :_OperationChannel];
 	
 	[data release];
+}
+
+-(void) DestroyItem:(NSString*)itemId
+{
+	
+	//var data = new Hashtable {}, { (byte)ParameterCode.ItemType, itemType } };
+	
+	NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
+	
+	[data setObject:itemId forKey:[KeyObject withByteValue:(nByte)ItemId]];
+	
+	Byte p = 0;
+	
+	[data setObject: [NSValue valueWithBytes:&p objCType:@encode(Byte)] forKey:[KeyObject withByteValue:(nByte)ItemType]];
+	
+	[self SendOperation:DestroyItem :data :true :_ItemChannel];
+	
+	[data release];
+	
 }
 
 -(void) Move:(NSString*)itemId /*: byte? itemType*/ : (float[]) position : (float[]) rotation : (bool) sendReliable

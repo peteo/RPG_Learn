@@ -115,6 +115,7 @@
 
 -(void) newGame:(id)sender 
 {
+	/*
 	novaRPGv2AppDelegate * app = [novaRPGv2AppDelegate getAppDelegate];
 	
 	if(app.Link.IsWaiting)
@@ -123,7 +124,9 @@
 		[alert show];
 		[alert release];
 	}
-	else 
+	else
+	*/
+	
 	{
 		[[StateManager sharedStateManager] createNewState];
 		[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameLayer gameScene] withColor:ccc3(0, 0, 0)]];

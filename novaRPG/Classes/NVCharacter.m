@@ -23,7 +23,7 @@
 
 @synthesize moveState = _moveState;
 @synthesize lookDirection = _lookDirection;
-
+@synthesize ItemID = _ItemID;
 
 // Load .plist into FrameChache and .png into a Batchnode, then spawn the Sprite and its AnimStates
 -(id) initWithSpritesheet:(NSString *) spriteName onMap:(NVMap *) currentMap 
@@ -185,11 +185,14 @@
 -(void) dealloc
 {
 	self.characterSprite = nil;
-	self.spriteSheet = nil;
-	self.walkDownAnim = nil;
-	self.walkUpAnim = nil;
-	self.walkLeftAnim = nil;
-	self.walkRightAnim = nil;
+	self.spriteSheet     = nil;
+	self.walkDownAnim    = nil;
+	self.walkUpAnim      = nil;
+	self.walkLeftAnim    = nil;
+	self.walkRightAnim   = nil;
+	
+	[_ItemID release];
+	
 	[super dealloc];
 }
 

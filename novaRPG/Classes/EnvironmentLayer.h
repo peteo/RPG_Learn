@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
 
-@interface EnvironmentLayer : CCLayerColor {
+@interface EnvironmentLayer : CCLayerColor 
+{
+	
 }
 
 -(id) initWithWeather:(int) weather atTime:(int) time;

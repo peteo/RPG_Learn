@@ -104,6 +104,7 @@ typedef enum States
 /// </param>
 
 -(void) SendOperation:(EOperationCode)operationCode : (NSMutableDictionary*) parameter : (bool) sendReliable : (nByte) channelId ;
+-(void) SendOutgoingCommands;
 
 /// <summary>
 /// The enter world.
@@ -168,6 +169,21 @@ typedef enum States
 -(void) ExitWorld;
 
 /// <summary>
+/// The destroy item.
+/// </summary>
+/// <param name="game">
+/// The mmo game.
+/// </param>
+/// <param name="itemId">
+/// The item id.
+/// </param>
+/// <param name="itemType">
+/// The item type.
+/// </param>
+
+-(void) DestroyItem:(NSString*)itemId;
+
+/// <summary>
 /// The move operation.
 /// </summary>
 /// <param name="game">
@@ -205,5 +221,6 @@ typedef enum States
 /// </returns>
 
 -(BOOL) MoveAbsolute:(float[])newPosition /*float[] rotation */ :(NSString*)itemId ;
+
 
 @end
