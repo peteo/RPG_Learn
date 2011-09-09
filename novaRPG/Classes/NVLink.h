@@ -9,8 +9,10 @@
 #import <Foundation/Foundation.h>
 
 #import  "cocos2d.h"
-#import  "NVCode.h"
 #include "LitePeer.h"
+
+#import  "NVCharacter.h"
+#import  "NVCode.h"
 
 typedef enum States
 {
@@ -135,7 +137,7 @@ typedef enum States
 /// </param>
 
 -(void) EnterWorld:(NSString*) worldName :(NSString*) username : (NSMutableDictionary*) properties : (float[]) position : (float[]) rotation : (float[]) viewDistanceEnter : (float[]) viewDistanceExit;	
--(void) EnterWorld:(CGPoint)pos :(NSString*) username;
+-(void) EnterWorld:(NVCharacter*)pCharacter;
 
 /// <summary>
 /// The create world.

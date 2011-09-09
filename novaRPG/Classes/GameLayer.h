@@ -16,6 +16,7 @@
 #import "NVEventManager.h"
 #import "NVAction.h"
 #import "NVLink.h"
+#import "NViewDistance.h"
 
 #import "StateManager.h"
 #import "TextBoxLayer.h"
@@ -30,6 +31,8 @@
 	NVMap *_tileMap;
 	
 	NVCharacter *_playerChar;
+	
+	NViewDistance *_viewDistance;
 	
 	CGRect _dDown1;
 	CGRect _dDown2;

@@ -9,7 +9,8 @@
 #import "cocos2d.h"
 
 
-@interface NVMap : CCNode {
+@interface NVMap : CCNode 
+{
 	CCTMXTiledMap *_tileMap;
 	CCTMXLayer *_bgLayer;
 	CCTMXObjectGroup *_gameObjects;

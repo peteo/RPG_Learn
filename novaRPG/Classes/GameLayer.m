@@ -40,7 +40,7 @@
 -(void) onExit:(id)sender
 {
 	[_Link DestroyItem:_playerChar.ItemID];
-	//[_Link ExitWorld];
+	[_Link ExitWorld];
 }
 
 // on "init" you need to initialize your instance
@@ -68,7 +68,14 @@
 		_playerChar = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 		_playerChar.characterSprite.position = [_tileMap spawnPoint];
 		[self addChild:_playerChar.spriteSheet];
+		
 		_playerChar.ItemID = deviceID;
+		
+		_playerChar.ViewDistanceEnter = CGSizeMake( 64.0f, 64.0f);
+		_playerChar.ViewDistanceExit  = CGSizeMake(128.0f,128.0f);
+		
+		//_playerChar.ViewDistanceEnter = CGSizeMake( 64.0f * 2, 64.0f * 2);
+		//_playerChar.ViewDistanceExit  = CGSizeMake(128.0f * 2,128.0f * 2);
 		
 		//Enable Touch Support
 		self.isTouchEnabled = YES;
@@ -115,15 +122,21 @@
 		
 		_bIsEnterWorlded = NO;
 		
-		[_Link EnterWorld:_playerChar.characterSprite.position :_playerChar.ItemID];
+		[_Link EnterWorld:_playerChar];
 		
 		//test
 		CCMenuItem *menuItem = [CCMenuItemFont itemFromString:@"Exit" target:self selector:@selector(onExit:)];
-		
         CCMenu * mainMenu = [CCMenu menuWithItems:menuItem,nil];
-        mainMenu.position = ccp(50,50);
-		
+        mainMenu.position = ccp(464,50);
         [self addChild:mainMenu z:100];
+		
+		_viewDistance = [NViewDistance node];
+		
+		_viewDistance.ViewDistanceEnter = _playerChar.ViewDistanceEnter;
+		_viewDistance.ViewDistanceExit  = _playerChar.ViewDistanceExit;
+		
+		_viewDistance.position = _playerChar.characterSprite.position;
+		[self addChild:_viewDistance z:101];
 		
 	}
 	return self;
@@ -381,8 +394,10 @@
 }
 
 // Gameloop and loop method start here
--(void) gameLoop:(ccTime) dt 
+-(void) gameLoop:(ccTime) dt
 {
+	_viewDistance.position = _playerChar.characterSprite.position;
+	
 	if ([_playerChar.characterSprite numberOfRunningActions] == 0 
 				&& _playerChar.moveState != kStateIdle)
 	{
@@ -423,6 +438,9 @@
 		}
 		
 		pPos[2] = _playerChar.moveState;
+		
+		//转换为左上角为原点的坐标系 
+		pPos[1] = (640 - pPos[1]);
 		
 		[_Link MoveAbsolute:pPos : _playerChar.ItemID];
 	}
@@ -476,7 +494,7 @@
 			{
 				_Link.state = stateCreateWorlded;
 				//创建世界成功
-				[_Link EnterWorld:_playerChar.characterSprite.position :_playerChar.ItemID];
+				[_Link EnterWorld:_playerChar];
 			}
 		}
 			break;
@@ -538,6 +556,9 @@
 			
 			//坐标Y
 			[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+			
+			//转换为左下角为原点的坐标系
+			Pos[1] = (640 - Pos[1]);
 			
 			//移动方向 moveState
 			[[PositionArry objectAtIndex:2] getValue:&Pos[2]];
@@ -648,16 +669,6 @@
 			
 			if(pItemID)
 			{
-				for (NVCharacter *Character in _RemoteplayerArray)
-				{
-					if([Character.ItemID isEqual:pItemID])
-					{
-						[Character.spriteSheet setVisible:YES];
-						return;
-					}
-				}
-				
-				//新的玩家加入
 				EGArray* PositionArry    = nil;
 				PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
 				
@@ -667,6 +678,22 @@
 				
 				//坐标Y
 				[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+				
+				//转换为左下角为原点的坐标系
+				Pos[1] = (640 - Pos[1]);
+				
+				
+				for (NVCharacter *Character in _RemoteplayerArray)
+				{
+					if([Character.ItemID isEqual:pItemID])
+					{
+						[Character.spriteSheet setVisible:YES];
+						Character.characterSprite.position = CGPointMake(Pos[0], Pos[1]);
+						return;
+					}
+				}
+				
+				//新的玩家加入
 				
 				NVCharacter * pRemoteplayer = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 				pRemoteplayer.characterSprite.position = CGPointMake(Pos[0], Pos[1]);

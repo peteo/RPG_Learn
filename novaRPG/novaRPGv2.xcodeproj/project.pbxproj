@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1F3B9A2D0EF2145700286867 /* novaRPGv2AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F3B9A2B0EF2145700286867 /* novaRPGv2AppDelegate.m */; };
+		212D14F41419B56300DB7947 /* NViewDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 212D14F31419B56300DB7947 /* NViewDistance.m */; };
 		2165E2631414DBC200B53F99 /* bgtiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E25E1414DBC200B53F99 /* bgtiles.png */; };
 		2165E2641414DBC200B53F99 /* fgtiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E25F1414DBC200B53F99 /* fgtiles.png */; };
 		2165E2651414DBC200B53F99 /* houses_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2165E2601414DBC200B53F99 /* houses_tiles.png */; };
@@ -197,6 +198,8 @@
 		1F3B9A2B0EF2145700286867 /* novaRPGv2AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = novaRPGv2AppDelegate.m; path = Classes/novaRPGv2AppDelegate.m; sourceTree = SOURCE_ROOT; };
 		1F3B9A2C0EF2145700286867 /* novaRPGv2AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = novaRPGv2AppDelegate.h; path = Classes/novaRPGv2AppDelegate.h; sourceTree = SOURCE_ROOT; };
 		1F3B9A820EF2151B00286867 /* novaRPGv2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = novaRPGv2_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		212D14F21419B56300DB7947 /* NViewDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NViewDistance.h; sourceTree = "<group>"; };
+		212D14F31419B56300DB7947 /* NViewDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NViewDistance.m; sourceTree = "<group>"; };
 		2165E25E1414DBC200B53F99 /* bgtiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgtiles.png; sourceTree = "<group>"; };
 		2165E25F1414DBC200B53F99 /* fgtiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fgtiles.png; sourceTree = "<group>"; };
 		2165E2601414DBC200B53F99 /* houses_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = houses_tiles.png; sourceTree = "<group>"; };
@@ -959,6 +962,8 @@
 				21828DF71415E6460054605A /* NVLink.m */,
 				21828E3C1415F9600054605A /* NVCode.h */,
 				21828E3D1415F9600054605A /* NVCode.m */,
+				212D14F21419B56300DB7947 /* NViewDistance.h */,
+				212D14F31419B56300DB7947 /* NViewDistance.m */,
 			);
 			name = NVHelpers;
 			sourceTree = "<group>";
@@ -1210,6 +1215,7 @@
 				21828DF81415E6460054605A /* NVLink.m in Sources */,
 				21828E3E1415F9600054605A /* NVCode.m in Sources */,
 				2165E8921418940400AC6D35 /* WaitLayer.m in Sources */,
+				212D14F41419B56300DB7947 /* NViewDistance.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,7 +12,7 @@
 
 //#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
 
-#define WORLD_NAME		 @"WORLD2"
+#define WORLD_NAME		 @"WOW-WORLD"
 
 @implementation NVLink
 
@@ -87,7 +87,7 @@
 			// Waiting for callback
 			break;
 		case stateKeysExchanged:
-			NSLog(@"stateKeysExchanged");
+			CCLOG(@"stateKeysExchanged");
 			//[self EnterLobby];
 			break;
 		case stateEnterLobbying:
@@ -113,9 +113,9 @@
 
 - (void) PhotonPeerOperationResult:(nByte)opCode :(int)returnCode :(NSMutableDictionary*)returnValues :(short)invocID
 { 
-	NSLog(@"OperationResult called, opCode = [%d] , returnCode = [%d] invocID = [%d]",opCode, returnCode, invocID);
+	CCLOG(@"OperationResult called, opCode = [%d] , returnCode = [%d] invocID = [%d]",opCode, returnCode, invocID);
 	
-	NSLog(@"%@", [Utils hashToString:returnValues :true]);
+	CCLOG(@"%@", [Utils hashToString:returnValues :true]);
 	
 	if(_dataReceiver)
 	{
@@ -130,12 +130,12 @@
 	{
 		case SC_CONNECT:
 			_state = stateConnected;
-			NSLog(@"-------CONNECTED-------");
+			CCLOG(@"-------CONNECTED-------");
 			_IsWaiting = NO;
 			break;
 		case SC_DISCONNECT:
 			_state = stateDisconnected;
-			NSLog(@"-------DISCONNECTED-------");
+			CCLOG(@"-------DISCONNECTED-------");
 			
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示！" message:@"无法连接服务器!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
 			[alert show];
@@ -151,12 +151,12 @@
 
 - (void) PhotonPeerEventAction:(nByte)eventCode :(NSMutableDictionary*)photonEvent
 {
-	NSLog(@"-----Listener::EventAction called, eventCode = %d", eventCode);
+	CCLOG(@"-----Listener::EventAction called, eventCode = %d", eventCode);
 	
 	if(!photonEvent)
 		return;
 	
-	NSLog(@"%@", [Utils hashToString:photonEvent :true]);
+	CCLOG(@"%@", [Utils hashToString:photonEvent :true]);
 	
 	if(_dataReceiver)
 	{
@@ -224,6 +224,10 @@
 {
 	[_LitePeer opCustom:operationCode :parameter :sendReliable :channelId];
 	
+	/*
+	CCLOG(@"SendOperation");
+	CCLOG(@"%@", [Utils hashToString:parameter :true]);
+	
 	// avoid operation congestion (QueueOutgoingUnreliableWarning)
 	_outgoingOperationCount++;
 	if (_outgoingOperationCount > 10)
@@ -231,6 +235,7 @@
 		[_LitePeer sendOutgoingCommands];
 		_outgoingOperationCount = 0;
 	}
+	*/
 }
 
 -(void) SendOutgoingCommands
@@ -303,36 +308,32 @@
 	[data release];
 }
 
--(void) EnterWorld:(CGPoint)pos :(NSString*) username
+-(void) EnterWorld:(NVCharacter*)pCharacter
 {
 	float positionArry[3];
 	float DistanceEnterArry[3];
 	float DistanceExitArry[3];
 	
-	CCLOG(@"EnterWorld_POS[%f][%f]",pos.x,pos.y);
+	//CCLOG(@"EnterWorld_POS[%f][%f]",pos.x,pos.y);
 	
-	positionArry[0] = pos.x;
-	positionArry[1] = pos.y;
+	positionArry[0] = pCharacter.characterSprite.position.x;
 	
-	//positionArry[0] = 16.0f;
-	//positionArry[1] = 16.0f;
+	//转换为左上角为原点的坐标系	
+	positionArry[1] = (640 - pCharacter.characterSprite.position.y);
 	
 	positionArry[2] = 0.0f;
-	
-	//positionArry[0] = [_tileMap tileCoordForPosition:_playerChar.characterSprite.position].x;
-	//positionArry[1] = [_tileMap tileCoordForPosition:_playerChar.characterSprite.position].y;
 
-	DistanceEnterArry[0] = 240.0f;
-	DistanceEnterArry[1] = 160.0f;
+	DistanceEnterArry[0] = pCharacter.ViewDistanceEnter.width;
+	DistanceEnterArry[1] = pCharacter.ViewDistanceEnter.height;
 	DistanceEnterArry[2] = 0.0f;
 	
-	DistanceExitArry[0] = 480.0f;
-	DistanceExitArry[1] = 320.0f;
+	DistanceExitArry[0] = pCharacter.ViewDistanceExit.width;
+	DistanceExitArry[1] = pCharacter.ViewDistanceExit.height;
 	DistanceExitArry[2] = 0.0f;
 	
 	_state = stateEnterWorlding;
 	
-	[self EnterWorld:WORLD_NAME :username :nil :positionArry :NULL :DistanceEnterArry :DistanceExitArry];
+	[self EnterWorld:WORLD_NAME :pCharacter.ItemID :nil :positionArry :NULL :DistanceEnterArry :DistanceExitArry];
 	
 }
 
@@ -390,12 +391,12 @@
 	float bottomRightCornerArry[3];
 	float tileDimensionsArry[3];
 	
-	topLeftCornerArry[0] = 16.0f;
-	topLeftCornerArry[1] = 16.0f;
-	topLeftCornerArry[2] =  0.0f;
+	topLeftCornerArry[0] = 1.0f;
+	topLeftCornerArry[1] = 1.0f;
+	topLeftCornerArry[2] = 0.0f;
 	
-	bottomRightCornerArry[0] = 624.0f;
-	bottomRightCornerArry[1] = 624.0f;
+	bottomRightCornerArry[0] = 640.0f;
+	bottomRightCornerArry[1] = 640.0f;
 	bottomRightCornerArry[2] =   0.0f;
 	
 	tileDimensionsArry[0] = 1.0f;
@@ -497,7 +498,7 @@
 	
 	//this.SetPositions(newPosition, this.Position, rotation, this.Rotation);
 	
-	[self Move:itemId :newPosition :NULL :/*false*/ true];
+	[self Move:itemId :newPosition :NULL :false /*true*/];
 	
 	//Operations.Move(this.Game, this.Id, this.Type, newPosition, rotation, this.Game.Settings.SendReliable);
 	

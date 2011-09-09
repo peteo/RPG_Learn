@@ -23,10 +23,12 @@
 
 
 // Load .plist into FrameChache and .png into a Batchnode, then spawn the Sprite and its AnimStates
--(id) initWithID:(int) npcid onMap:(NVMap *) currentMap {
-	if ((self = [super init])) {
-		
+-(id) initWithID:(int) npcid onMap:(NVMap *) currentMap 
+{
+	if ((self = [super init])) 
+	{
 		[super onEnter];
+		
 		_currentMap = currentMap;
 		
 		_spriteName = [[_currentMap.npcs objectAtIndex:npcid] valueForKey:@"displayid"];

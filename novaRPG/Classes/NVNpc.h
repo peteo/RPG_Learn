@@ -11,7 +11,8 @@
 #import "NVEventManager.h"
 #import "NVAction.h"
 
-@interface NVNpc : CCNode {
+@interface NVNpc : CCNode 
+{
 	CCSprite *_characterSprite;
 	CCSpriteBatchNode *_spriteSheet;
 	CCAnimation *_walkDownAnim;

@@ -21,6 +21,9 @@
 @synthesize moveSpeed = _moveSpeed;
 @synthesize animSpeed = _animSpeed;
 
+@synthesize ViewDistanceEnter = _ViewDistanceEnter;
+@synthesize ViewDistanceExit  = _ViewDistanceExit;
+
 @synthesize moveState = _moveState;
 @synthesize lookDirection = _lookDirection;
 @synthesize ItemID = _ItemID;
@@ -113,7 +116,7 @@
 
 -(void) update 
 {
-	switch (self.moveState) 
+	switch (self.moveState)
 	{
 		case kStateIdle:
 			break;

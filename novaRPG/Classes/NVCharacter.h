@@ -42,6 +42,8 @@ typedef enum
 	int _previousGID;
 	
 	NSString *_ItemID;
+	CGSize    _ViewDistanceEnter;
+	CGSize    _ViewDistanceExit;
 }
 
 // Sprite and Spritesheet
@@ -62,6 +64,10 @@ typedef enum
 // States
 @property (readwrite,assign) int moveState;
 @property (readwrite,assign) int lookDirection;
+
+//ViewDistance
+@property (readwrite,assign) CGSize ViewDistanceEnter;
+@property (readwrite,assign) CGSize ViewDistanceExit;
 
 @property (nonatomic,retain) NSString * ItemID;
 
