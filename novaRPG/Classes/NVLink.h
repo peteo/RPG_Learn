@@ -222,7 +222,7 @@ typedef enum States
 /// The move absolute.
 /// </returns>
 
--(BOOL) MoveAbsolute:(float[])newPosition /*float[] rotation */ :(NSString*)itemId ;
+-(BOOL) MoveAbsolute:(float[])newPosition :(float[]) rotation : (NSString*)itemId ;
 
 
 @end

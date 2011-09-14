@@ -39,8 +39,9 @@
 
 -(void) onExit:(id)sender
 {
-	[_Link DestroyItem:_playerChar.ItemID];
-	[_Link ExitWorld];
+	//[_Link DestroyItem:_playerChar.ItemID];
+	//[_Link ExitWorld];
+	[_Link CloseConnection];
 }
 
 // on "init" you need to initialize your instance
@@ -405,7 +406,7 @@
 		
 		//CCLOG(@"playerChar[%f][%f]",_playerChar.characterSprite.position.x,_playerChar.characterSprite.position.y);
 		
-		float pPos[3];
+		float pPos[2];
 		
 		switch (_playerChar.moveState) 
 		{
@@ -437,12 +438,13 @@
 				break;
 		}
 		
-		pPos[2] = _playerChar.moveState;
+		float pRotation[1];
+		pRotation[0] = _playerChar.moveState;
 		
 		//转换为左上角为原点的坐标系 
 		pPos[1] = (640 - pPos[1]);
 		
-		[_Link MoveAbsolute:pPos : _playerChar.ItemID];
+		[_Link MoveAbsolute:pPos:pRotation:_playerChar.ItemID];
 	}
 }
 
@@ -529,7 +531,7 @@
 
 - (void)LinkEventAction:(nByte)eventCode :(NSMutableDictionary*)photonEvent
 {
-	switch (eventCode) 
+	switch (eventCode)
 	{
 		case ItemMoved:
 		{
@@ -543,14 +545,16 @@
 			
 			EGArray* OldPositionArry = nil;
 			EGArray* PositionArry    = nil;
+			EGArray* RotationArry    = nil;
 			
 			OldPositionArry = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)OldPosition]];
 			PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
+			RotationArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Rotation]];
 			
 			//if([ary.Type compare:[NSString stringWithUTF8String:@encode(float)]])
 			//	DEBUG_RELEASE(NSAssert(false, "ERROR: unexpected type"), break);
 			
-			float Pos[3];
+			float Pos[2];
 			//坐标X
 			[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
 			
@@ -561,9 +565,9 @@
 			Pos[1] = (640 - Pos[1]);
 			
 			//移动方向 moveState
-			[[PositionArry objectAtIndex:2] getValue:&Pos[2]];
-			
-			int pMoveState = (int)Pos[2];
+			float pRotation[1];
+			[[RotationArry objectAtIndex:0] getValue:&pRotation[0]];
+			int pMoveState = pRotation[0];
 			
 			CGPoint pPoint = CGPointMake(Pos[0], Pos[1]);
 			
@@ -672,7 +676,7 @@
 				EGArray* PositionArry    = nil;
 				PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
 				
-				float Pos[3];
+				float Pos[2];
 				//坐标X
 				[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
 				
