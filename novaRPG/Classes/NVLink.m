@@ -12,7 +12,7 @@
 
 //#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
 
-#define WORLD_NAME		 @"WOW-WORLD"
+#define WORLD_NAME		 @"WOW-WORLD8"
 
 @implementation NVLink
 
@@ -321,18 +321,15 @@
 	
 	//CCLOG(@"EnterWorld_POS[%f][%f]",pos.x,pos.y);
 	
-	positionArry[0] = pCharacter.characterSprite.position.x;
-	//转换为左上角为原点的坐标系	
+	//转换为右上角为原点的坐标系	
+	positionArry[0] = (640 - pCharacter.characterSprite.position.x);
 	positionArry[1] = (640 - pCharacter.characterSprite.position.y);
-	//positionArry[2] = 0.0f;
-
+	
 	DistanceEnterArry[0] = pCharacter.ViewDistanceEnter.width;
 	DistanceEnterArry[1] = pCharacter.ViewDistanceEnter.height;
-	//DistanceEnterArry[2] = 0.0f;
 	
 	DistanceExitArry[0] = pCharacter.ViewDistanceExit.width;
 	DistanceExitArry[1] = pCharacter.ViewDistanceExit.height;
-	//DistanceExitArry[2] = 0.0f;
 	
 	_state = stateEnterWorlding;
 	
@@ -396,15 +393,12 @@
 	
 	topLeftCornerArry[0] = 1.0f;
 	topLeftCornerArry[1] = 1.0f;
-	//topLeftCornerArry[2] = 0.0f;
 	
 	bottomRightCornerArry[0] = 640.0f;
 	bottomRightCornerArry[1] = 640.0f;
-	//bottomRightCornerArry[2] =   0.0f;
 	
-	tileDimensionsArry[0] = 1.0f;
-	tileDimensionsArry[1] = 1.0f;
-	//tileDimensionsArry[2] = 0.0f;
+	tileDimensionsArry[0] = 32.0f;
+	tileDimensionsArry[1] = 32.0f;
 	
 	_state = stateCreateWorlding;
 	

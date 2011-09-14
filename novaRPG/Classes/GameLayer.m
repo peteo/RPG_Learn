@@ -65,6 +65,11 @@
 		_tileMap = [[NVMap alloc] initWithMap:[[StateManager sharedStateManager] getCurrentMap]];
 		[self addChild:_tileMap.tileMap];
 		
+		CCLOG(@"mapSize[%f][%f]tileSize[%f][%f]",_tileMap.tileMap.mapSize.width,
+				  _tileMap.tileMap.mapSize.height,
+			      _tileMap.tileMap.tileSize.width,
+			      _tileMap.tileMap.tileSize.height);
+		
 		// Load Playersprite
 		_playerChar = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 		_playerChar.characterSprite.position = [_tileMap spawnPoint];
@@ -441,7 +446,8 @@
 		float pRotation[1];
 		pRotation[0] = _playerChar.moveState;
 		
-		//转换为左上角为原点的坐标系 
+		//转换为右上角为原点的坐标系
+		pPos[0] = (640 - pPos[0]);
 		pPos[1] = (640 - pPos[1]);
 		
 		[_Link MoveAbsolute:pPos:pRotation:_playerChar.ItemID];
@@ -562,6 +568,7 @@
 			[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
 			
 			//转换为左下角为原点的坐标系
+			Pos[0] = (640 - Pos[0]);
 			Pos[1] = (640 - Pos[1]);
 			
 			//移动方向 moveState
@@ -674,18 +681,22 @@
 			if(pItemID)
 			{
 				EGArray* PositionArry    = nil;
+				EGArray* RotationArry    = nil;
+				
 				PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
+				RotationArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Rotation]];
 				
 				float Pos[2];
-				//坐标X
 				[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
-				
-				//坐标Y
 				[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
-				
 				//转换为左下角为原点的坐标系
+				Pos[0] = (640 - Pos[0]);
 				Pos[1] = (640 - Pos[1]);
 				
+				float pRotation[1];
+				[[RotationArry objectAtIndex:0] getValue:&pRotation[0]];
+				
+				int pMoveState = (int)pRotation[0];
 				
 				for (NVCharacter *Character in _RemoteplayerArray)
 				{
@@ -693,6 +704,25 @@
 					{
 						[Character.spriteSheet setVisible:YES];
 						Character.characterSprite.position = CGPointMake(Pos[0], Pos[1]);
+						switch (pMoveState)
+						{
+							case kStateIdle:
+								break;
+							case kStateDown:
+								[Character lookInDirection:1];
+								break;
+							case kStateUp:
+								[Character lookInDirection:2];
+								break;
+							case kStateLeft:
+								[Character lookInDirection:3];
+								break;
+							case kStateRight:
+								[Character lookInDirection:4];
+								break;
+							default:
+								break;
+						}
 						return;
 					}
 				}
@@ -701,6 +731,25 @@
 				
 				NVCharacter * pRemoteplayer = [[NVCharacter alloc] initWithSpritesheet:@"playersprite_female" onMap:_tileMap];
 				pRemoteplayer.characterSprite.position = CGPointMake(Pos[0], Pos[1]);
+				switch (pMoveState)
+				{
+					case kStateIdle:
+						break;
+					case kStateDown:
+						[pRemoteplayer lookInDirection:1];
+						break;
+					case kStateUp:
+						[pRemoteplayer lookInDirection:2];
+						break;
+					case kStateLeft:
+						[pRemoteplayer lookInDirection:3];
+						break;
+					case kStateRight:
+						[pRemoteplayer lookInDirection:4];
+						break;
+					default:
+						break;
+				}
 				pRemoteplayer.ItemID = pItemID;
 				[self addChild:pRemoteplayer.spriteSheet];
 				
