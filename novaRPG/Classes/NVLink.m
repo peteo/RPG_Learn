@@ -8,12 +8,6 @@
 
 #import "NVLink.h"
 
-#define URL_TEST_SERVER	 L"172.18.19.73:5055"
-
-//#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
-
-#define WORLD_NAME		 @"WOW-WORLD8"
-
 @implementation NVLink
 
 @synthesize dataReceiver = _dataReceiver;
@@ -48,6 +42,9 @@
 	_DiagnosticsChannel = 0;
 	_OperationChannel	= 0;
 	_ItemChannel		= 0;
+	_MoveChannel        = 0;
+	
+	//_LitePeer.SentCountAllowance = _ChannelCount;
 	
 	return self;
 }
@@ -70,6 +67,8 @@
 -(void) Run
 {
 	[_LitePeer service:true];
+	
+	[_LitePeer sendOutgoingCommands];
 	
 	switch (_state)
 	{
@@ -472,7 +471,7 @@
 	
 	CCLOG(@"Move[%f][%f]",position[0],position[1]);
 	
-	[self SendOperation:Move :data :sendReliable :_ItemChannel];
+	[self SendOperation:Move :data :sendReliable :_MoveChannel];
 	
 	[data release];
 }
@@ -506,6 +505,21 @@
 	//Operations.Move(this.Game, this.Id, this.Type, newPosition, rotation, this.Game.Settings.SendReliable);
 	
 	return YES;
+}
+
+-(void) RadarSubscribe : (NSString*) pWorldName
+{
+	//var data = new Hashtable { { (byte)ParameterCode.WorldName, worldName } };
+	//peer.OpCustom((byte)OperationCode.RadarSubscribe, data, true, Settings.RadarChannel);
+	
+	NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
+	
+	[data setObject:pWorldName forKey:[KeyObject withByteValue:(nByte)WorldName]];
+	
+	[self SendOperation:RadarSubscribe :data :true :_RadarChannel];
+	
+	[data release];
+	
 }
 
 @end

@@ -49,6 +49,7 @@
 // Helper methods go here
 -(CGPoint) tileCoordForPosition:(CGPoint) position;
 -(CGPoint) positionForTileCoord:(CGPoint) position;
+-(CGPoint) GLForPosition:(CGPoint)position;
 
 // Methods for Collision Checking
 -(BOOL) checkCollisionForPosition:(CGPoint) position;

@@ -10,13 +10,15 @@
 
 #import "cocos2d.h"
 
-@interface NViewDistance : CCNode 
+@interface NViewDistance : CCNode
 {
 	CGSize    _ViewDistanceEnter;
 	CGSize    _ViewDistanceExit;
+	NSString *_ItemID;
 }
 
 @property (readwrite,assign) CGSize ViewDistanceEnter;
 @property (readwrite,assign) CGSize ViewDistanceExit;
+@property (nonatomic,retain) NSString * ItemID;
 
 @end

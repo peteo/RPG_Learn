@@ -12,6 +12,10 @@
 #import "novaRPGv2AppDelegate.h"
 #import "WaitLayer.h"
 
+
+#define DISTANCEENTER CGSizeMake( 64.0f, 64.0f)
+#define DISTANCEEXIT  CGSizeMake(128.0f,128.0f)
+
 @implementation GameLayer
 
 +(id) gameScene
@@ -77,11 +81,8 @@
 		
 		_playerChar.ItemID = deviceID;
 		
-		_playerChar.ViewDistanceEnter = CGSizeMake( 64.0f, 64.0f);
-		_playerChar.ViewDistanceExit  = CGSizeMake(128.0f,128.0f);
-		
-		//_playerChar.ViewDistanceEnter = CGSizeMake( 64.0f * 2, 64.0f * 2);
-		//_playerChar.ViewDistanceExit  = CGSizeMake(128.0f * 2,128.0f * 2);
+		_playerChar.ViewDistanceEnter = DISTANCEENTER;
+		_playerChar.ViewDistanceExit  = DISTANCEEXIT;
 		
 		//Enable Touch Support
 		self.isTouchEnabled = YES;
@@ -101,6 +102,7 @@
 		
 		_npcarray		   = [[CCArray alloc] init];
 		_RemoteplayerArray = [[CCArray alloc] init];
+		_ViewDistanceArray = [[NSMutableDictionary alloc] initWithCapacity:10];
 
 		//Load NPCs on Map
 		for (int i = 0;i < [_tileMap.npcs count]; i += 1) 
@@ -140,9 +142,13 @@
 		
 		_viewDistance.ViewDistanceEnter = _playerChar.ViewDistanceEnter;
 		_viewDistance.ViewDistanceExit  = _playerChar.ViewDistanceExit;
-		
+		_viewDistance.ItemID = _playerChar.ItemID;
 		_viewDistance.position = _playerChar.characterSprite.position;
 		[self addChild:_viewDistance z:101];
+		
+		_RadarView = [NVRadar node];
+		_RadarView.position = _playerChar.characterSprite.position;
+		[self addChild:_RadarView z:102];
 		
 	}
 	return self;
@@ -402,7 +408,21 @@
 // Gameloop and loop method start here
 -(void) gameLoop:(ccTime) dt
 {
-	_viewDistance.position = _playerChar.characterSprite.position;
+	_viewDistance.position  = _playerChar.characterSprite.position;
+	
+	_RadarView.position     = _playerChar.characterSprite.position;
+	_RadarView.CharacterPos = [_tileMap GLForPosition:_playerChar.characterSprite.position];
+	
+	//CCLOG(@"[%f][%f]",_RadarView.CharacterPos.x,_RadarView.CharacterPos.y);
+
+	for(NVCharacter * pCharacter in _RemoteplayerArray)
+	{
+		if(pCharacter.spriteSheet.visible)
+		{
+			NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:pCharacter.ItemID];
+			pViewDistance.position = pCharacter.characterSprite.position;
+		}
+	}
 	
 	if ([_playerChar.characterSprite numberOfRunningActions] == 0 
 				&& _playerChar.moveState != kStateIdle)
@@ -480,6 +500,7 @@
 	[_playerChar		 release];
 	[_npcarray			 release];
 	[_RemoteplayerArray  release];
+	[_ViewDistanceArray  release];
 	
 	[super dealloc];
 }
@@ -518,6 +539,8 @@
 				_Link.state = stateEnterWorlded;
 				//加入世界成功
 				CCLOG(@"EnterWorld_Succeed");
+				
+				[_Link RadarSubscribe:WORLD_NAME];
 				
 				_bIsEnterWorlded = YES;
 			}
@@ -641,7 +664,6 @@
 						default:
 							break;
 					}
-					
 					return;
 				}
 			}
@@ -660,8 +682,20 @@
 				{
 					if([Character.ItemID isEqual:pItemID])
 					{
+						NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						
+						[self removeChild:pViewDistance         cleanup:YES];
 						[self removeChild:Character.spriteSheet cleanup:YES];
 						
+						for(NVRemotePlayRadar * pRemotePlayRadar in _RadarView.RemotePlayRadarArray)
+						{
+							if([pRemotePlayRadar.ItemID isEqual:pItemID])
+							{
+								[_RadarView.RemotePlayRadarArray removeObject:pRemotePlayRadar];
+							}
+						}
+						
+						[_ViewDistanceArray removeObjectForKey:Character.ItemID];
 						[_RemoteplayerArray removeObject:Character];
 						
 						return;
@@ -723,6 +757,11 @@
 							default:
 								break;
 						}
+						
+						NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						[pViewDistance setVisible:YES];
+						pViewDistance.position = Character.characterSprite.position;
+						
 						return;
 					}
 				}
@@ -759,6 +798,27 @@
 				
 				[pRemoteplayer release];
 				
+				//添加玩家得视野
+				NViewDistance * pViewDistance = [NViewDistance node];
+				
+				pViewDistance.ViewDistanceEnter = DISTANCEENTER;
+				pViewDistance.ViewDistanceExit  = DISTANCEEXIT;
+				pViewDistance.ItemID = pRemoteplayer.ItemID;
+				pViewDistance.position = pRemoteplayer.characterSprite.position;
+				[self addChild:pViewDistance z:101];
+				
+				[_ViewDistanceArray setObject:pViewDistance forKey:pViewDistance.ItemID];
+				
+				//雷达中添加玩家
+				NVRemotePlayRadar * pRemotePlayRadar = [[NVRemotePlayRadar alloc] init];
+				
+				pRemotePlayRadar.ItemID = pRemoteplayer.ItemID;
+				pRemotePlayRadar.Pos    = [_tileMap GLForPosition:pRemoteplayer.characterSprite.position];
+				
+				[_RadarView.RemotePlayRadarArray addObject:pRemotePlayRadar];
+				
+				[pRemotePlayRadar release];
+				
 			}
 		}
 			break;
@@ -776,10 +836,40 @@
 					if([Character.ItemID isEqual:pItemID])
 					{
 						[Character.spriteSheet setVisible:NO];
+						
+						NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						
+						[pViewDistance setVisible:NO];
+						
 						return;
 					}
 				}
 			}
+		}
+		case RadarUpdate:
+		{
+			CCLOG(@"RadarUpdate");
+			NSString * pItemID = nil;
+			pItemID = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)ItemId]];
+			
+			EGArray* PositionArry    = nil;
+			PositionArry    = [photonEvent objectForKey:[KeyObject withByteValue:(nByte)Position]];
+			
+			for(NVRemotePlayRadar * pRemotePlayRadar in _RadarView.RemotePlayRadarArray)
+			{
+				if([pRemotePlayRadar.ItemID isEqual:pItemID])
+				{
+					float Pos[2];
+					[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
+					[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+					//转换为左下角为原点的坐标系
+					Pos[0] = (640 - Pos[0]);
+					Pos[1] = (640 - Pos[1]);
+					
+					pRemotePlayRadar.Pos = [_tileMap GLForPosition:ccp(Pos[0],Pos[1])];
+				}
+			}
+			
 		}
 			break;
 		default:

@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define URL_TEST_SERVER	 L"172.18.19.73:5055"
+
+//#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
+
+#define WORLD_NAME		 @"WOW-WORLD8"
+
 #import  "cocos2d.h"
 #include "LitePeer.h"
 
@@ -76,6 +82,7 @@ typedef enum States
 	int _DiagnosticsChannel;
 	int _OperationChannel;
 	int _ItemChannel;
+	int _MoveChannel;
 	
 	
 }
@@ -224,5 +231,13 @@ typedef enum States
 
 -(BOOL) MoveAbsolute:(float[])newPosition :(float[]) rotation : (NSString*)itemId ;
 
+/// <summary>
+/// The radar subscribe.
+/// </summary>
+/// <param name="worldName">
+/// The world Name.
+/// </param>
+
+-(void) RadarSubscribe : (NSString*) pWorldName;
 
 @end

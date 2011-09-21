@@ -90,6 +90,13 @@
     return ccp(x, y);
 }
 
+- (CGPoint)GLForPosition:(CGPoint)position {
+	// Gets a static position for the GL.
+    int x = position.x / _tileMap.tileSize.width;
+    int y = position.y / _tileMap.tileSize.height;
+    return ccp(x, y);
+}
+
 - (CGPoint)positionForTileCoord:(CGPoint)position {
     int x = ((position.x*_tileMap.tileSize.width) + 16);
     int y = (((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y * _tileMap.tileSize.height) - 16);

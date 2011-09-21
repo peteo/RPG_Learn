@@ -13,6 +13,7 @@
 
 @synthesize ViewDistanceEnter = _ViewDistanceEnter;
 @synthesize ViewDistanceExit  = _ViewDistanceExit;
+@synthesize ItemID = _ItemID;
 
 -(void) drawRectFaster:(CGRect)rect
 {
@@ -82,6 +83,13 @@
 	// reset line width & color as to not interfere with draw code in other nodes that draws lines
 	glLineWidth(1.0f);
 	glColor4f(1, 1, 1, 1);
+}
+
+-(void) dealloc
+{
+	[_ItemID release];
+	
+	[super dealloc];
 }
 
 @end

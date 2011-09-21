@@ -22,7 +22,7 @@
 #import "TextBoxLayer.h"
 #import "GDataXMLNode.h"
 #import "EnvironmentLayer.h"
-
+#import "NVRadar.h"
 
 @interface GameLayer : CCLayer < TextBoxDelegate , DataReceiver >
 {
@@ -30,9 +30,9 @@
 	
 	NVMap *_tileMap;
 	
-	NVCharacter *_playerChar;
-	
+	NVCharacter   *_playerChar;
 	NViewDistance *_viewDistance;
+	NVRadar       *_RadarView;
 	
 	CGRect _dDown1;
 	CGRect _dDown2;
@@ -48,6 +48,7 @@
 	
 	CCArray *_npcarray;
 	CCArray *_RemoteplayerArray;
+	NSMutableDictionary *_ViewDistanceArray;
 	
 	NVLink  *_Link;
 	
