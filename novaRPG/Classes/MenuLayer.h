@@ -20,6 +20,7 @@
 }
 
 +(id) menuScene;
+
 -(void) onPlay:(id) sender;
 -(void) onSettings:(id) sender;
 -(void) onAbout:(id) sender;

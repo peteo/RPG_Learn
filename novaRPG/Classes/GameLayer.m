@@ -43,9 +43,13 @@
 
 -(void) onExit:(id)sender
 {
-	//[_Link DestroyItem:_playerChar.ItemID];
-	//[_Link ExitWorld];
+	/*
 	[_Link CloseConnection];
+	*/
+	
+	NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"punchball://?foo=1&amp;bar=2"]];
+	[[UIApplication sharedApplication] openURL:URL];
+	
 }
 
 // on "init" you need to initialize your instance

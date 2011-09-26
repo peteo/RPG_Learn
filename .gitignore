@@ -2,3 +2,7 @@ novaRPG/.DS_Store
 novaRPG/build/*/
 novaRPG/novaRPGv2.xcodeproj/Peteo.mode1v3
 novaRPG/novaRPGv2.xcodeproj/Peteo.pbxuser
+PtRPG/build/*/
+PtRPG/libs/*/
+PtRPG/PtRPG.xcodeproj/Peteo.mode1v3
+PtRPG/PtRPG.xcodeproj/Peteo.pbxuser

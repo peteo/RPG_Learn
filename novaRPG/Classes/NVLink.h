@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-#define URL_TEST_SERVER	 L"172.18.19.73:5055"
+//#define URL_TEST_SERVER	 L"172.18.19.73:5054"
+
+#define URL_TEST_SERVER	 L"172.18.19.117:5055"
 
 //#define URL_TEST_SERVER	 L"udp.exitgames.com:5055"
 
