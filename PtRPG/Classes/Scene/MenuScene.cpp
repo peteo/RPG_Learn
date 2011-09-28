@@ -45,13 +45,11 @@ bool MenuScene::init()
 	CCMenuItem *menuItem2 = CCMenuItemFont::itemFromString("Settings",this,menu_selector(MenuScene::onSettings));
 	CCMenuItem *menuItem3 = CCMenuItemFont::itemFromString("About",this,menu_selector(MenuScene::onAbout));
 	
-	this->_mainMenu = CCMenu::menuWithItems(menuItem1,menuItem2,menuItem3);
+	_mainMenu = CCMenu::menuWithItems(menuItem1,menuItem2,menuItem3,NULL);
 	
-	this->_mainMenu->alignItemsVertically();
+	_mainMenu->alignItemsVertically();
 	
-	this->addChild(this->_mainMenu);
-	
-	
+	addChild(_mainMenu);
 	
 	return true;
 }

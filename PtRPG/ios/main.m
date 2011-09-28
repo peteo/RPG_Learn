@@ -1,8 +1,8 @@
 //
 //  main.m
-//  PtRPG
+//  cocox
 //
-//  Created by Peteo on 11-9-26.
+//  Created by Peteo on 11-9-28.
 //  Copyright __MyCompanyName__ 2011. All rights reserved.
 //
 

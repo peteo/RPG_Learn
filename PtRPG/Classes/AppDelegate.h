@@ -1,9 +1,9 @@
 //
-//  PtRPGAppDelegate.h
-//  PtRPG
+//  cocoxAppDelegate.h
+//  cocox
 //
-//  Created by Peteo on 11-9-26.
-//  Copyright The9 2011. All rights reserved.
+//  Created by Peteo on 11-9-28.
+//  Copyright __MyCompanyName__ 2011. All rights reserved.
 //
 
 #ifndef  _APP_DELEGATE_H_
