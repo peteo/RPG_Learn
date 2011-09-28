@@ -12,9 +12,11 @@
 
 #include "cocos2d.h"
 
+#include "PtMap.h"
+
 USING_NS_CC;
 
-class GameScene : public cocos2d::CCLayer
+class GameScene : public CCLayer
 {
 public:
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
@@ -27,6 +29,8 @@ public:
 	LAYER_NODE_FUNC(GameScene);
 	
 private:
+	
+	PtMap *_tileMap;
 	
 };
 

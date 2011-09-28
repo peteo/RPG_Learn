@@ -38,5 +38,9 @@ bool GameScene::init()
 	
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 	
+	// Load Tilemap
+	_tileMap = PtMap::PtMapWithName("testmapFinal");
+	addChild(_tileMap->_tileMap);
+	
 	return true;
 }

@@ -14,7 +14,7 @@
 
 USING_NS_CC;
 
-class MenuScene : public cocos2d::CCLayer
+class MenuScene : public CCLayer
 {
 public:
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone

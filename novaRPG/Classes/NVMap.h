@@ -43,6 +43,7 @@
 @property (readonly,assign) NSString *loadedMap;
 
 -(id) initWithMap:(NSString *) mapName;
+
 -(CGPoint) spawnPoint;
 -(CGPoint) npcSpawnForId:(int) npcID;
 
