@@ -17,14 +17,8 @@ USING_NS_CC;
 class PtMap : public CCLayer 
 {
 private:
-	CCTMXLayer		 *_bgLayer;
-	CCTMXObjectGroup *_gameObjects;
-	CCTMXLayer	     *_fgLayer;
-	CCTMXLayer		 *_extraLayer;
-	CCTMXLayer		 *_metaLayer;
 	
-	CCArray *_npcs;
-	CCArray *_doors;
+	CCTMXObjectGroup *_gameObjects;
 	
 	int _mapSize_x;
 	int _mapSize_y;
@@ -34,6 +28,13 @@ private:
 public:
 	
 	CCTMXTiledMap	 *_tileMap;
+	CCTMXLayer		 *_metaLayer;
+	CCTMXLayer	     *_fgLayer;
+	CCTMXLayer		 *_extraLayer;
+	CCTMXLayer		 *_bgLayer;
+	
+	CCArray *_npcs;
+	CCArray *_doors;
 
 public:
 	

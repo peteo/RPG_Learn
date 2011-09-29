@@ -62,6 +62,15 @@ bool GameScene::init()
 
 2. 字符串的使用(NSString)
 (1)
+const char * getString()
+{
+	CCString *pRet = new CCString();
+	pRet->autorelease();
+
+	pRet->m_sString = XXXXX;
+	
+	return pRet->m_sString.c_str();
+}
 
 
 (2)
@@ -78,14 +87,23 @@ CC_SAFE_DELETE(m_pFontName);
 CC_SAFE_DELETE(m_pFontName);
 m_pFontName = new std::string(fontName);
 
-CCString *pRet = new CCString();
-pRet->autorelease();
+
 
 
 3. 格式刷(stringWithFormat)
 char pTempMap[32] = {0};
 sprintf(pTempMap,"%s.tmx",mapName.c_str());
 
+
+4. CCMutableArray
+CCMutableArray<CCSpriteFrame*> *walkRightFrames = new CCMutableArray<CCSpriteFrame*>();
+
+
+5.CCArray
+CCArray::arrayWithCapacity(10);
+
+
+6. win32内存检测工具Visual Leak Detector , CRT
 
 
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		215CBC25143409880009A391 /* PtCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 215CBC24143409880009A391 /* PtCharacter.cpp */; };
+		215CBE0A143451890009A391 /* PtUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 215CBE09143451890009A391 /* PtUtils.mm */; };
 		218CD5AF1430529900A6446D /* arial16.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 218CD5A01430529900A6446D /* arial16.fnt */; };
 		218CD5B01430529900A6446D /* arial16.png in Resources */ = {isa = PBXBuildFile; fileRef = 218CD5A11430529900A6446D /* arial16.png */; };
 		218CD5B11430529900A6446D /* event_testMap4.xml in Resources */ = {isa = PBXBuildFile; fileRef = 218CD5A21430529900A6446D /* event_testMap4.xml */; };
@@ -320,6 +322,11 @@
 /* Begin PBXFileReference section */
 		1D6058910D05DD3D006BFB54 /* PtRPG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PtRPG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F3B9A820EF2151B00286867 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = SOURCE_ROOT; };
+		215CBC23143409880009A391 /* PtCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtCharacter.h; sourceTree = "<group>"; };
+		215CBC24143409880009A391 /* PtCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtCharacter.cpp; sourceTree = "<group>"; };
+		215CBD7D14341B1B0009A391 /* PtMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtMacros.h; sourceTree = "<group>"; };
+		215CBE08143451890009A391 /* PtUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtUtils.h; sourceTree = "<group>"; };
+		215CBE09143451890009A391 /* PtUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PtUtils.mm; sourceTree = "<group>"; };
 		218CD5A01430529900A6446D /* arial16.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = arial16.fnt; sourceTree = "<group>"; };
 		218CD5A11430529900A6446D /* arial16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arial16.png; sourceTree = "<group>"; };
 		218CD5A21430529900A6446D /* event_testMap4.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = event_testMap4.xml; sourceTree = "<group>"; };
@@ -687,6 +694,11 @@
 				21F9C5511431D39100F7921D /* PtCode.cpp */,
 				21F9C5671431E26D00F7921D /* PtMap.h */,
 				21F9C5681431E26D00F7921D /* PtMap.cpp */,
+				215CBC23143409880009A391 /* PtCharacter.h */,
+				215CBC24143409880009A391 /* PtCharacter.cpp */,
+				215CBD7D14341B1B0009A391 /* PtMacros.h */,
+				215CBE08143451890009A391 /* PtUtils.h */,
+				215CBE09143451890009A391 /* PtUtils.mm */,
 			);
 			path = PtHelpers;
 			sourceTree = "<group>";
@@ -1542,6 +1554,8 @@
 				218CD7571430605100A6446D /* GameScene.cpp in Sources */,
 				21F9C5521431D39100F7921D /* PtCode.cpp in Sources */,
 				21F9C5691431E26D00F7921D /* PtMap.cpp in Sources */,
+				215CBC25143409880009A391 /* PtCharacter.cpp in Sources */,
+				215CBE0A143451890009A391 /* PtUtils.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1688,6 +1702,9 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
+					DEBUG,
+					"COCOS2D_DEBUG=1",
+					"CD_DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;

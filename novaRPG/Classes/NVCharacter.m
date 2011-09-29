@@ -87,7 +87,8 @@
 	// Place for Extra-Animations (Framegroups 5-9)
 }
 
--(void) lookInDirection:(int) lookDirection {
+-(void) lookInDirection:(int) lookDirection 
+{
 	switch (lookDirection) {
 		case 0:
 			break;
