@@ -61,7 +61,7 @@ bool GameScene::init()
 	
 	_playerChar = new PtCharacter(pSpritName,_tileMap);
 	
-	_playerChar->_characterSprite->getPosition() = _tileMap->spawnPoint();
+	_playerChar->_characterSprite->setPosition(_tileMap->spawnPoint());
 	
 	addChild(_playerChar->_spriteSheet);
 
@@ -189,7 +189,7 @@ void GameScene::followPlayer(void * sender)
 void GameScene::centerCamera(CCPoint point)
 {
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	this->getPosition() = ccp(-point.x+winSize.width/2,-point.y+winSize.height/2);
+	this->setPosition(ccp(-point.x+winSize.width/2,-point.y+winSize.height/2));
 }
 
 void GameScene::moveCameraByTile(CCPoint point,int duration)

@@ -85,6 +85,7 @@ PtCharacter::PtCharacter(CCString *spriteName,PtMap * currentMap)
 	walkDownFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(pTempSpriteName));
 	
 	_walkDownAnim = CCAnimation::animationWithFrames(walkDownFrames,_animSpeed);
+	_walkDownAnim->retain();
 	CC_SAFE_DELETE(walkDownFrames);
 	
 	// For Up-Animation: Framegroup 2
@@ -103,6 +104,7 @@ PtCharacter::PtCharacter(CCString *spriteName,PtMap * currentMap)
 	walkUpFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(pTempSpriteName));
 	
 	_walkUpAnim = CCAnimation::animationWithFrames(walkUpFrames,_animSpeed);
+	_walkUpAnim->retain();
 	CC_SAFE_DELETE(walkUpFrames);
 	
 	// For Left-Animation: Framegroup 3	
@@ -121,6 +123,7 @@ PtCharacter::PtCharacter(CCString *spriteName,PtMap * currentMap)
 	walkLeftFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(pTempSpriteName));
 	
 	_walkLeftAnim = CCAnimation::animationWithFrames(walkLeftFrames,_animSpeed);
+	_walkLeftAnim->retain();
 	CC_SAFE_DELETE(walkLeftFrames);
 	
 	
@@ -140,6 +143,7 @@ PtCharacter::PtCharacter(CCString *spriteName,PtMap * currentMap)
 	walkRightFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(pTempSpriteName));
 	
 	_walkRightAnim = CCAnimation::animationWithFrames(walkRightFrames,_animSpeed);
+	_walkRightAnim->retain();
 	CC_SAFE_DELETE(walkRightFrames);
 	
 	_moveSpeed   = 0.3;
@@ -153,6 +157,11 @@ PtCharacter::~PtCharacter()
 {
 	CC_SAFE_DELETE(_spriteName);
 	CC_SAFE_DELETE(_ItemID);
+	
+	CC_SAFE_RELEASE(_walkDownAnim);
+	CC_SAFE_RELEASE(_walkUpAnim);
+	CC_SAFE_RELEASE(_walkLeftAnim);
+	CC_SAFE_RELEASE(_walkRightAnim);
 }
 
 void PtCharacter::loadExtraAnimations()
