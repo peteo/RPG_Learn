@@ -65,7 +65,7 @@ bool GameScene::init()
 	
 	addChild(_playerChar->_spriteSheet);
 
-	_playerChar->setItemID(PtUtils::getDeviceID());
+	//_playerChar->setItemID(PtUtils::getDeviceID());
 	
 	CC_SAFE_DELETE(pSpritName);
 	
