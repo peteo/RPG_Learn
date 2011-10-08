@@ -34,6 +34,7 @@ GameScene::~GameScene()
 	
 	CC_SAFE_DELETE(_playerChar);
 	CC_SAFE_DELETE(_tileMap);
+	CC_SAFE_DELETE(_Link);
 }
 
 // on "init" you need to initialize your instance
@@ -47,6 +48,9 @@ bool GameScene::init()
 	}
 	
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	
+	_Link = new PtLink();
+	_Link->InitLib(this);
 	
 	// Load Tilemap
 	//_tileMap = PtMap::PtMapWithName("testmapFinal");
@@ -119,6 +123,8 @@ bool GameScene::init()
 
 void GameScene::gameLoop(ccTime dt)
 {
+	_Link->Run();
+	
 	CCObject    * pObject;
 	CCARRAY_FOREACH(_RemoteplayerArray, pObject)
 	{
@@ -176,7 +182,7 @@ void GameScene::gameLoop(ccTime dt)
 		pPos[0] = (640 - pPos[0]);
 		pPos[1] = (640 - pPos[1]);
 		
-		//[_Link MoveAbsolute:pPos:pRotation:_playerChar.ItemID];
+		_Link->MoveAbsolute(pPos,pRotation,_playerChar->getItemID());
 	}
 }
 
@@ -445,12 +451,453 @@ void GameScene::textBoxUpdate(ccTime dt)
 }
 */
 
+void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID)
+{
+	switch(opCode)
+	{
+		case ExitGameCode::CreateWorld:
+		{
+			if(returnCode == ExitGameCode::Ok)
+			{
+				_Link->_state = stateCreateWorlded;
+				//创建世界成功
+				_Link->EnterWorld(_playerChar);
+			}
+		}
+			break;
+			
+		case ExitGameCode::EnterWorld:
+		{
+			if(returnCode == ExitGameCode::WorldNotFound)
+			{
+				_Link->CreateWorld();
+			}
+			else if(returnCode == ExitGameCode::Ok)
+			{
+				_Link->_state = stateEnterWorlded;
+				//加入世界成功
+				CCLOG("EnterWorld_Succeed");
+				
+				_Link->RadarSubscribe();
+				
+				_bIsEnterWorlded = true;
+			}
+		}
+			break;
+			
+		case ExitGameCode::ExitWorld:
+		{
+			
+		}
+			break;
+		default:
+			break;
+	}
+}
 
+void GameScene::PhotonPeerStatus(int statusCode)
+{
+	
+}
 
+void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent)
+{
+	switch (eventCode)
+	{
+		case ExitGameCode::ItemMoved:
+		{
+			CCString * pItemID = NULL;
+			ExitGames::JString pStrItemID;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			
+			if(pItemID == NULL)
+			{
+				return;
+			}
+			
+			float* OldPositionArry = NULL;
+			float* PositionArry    = NULL;
+			float* RotationArry    = NULL;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))
+				OldPositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))).getDataCopy();
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+				PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
+				RotationArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
+			
+			float Pos[2];
+			//坐标X
+			Pos[0] = PositionArry[0];
+			
+			//坐标Y
+			Pos[1] = PositionArry[1];
+			
+			//转换为左下角为原点的坐标系
+			Pos[0] = (640 - Pos[0]);
+			Pos[1] = (640 - Pos[1]);
+			
+			//移动方向 moveState
+			float pRotation[1];
+			pRotation[0] = RotationArry[0];
+			
+			int pMoveState = pRotation[0];
+			
+			CCPoint pPoint = CCPointMake(Pos[0], Pos[1]);
+			
+			CCLOG("RemotePlayer[%f][%f]",pPoint.x,pPoint.y);
+			
+			CCObject  * pObject = NULL;
+			CCARRAY_FOREACH(_RemoteplayerArray, pObject)
+			{
+				PtCharacter * pCharacter = (PtCharacter*)pObject;
+				
+				if(0 == strcmp(pCharacter->getItemID()->m_sString.c_str(),pItemID->m_sString.c_str()))
+				{
+					pCharacter->_moveState = pMoveState;
+					
+					switch (pMoveState)
+					{
+						case kStateIdle:
+							break;
+						case kStateDown:
+							// Move Down
+							pCharacter->lookInDirection(1);
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
+							pCharacter->_characterSprite->runAction(CCMoveTo::actionWithDuration(pCharacter->_moveSpeed,pPoint));
+							pCharacter->_characterSprite->runAction(CCAnimate::actionWithAnimation(pCharacter->_walkDownAnim));
+						}
+							break;
+						case kStateUp:
+							// Move Up
+							pCharacter->lookInDirection(2);
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
+							pCharacter->_characterSprite->runAction(CCMoveTo::actionWithDuration(pCharacter->_moveSpeed,pPoint));
+							pCharacter->_characterSprite->runAction(CCAnimate::actionWithAnimation(pCharacter->_walkUpAnim));
+						}
+							break;
+						case kStateLeft:
+							// Move Left
+							pCharacter->lookInDirection(3);
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
+							pCharacter->_characterSprite->runAction(CCMoveTo::actionWithDuration(pCharacter->_moveSpeed,pPoint));
+							pCharacter->_characterSprite->runAction(CCAnimate::actionWithAnimation(pCharacter->_walkLeftAnim));
+						}
+							break;
+						case kStateRight:
+							// Move Right
+							pCharacter->lookInDirection(4);
+							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]) 
+						{
+							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
+							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+							//[_currentMap setTileCollidable:YES atTileCoord:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
+							pCharacter->_characterSprite->runAction(CCMoveTo::actionWithDuration(pCharacter->_moveSpeed,pPoint));
+							pCharacter->_characterSprite->runAction(CCAnimate::actionWithAnimation(pCharacter->_walkRightAnim));
+						}
+							break;
+						default:
+							break;
+					}
+					return;
+				}
+			}
+			
+			FREEIF(OldPositionArry);
+			FREEIF(PositionArry);
+			FREEIF(RotationArry);
+		}
+			break;
+		case ExitGameCode::ItemDestroyed:
+		{
+			CCLOG("ItemDestroyed");
+			
+			CCString * pItemID = NULL;
+			ExitGames::JString pStrItemID;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			
+			if(pItemID)
+			{	
+				CCObject  * pObject = NULL;
+				CCARRAY_FOREACH(_RemoteplayerArray, pObject)
+				{
+					PtCharacter * pCharacter = (PtCharacter*)pObject;
+					
+					if(0 == strcmp(pCharacter->getItemID()->m_sString.c_str(),pItemID->m_sString.c_str()))
+					{
+						//NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						
+						//[self removeChild:pViewDistance         cleanup:YES];
+						removeChild(pCharacter->_spriteSheet,true);
+						
+						/*
+						for(NVRemotePlayRadar * pRemotePlayRadar in _RadarView.RemotePlayRadarArray)
+						{
+							if([pRemotePlayRadar.ItemID isEqual:pItemID])
+							{
+								[_RadarView.RemotePlayRadarArray removeObject:pRemotePlayRadar];
+							}
+						}
+						*/
+						
+						//[_ViewDistanceArray removeObjectForKey:Character.ItemID];
+						_RemoteplayerArray->removeObject(pCharacter);
+						
+						return;
+					}
+				}
+			}
+		}
+			break;
+		case ExitGameCode::ItemSubscribed:
+		{
+			CCLOG("ItemSubscribed");
+			
+			CCString * pItemID = NULL;
+			ExitGames::JString pStrItemID;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			
+			if(pItemID)
+			{
+				float* PositionArry    = NULL;
+				float* RotationArry    = NULL;
+				
+				if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+					PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+				
+				if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
+					RotationArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
+				
+				float Pos[2];
+				Pos[0] = PositionArry[0];
+				Pos[1] = PositionArry[1];
+				
+				//转换为左下角为原点的坐标系
+				Pos[0] = (640 - Pos[0]);
+				Pos[1] = (640 - Pos[1]);
+				
+				float pRotation[1];
+				pRotation[0] = RotationArry[0];
+				
+				int pMoveState = (int)pRotation[0];
+				
+				CCObject  * pObject = NULL;
+				CCARRAY_FOREACH(_RemoteplayerArray, pObject)
+				{
+					PtCharacter * pCharacter = (PtCharacter*)pObject;
+					
+					if(0 == strcmp(pCharacter->getItemID()->m_sString.c_str(),pItemID->m_sString.c_str()))
+					{
+						pCharacter->_spriteSheet->setIsVisible(true);
+						pCharacter->_characterSprite->setPosition(CCPointMake(Pos[0], Pos[1]));
+						switch (pMoveState)
+						{
+							case kStateIdle:
+								break;
+							case kStateDown:
+								pCharacter->lookInDirection(1);
+								break;
+							case kStateUp:
+								pCharacter->lookInDirection(2);
+								break;
+							case kStateLeft:
+								pCharacter->lookInDirection(3);
+								break;
+							case kStateRight:
+								pCharacter->lookInDirection(4);
+								break;
+							default:
+								break;
+						}
+						
+						/*
+						NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						[pViewDistance setVisible:YES];
+						pViewDistance.position = Character.characterSprite.position;
+						*/
+						
+						return;
+					}
+				}
+				
+				//新的玩家加入
+				
+				CCString * pSpritName = new CCString("playersprite_female");
+				
+				PtCharacter * pRemoteplayer = new PtCharacter(pSpritName,_tileMap);
+				
+				pRemoteplayer->autorelease();
+		
+				pRemoteplayer->_characterSprite->setPosition(CCPointMake(Pos[0], Pos[1]));
+				switch (pMoveState)
+				{
+					case kStateIdle:
+						break;
+					case kStateDown:
+						pRemoteplayer->lookInDirection(1);
+						break;
+					case kStateUp:
+						pRemoteplayer->lookInDirection(2);
+						break;
+					case kStateLeft:
+						pRemoteplayer->lookInDirection(3);
+						break;
+					case kStateRight:
+						pRemoteplayer->lookInDirection(4);
+						break;
+					default:
+						break;
+				}
+				pRemoteplayer->setItemID(pItemID);
+				addChild(pRemoteplayer->_spriteSheet);
+				
+				_RemoteplayerArray->addObject(pRemoteplayer);
+				
+				reorderChild(pRemoteplayer->_spriteSheet,_npcarray->count() + _RemoteplayerArray->count() + 2);
 
+				//添加玩家得视野
+				/*
+				NViewDistance * pViewDistance = [NViewDistance node];
+				
+				pViewDistance.ViewDistanceEnter = DISTANCEENTER;
+				pViewDistance.ViewDistanceExit  = DISTANCEEXIT;
+				pViewDistance.ItemID = pRemoteplayer.ItemID;
+				pViewDistance.position = pRemoteplayer.characterSprite.position;
+				[self addChild:pViewDistance z:101];
+				
+				[_ViewDistanceArray setObject:pViewDistance forKey:pViewDistance.ItemID];
+				*/
+				
+				//雷达中添加玩家
+				/*
+				NVRemotePlayRadar * pRemotePlayRadar = [[NVRemotePlayRadar alloc] init];
+				
+				pRemotePlayRadar.ItemID = pRemoteplayer.ItemID;
+				pRemotePlayRadar.Pos    = [_tileMap GLForPosition:pRemoteplayer.characterSprite.position];
+				
+				[_RadarView.RemotePlayRadarArray addObject:pRemotePlayRadar];
+				
+				[pRemotePlayRadar release];
+				*/
+				
+				CC_SAFE_DELETE(pSpritName);
+				
+				FREEIF(PositionArry);
+				FREEIF(RotationArry);
+			}
+		}
+			break;
+		case ExitGameCode::ItemUnsubscribed:
+		{
+			CCLOG("ItemUnsubscribed");
+			
+			CCString * pItemID = NULL;
+			ExitGames::JString pStrItemID;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			
+			if(pItemID)
+			{
+				CCObject  * pObject = NULL;
+				CCARRAY_FOREACH(_RemoteplayerArray, pObject)
+				{
+					PtCharacter * pCharacter = (PtCharacter*)pObject;
+					
+					if(0 == strcmp(pCharacter->getItemID()->m_sString.c_str(),pItemID->m_sString.c_str()))
+					{
+						pCharacter->_spriteSheet->setIsVisible(false);
+						
+						//NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:Character.ItemID];
+						
+						//[pViewDistance setVisible:NO];
+						
+						return;
+					}
+				}
+			}
+		}
+		case ExitGameCode::RadarUpdate:
+		{
+			CCLOG("RadarUpdate");
+			
+			CCString * pItemID = NULL;
+			ExitGames::JString pStrItemID;
+			
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			
+			float* PositionArry    = NULL;
+			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+				PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+			
+			/*
+			for(NVRemotePlayRadar * pRemotePlayRadar in _RadarView.RemotePlayRadarArray)
+			{
+				if([pRemotePlayRadar.ItemID isEqual:pItemID])
+				{
+					float Pos[2];
+					[[PositionArry objectAtIndex:0] getValue:&Pos[0]];
+					[[PositionArry objectAtIndex:1] getValue:&Pos[1]];
+					//转换为左下角为原点的坐标系
+					Pos[0] = (640 - Pos[0]);
+					Pos[1] = (640 - Pos[1]);
+					
+					pRemotePlayRadar.Pos = [_tileMap GLForPosition:ccp(Pos[0],Pos[1])];
+				}
+			}
+			*/
+			
+			FREEIF(PositionArry);
+		}
+			break;
+		default:
+			break;
+	}
+}
 
-
-
-
-
+void GameScene::PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string)
+{
+	
+}
 

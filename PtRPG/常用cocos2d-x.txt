@@ -102,6 +102,17 @@ CCMutableArray<CCSpriteFrame*> *walkRightFrames = new CCMutableArray<CCSpriteFra
 5.CCArray
 CCArray::arrayWithCapacity(10);
 
+CCObject    * pObject;
+CCARRAY_FOREACH(_RemoteplayerArray, pObject)
+{
+	PtCharacter * pCharacter = (PtCharacter*)pObject;
+	if(pCharacter && pCharacter->_spriteSheet->getIsVisible())
+	{
+		//NViewDistance * pViewDistance = (NViewDistance*)[_ViewDistanceArray objectForKey:pCharacter.ItemID];
+		//pViewDistance->getPosition() = pCharacter->_characterSprite->getPosition();
+	}
+}
+
 
 6. win32ÄÚ´æ¼ì²â¹¤¾ßVisual Leak Detector , CRT
 

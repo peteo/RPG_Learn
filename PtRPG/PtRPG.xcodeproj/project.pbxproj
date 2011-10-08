@@ -26,6 +26,7 @@
 		218CD5BC1430529900A6446D /* testmapFinal.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 218CD5AE1430529900A6446D /* testmapFinal.tmx */; };
 		218CD5F1143057C300A6446D /* MenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218CD5F0143057C300A6446D /* MenuScene.cpp */; };
 		218CD7571430605100A6446D /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218CD7561430605100A6446D /* GameScene.cpp */; };
+		21D22BA2143FE07200247EFD /* PtLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D22BA1143FE07200247EFD /* PtLink.cpp */; };
 		21F9C5521431D39100F7921D /* PtCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F9C5511431D39100F7921D /* PtCode.cpp */; };
 		21F9C5691431E26D00F7921D /* PtMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F9C5681431E26D00F7921D /* PtMap.cpp */; };
 		505574581045D68500A31725 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 506EDBA4102F4C9F00A389B3 /* AVFoundation.framework */; };
@@ -346,6 +347,8 @@
 		218CD5F0143057C300A6446D /* MenuScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MenuScene.cpp; sourceTree = "<group>"; };
 		218CD7551430605100A6446D /* GameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
 		218CD7561430605100A6446D /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameScene.cpp; sourceTree = "<group>"; };
+		21D22BA0143FE07200247EFD /* PtLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtLink.h; sourceTree = "<group>"; };
+		21D22BA1143FE07200247EFD /* PtLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtLink.cpp; sourceTree = "<group>"; };
 		21F9C5501431D39100F7921D /* PtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtCode.h; sourceTree = "<group>"; };
 		21F9C5511431D39100F7921D /* PtCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtCode.cpp; sourceTree = "<group>"; };
 		21F9C5671431E26D00F7921D /* PtMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtMap.h; sourceTree = "<group>"; };
@@ -699,6 +702,8 @@
 				215CBD7D14341B1B0009A391 /* PtMacros.h */,
 				215CBE08143451890009A391 /* PtUtils.h */,
 				215CBE09143451890009A391 /* PtUtils.mm */,
+				21D22BA0143FE07200247EFD /* PtLink.h */,
+				21D22BA1143FE07200247EFD /* PtLink.cpp */,
 			);
 			path = PtHelpers;
 			sourceTree = "<group>";
@@ -1556,6 +1561,7 @@
 				21F9C5691431E26D00F7921D /* PtMap.cpp in Sources */,
 				215CBC25143409880009A391 /* PtCharacter.cpp in Sources */,
 				215CBE0A143451890009A391 /* PtUtils.mm in Sources */,
+				21D22BA2143FE07200247EFD /* PtLink.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1685,7 +1691,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1D6058940D05DD3E006BFB54 /* Debug */ = {
+		1D6058940D05DD3E006BFB54 /* debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1705,6 +1711,7 @@
 					DEBUG,
 					"COCOS2D_DEBUG=1",
 					"CD_DEBUG=1",
+					_EG_IPHONE_PLATFORM,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -1713,24 +1720,35 @@
 				HEADER_SEARCH_PATHS = (
 					libs/cocos2dx,
 					libs/CocosDenshion/include,
+					"PhotonLib/Common-c/inc/**",
+					"PhotonLib/Common-cpp/inc/**",
+					"PhotonLib/Photon-cpp/inc/**",
+					"PhotonLib/Photon-c/inc/**",
 				);
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				LIBRARY_SEARCH_PATHS = (
+					"PhotonLib/Common-cpp/ios_lib/**",
+					"PhotonLib/Photon-cpp/ios_lib/**",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
+					"-lPhoton-cpp_$(CONFIGURATION)_$PLATFORM_NAME",
+					"-lCommon-cpp_$(CONFIGURATION)_$PLATFORM_NAME",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = PtRPG;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 				WARNING_CFLAGS = "";
 			};
-			name = Debug;
+			name = debug;
 		};
-		1D6058950D05DD3E006BFB54 /* Release */ = {
+		1D6058950D05DD3E006BFB54 /* release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1745,6 +1763,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_FILE32API,
 					TARGET_OS_IPHONE,
+					_EG_IPHONE_PLATFORM,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -1753,24 +1772,35 @@
 				HEADER_SEARCH_PATHS = (
 					libs/cocos2dx,
 					libs/CocosDenshion/include,
+					"PhotonLib/Common-c/inc/**",
+					"PhotonLib/Common-cpp/inc/**",
+					"PhotonLib/Photon-cpp/inc/**",
+					"PhotonLib/Photon-c/inc/**",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				LIBRARY_SEARCH_PATHS = (
+					"PhotonLib/Common-cpp/ios_lib/**",
+					"PhotonLib/Photon-cpp/ios_lib/**",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
+					"-lPhoton-cpp_$(CONFIGURATION)_$PLATFORM_NAME",
+					"-lCommon-cpp_$(CONFIGURATION)_$PLATFORM_NAME",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = PtRPG;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 				WARNING_CFLAGS = "";
 			};
-			name = Release;
+			name = release;
 		};
-		506EE05F10304ED500A389B3 /* Debug */ = {
+		506EE05F10304ED500A389B3 /* debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1793,9 +1823,9 @@
 				PRODUCT_NAME = "cocos2d libraries";
 				SDKROOT = iphoneos;
 			};
-			name = Debug;
+			name = debug;
 		};
-		506EE06010304ED500A389B3 /* Release */ = {
+		506EE06010304ED500A389B3 /* release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1819,9 +1849,9 @@
 				SDKROOT = iphoneos;
 				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = release;
 		};
-		C01FCF4F08A954540054247B /* Debug */ = {
+		C01FCF4F08A954540054247B /* debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1838,15 +1868,18 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = debug;
 		};
-		C01FCF5008A954540054247B /* Release */ = {
+		C01FCF5008A954540054247B /* release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1859,12 +1892,15 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator4.1;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1872,29 +1908,29 @@
 		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "PtRPG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D6058940D05DD3E006BFB54 /* Debug */,
-				1D6058950D05DD3E006BFB54 /* Release */,
+				1D6058940D05DD3E006BFB54 /* debug */,
+				1D6058950D05DD3E006BFB54 /* release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = release;
 		};
 		506EE06410304F0100A389B3 /* Build configuration list for PBXNativeTarget "cocos2d libraries" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				506EE05F10304ED500A389B3 /* Debug */,
-				506EE06010304ED500A389B3 /* Release */,
+				506EE05F10304ED500A389B3 /* debug */,
+				506EE06010304ED500A389B3 /* release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = release;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PtRPG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C01FCF4F08A954540054247B /* Debug */,
-				C01FCF5008A954540054247B /* Release */,
+				C01FCF4F08A954540054247B /* debug */,
+				C01FCF5008A954540054247B /* release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = release;
 		};
 /* End XCConfigurationList section */
 	};

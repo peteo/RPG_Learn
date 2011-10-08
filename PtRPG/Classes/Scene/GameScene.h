@@ -14,10 +14,11 @@
 
 #include "PtMap.h"
 #include "PtCharacter.h"
+#include "PtLink.h"
 
 USING_NS_CC;
 
-class GameScene : public CCLayer
+class GameScene : public CCLayer,public PhotonListener
 {
 public:
 	
@@ -56,6 +57,7 @@ private:
 	CCArray *_npcarray;
 	CCArray *_RemoteplayerArray;
 	
+	PtLink  *_Link;
 	bool    _bIsEnterWorlded;
 	
 private:
@@ -79,6 +81,14 @@ private:
 	// Loops and Tick Methods
 	void gameLoop(ccTime dt);
 	void textBoxUpdate(ccTime dt);
+	
+public:
+	void PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID);
+	void PhotonPeerStatus(int statusCode);
+	void PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent);
+	void PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string);
+	
+	
 };
 
 #endif // __GAME_SCENE_H__

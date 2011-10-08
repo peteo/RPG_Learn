@@ -35,16 +35,6 @@ public:
 	
 private:
 	
-	CCAnimation *_walkDownAnim;
-	CCAnimation *_walkUpAnim;
-	CCAnimation *_walkLeftAnim;
-	CCAnimation *_walkRightAnim;
-	
-	float _moveSpeed;
-	float _animSpeed;
-	
-	int _lookDirection;
-	
 	CCString *_spriteName;
 	
 	PtMap *_currentMap;
@@ -52,20 +42,32 @@ private:
 	int _previousGID;
 	
 	CCString *_ItemID;
-	CCSize    _ViewDistanceEnter;
-	CCSize    _ViewDistanceExit;
 	
 public:
 	void loadExtraAnimations();
 	void lookInDirection(int lookDirection);
 	void update();
 	void setItemID(CCString * pId);
+	inline CCString* getItemID(){return _ItemID;}
 	
 public:
 	CCSprite		  *_characterSprite;
 	CCSpriteBatchNode *_spriteSheet;
 	
+	CCSize    _ViewDistanceEnter;
+	CCSize    _ViewDistanceExit;
+	
 	int _moveState;
+	
+	float _moveSpeed;
+	float _animSpeed;
+	
+	int   _lookDirection;
+	
+	CCAnimation *_walkDownAnim;
+	CCAnimation *_walkUpAnim;
+	CCAnimation *_walkLeftAnim;
+	CCAnimation *_walkRightAnim;
 	
 };
 
