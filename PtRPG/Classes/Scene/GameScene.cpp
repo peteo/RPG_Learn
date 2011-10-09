@@ -8,7 +8,16 @@
  */
 
 #include "GameScene.h"
-#include "PtUtils.h"
+//#include "PtUtils.h"
+
+/*
+设置内经和外径
+*/
+//#define DISTANCEENTER CCSizeMake( 64.0f, 64.0f)
+//#define DISTANCEEXIT  CCSizeMake(128.0f,128.0f)
+
+#define DISTANCEENTER CCSizeMake(240.0f,240.0f)
+#define DISTANCEEXIT  CCSizeMake(480.0f,480.0f)
 
 USING_NS_CC;
 
@@ -52,16 +61,12 @@ bool GameScene::init()
 	_Link = new PtLink();
 	_Link->InitLib(this);
 	
-	// Load Tilemap
-	//_tileMap = PtMap::PtMapWithName("testmapFinal");
-	
+	// Load Tilemap	
 	_tileMap = new PtMap("testmapFinal");
 	addChild(_tileMap->_tileMap);
 	
 	// Load Playersprite
 	CCString * pSpritName = new CCString("playersprite_female");
-	
-	//_playerChar = PtCharacter::initWithSpritesheet(pSpritName,_tileMap);
 	
 	_playerChar = new PtCharacter(pSpritName,_tileMap);
 	
@@ -69,9 +74,19 @@ bool GameScene::init()
 	
 	addChild(_playerChar->_spriteSheet);
 
-	//_playerChar->setItemID(PtUtils::getDeviceID());
+	int pRandomItemID = arc4random();
+	
+	char pTempItemID[32] = {0};
+	sprintf(pTempItemID,"%d",pRandomItemID);
+	CCString *CCStr = new CCString(pTempItemID);
+	CCStr->autorelease();
+	
+	_playerChar->setItemID(CCStr);
 	
 	CC_SAFE_DELETE(pSpritName);
+	
+	_playerChar->_ViewDistanceEnter = DISTANCEENTER;
+	_playerChar->_ViewDistanceExit  = DISTANCEEXIT;
 	
 	//Enable Touch Support	
 	this->setIsTouchEnabled(true);
@@ -112,11 +127,6 @@ bool GameScene::init()
 	// Start the GameLoop
 	schedule(schedule_selector(GameScene::gameLoop),_loopSpeed);
 	runAction(CCFollow::actionWithTarget(_playerChar->_characterSprite));
-
-	//test
-	_bIsEnterWorlded = true;
-	
-	//[_Link EnterWorld:_playerChar];
 	
 	return true;
 }
@@ -497,7 +507,20 @@ void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Ha
 
 void GameScene::PhotonPeerStatus(int statusCode)
 {
-	
+	switch(statusCode)
+	{
+		case SC_CONNECT:
+		{
+			_Link->EnterWorld(_playerChar);
+		}
+			break;
+		case SC_DISCONNECT:
+			break;
+		case SC_EXCEPTION:
+			break;
+		default:
+			break;
+	}
 }
 
 void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent)
@@ -546,10 +569,11 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			Pos[1] = (640 - Pos[1]);
 			
 			//移动方向 moveState
-			float pRotation[1];
-			pRotation[0] = RotationArry[0];
-			
-			int pMoveState = pRotation[0];
+			int pMoveState = 0;
+			if(RotationArry)
+			{
+				pMoveState = (int)RotationArry[0];
+			}
 			
 			CCPoint pPoint = CCPointMake(Pos[0], Pos[1]);
 			
@@ -708,10 +732,12 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 				Pos[0] = (640 - Pos[0]);
 				Pos[1] = (640 - Pos[1]);
 				
-				float pRotation[1];
-				pRotation[0] = RotationArry[0];
+				int pMoveState = 0;
 				
-				int pMoveState = (int)pRotation[0];
+				if(RotationArry)
+				{
+					pMoveState = (int)RotationArry[0];
+				}
 				
 				CCObject  * pObject = NULL;
 				CCARRAY_FOREACH(_RemoteplayerArray, pObject)

@@ -54,7 +54,7 @@ void PtLink::PhotonPeerOperationResult(nByte opCode, int returnCode, const Hasht
 {
 	CCLOG("OperationResult called, opCode = [%d] , returnCode = [%d] invocID = [%d]",opCode, returnCode, invocID);
 	
-	//CCLOG("%s", returnValues.toString(true).cstr());
+	//CCLOG("%s", returnValues.toString(true).ANSIRepresentation().cstr());
 	
 	if(m_pListener)
 	{
@@ -85,14 +85,16 @@ void PtLink::PhotonPeerStatus(int statusCode)
 		default:
 			break;
 	}
+	
+	if(m_pListener)
+	{
+		m_pListener->PhotonPeerStatus(statusCode);
+	}
 }
 
 void PtLink::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent)
 {
 	CCLOG("-----Listener::EventAction called, eventCode = %d", eventCode);
-	
-	if(&photonEvent)
-		return;
 	
 	//CCLOG("%s", photonEvent.toString(true).cstr());
 	
