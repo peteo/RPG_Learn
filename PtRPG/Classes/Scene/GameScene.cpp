@@ -73,6 +73,7 @@ bool GameScene::init()
 	addChild(_playerChar->_spriteSheet);
 
 	//int pRandomItemID = arc4random();
+	srand((unsigned)time(NULL));
 	int pRandomItemID = rand();
 	
 	char pTempItemID[32] = {0};

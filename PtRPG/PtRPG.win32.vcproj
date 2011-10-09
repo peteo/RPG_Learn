@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="PtRPG.win32"
 	ProjectGUID="{33666E73-B7A2-47EC-BF19-91CE4D625859}"
+	RootNamespace="PtRPG.win32"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -48,8 +49,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;.\win32;.\Classes;.\Classes\PtHelpers;.\Classes\Scene;.\libs\cocos2dx;.\libs\cocos2dx\include;.\libs\cocos2dx\platform;.\libs\cocos2dx\platform\third_party\win32\OGLES"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;COCOS2D_DEBUG=1;"
+				AdditionalIncludeDirectories=".;.\win32;.\Classes;.\Classes\PtHelpers;.\Classes\Scene;.\libs\cocos2dx;.\libs\cocos2dx\include;.\libs\cocos2dx\platform;.\libs\cocos2dx\platform\third_party\win32\OGLES;&quot;.\PhotonLib\Common-c\inc&quot;;&quot;.\PhotonLib\Common-cpp\inc&quot;;&quot;.\PhotonLib\Photon-c\inc&quot;;&quot;.\PhotonLib\Photon-cpp\inc&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;COCOS2D_DEBUG=1;EG_DEBUGGER;_EG_WIN32_PLATFORM"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -72,9 +73,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcocos2d.lib libgles_cm.lib"
+				AdditionalDependencies="libcocos2d.lib libgles_cm.lib Photon-cpp_$(ConfigurationName).lib Common-cpp_$(ConfigurationName).lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OutDir)"
+				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;;&quot;.\PhotonLib\Common-cpp\win32_lib&quot;;&quot;.\PhotonLib\Photon-cpp\win32_lib&quot;"
+				IgnoreDefaultLibraryNames="LIBCD.lib;LIBCMT.lib;libcmtd"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -268,6 +270,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Classes\PtHelpers\PtLink.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Classes\PtHelpers\PtLink.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Classes\PtHelpers\PtMacros.h"
 					>
 				</File>
@@ -277,10 +287,6 @@
 				</File>
 				<File
 					RelativePath=".\Classes\PtHelpers\PtMap.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Classes\PtHelpers\PtUtils.h"
 					>
 				</File>
 			</Filter>
