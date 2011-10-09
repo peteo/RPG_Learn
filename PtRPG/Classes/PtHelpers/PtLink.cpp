@@ -10,7 +10,6 @@
 #include "PtLink.h"
 #include "PtCharacter.h"
 
-
 PtLink::PtLink()
 :m_pLitePeer(NULL)
 ,m_pListener(NULL)
@@ -317,9 +316,9 @@ void PtLink::DestroyItem(CCString* itemId)
 	
 	data.put(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId), ExitGames::ValueObject<ExitGames::JString>(itemId->m_sString.c_str()));
 	
-	Byte p = 0;
+	nByte p = 0;
 
-	data.put(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemType), ExitGames::ValueObject<Byte>(p));
+	data.put(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemType), ExitGames::ValueObject<nByte>(p));
 	
 	SendOperation(ExitGameCode::DestroyItem,data,true,_ItemChannel);
 }

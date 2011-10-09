@@ -7,10 +7,8 @@
  *
  */
 
-#include "MenuScene.h"
 #include "GameScene.h"
-
-USING_NS_CC;
+#include "MenuScene.h"
 
 CCScene* MenuScene::scene()
 {

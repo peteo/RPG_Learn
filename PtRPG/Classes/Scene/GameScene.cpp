@@ -19,8 +19,6 @@
 #define DISTANCEENTER CCSizeMake(240.0f,240.0f)
 #define DISTANCEEXIT  CCSizeMake(480.0f,480.0f)
 
-USING_NS_CC;
-
 CCScene* GameScene::scene()
 {
 	// 'scene' is an autorelease object
@@ -74,7 +72,8 @@ bool GameScene::init()
 	
 	addChild(_playerChar->_spriteSheet);
 
-	int pRandomItemID = arc4random();
+	//int pRandomItemID = arc4random();
+	int pRandomItemID = rand();
 	
 	char pTempItemID[32] = {0};
 	sprintf(pTempItemID,"%d",pRandomItemID);
@@ -926,4 +925,3 @@ void GameScene::PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JS
 {
 	
 }
-

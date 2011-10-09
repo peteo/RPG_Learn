@@ -11,8 +11,8 @@
 #define __PT_LINK_H__
 
 #include "LitePeer.h"
-#include "cocos2d.h"
 #include "PtCode.h"
+#include "cocos2d.h"
 
 #define URL_TEST_SERVER	 L"172.18.19.73:5055"
 
@@ -60,7 +60,6 @@ using namespace ExitGames;
 USING_NS_CC;
 
 class PtCharacter;
-class MenuScene;
 
 class PtLink : public PhotonListener
 {

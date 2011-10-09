@@ -11,7 +11,10 @@
 #define __PT_CHARACTER_H__
 
 #include "cocos2d.h"
-#include "PtMap.h"
+
+class PtMap;
+
+USING_NS_CC;
 
 typedef enum 
 {
@@ -21,8 +24,6 @@ typedef enum
 	kStateLeft,
 	kStateRight
 } _moveState;
-
-USING_NS_CC;
 
 class PtCharacter : public CCNode 
 {

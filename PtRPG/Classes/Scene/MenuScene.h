@@ -21,7 +21,7 @@ public:
 	virtual bool init();
 	
 	// there's no 'id' in cpp, so we recommand to return the exactly class pointer
-	static cocos2d::CCScene* scene();
+	static CCScene* scene();
 	
 	// implement the "static node()" method manually
 	LAYER_NODE_FUNC(MenuScene);

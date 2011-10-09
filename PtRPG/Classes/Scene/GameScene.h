@@ -10,15 +10,15 @@
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
+#include "PtLink.h"
 #include "cocos2d.h"
 
 #include "PtMap.h"
 #include "PtCharacter.h"
-#include "PtLink.h"
 
 USING_NS_CC;
 
-class GameScene : public CCLayer,public PhotonListener
+class GameScene : public CCLayer ,public PhotonListener
 {
 public:
 	
@@ -87,8 +87,6 @@ public:
 	void PhotonPeerStatus(int statusCode);
 	void PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent);
 	void PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string);
-	
-	
 };
 
 #endif // __GAME_SCENE_H__

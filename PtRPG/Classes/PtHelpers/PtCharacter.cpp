@@ -9,6 +9,7 @@
 
 #include "PtCharacter.h"
 #include "PtMacros.h"
+#include "PtMap.h"
 
 PtCharacter * PtCharacter::initWithSpritesheet(CCString *spriteName,PtMap * currentMap)
 {
