@@ -223,6 +223,9 @@ void PtCharacter::update()
 		case kStateDown:
 			// Move Down
 			lookInDirection(1);
+			if(_currentMap->tileCoordForPosition(_characterSprite->getPosition()).y >=  _currentMap->_tileMap->getMapSize().height - 1)
+				return;
+			
 			if (!_currentMap->checkCollisionForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y-32))) 
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
@@ -252,6 +255,9 @@ void PtCharacter::update()
 		case kStateUp:
 			// Move Up
 			lookInDirection(2);
+			if(_currentMap->tileCoordForPosition(_characterSprite->getPosition()).y <= 0)
+				return;
+			
 			if (!_currentMap->checkCollisionForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y+32)))
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
@@ -266,6 +272,9 @@ void PtCharacter::update()
 		case kStateLeft:
 			// Move Left
 			lookInDirection(3);
+			if(_currentMap->tileCoordForPosition(_characterSprite->getPosition()).x <= 0)
+				return;
+			
 			if (!_currentMap->checkCollisionForPosition(ccp(_characterSprite->getPosition().x-32,_characterSprite->getPosition().y)))
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
@@ -279,6 +288,9 @@ void PtCharacter::update()
 		case kStateRight:
 			// Move Right
 			lookInDirection(4);
+			if(_currentMap->tileCoordForPosition(_characterSprite->getPosition()).x >= _currentMap->_tileMap->getMapSize().width - 1)
+				return;
+			
 			if (!_currentMap->checkCollisionForPosition(ccp(_characterSprite->getPosition().x+32,_characterSprite->getPosition().y)))
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));

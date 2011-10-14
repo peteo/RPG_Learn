@@ -128,6 +128,9 @@ bool GameScene::init()
 	schedule(schedule_selector(GameScene::gameLoop),_loopSpeed);
 	runAction(CCFollow::actionWithTarget(_playerChar->_characterSprite));
 	
+	//test
+	_bIsEnterWorlded = true;
+	
 	return true;
 }
 
@@ -362,6 +365,8 @@ void GameScene::registerWithTouchDispatcher()
 
 bool GameScene::ccTouchBegan(CCTouch* touch, CCEvent* event)
 {
+	CCLOG("ccTouchBegan");
+	
 	if(_bIsEnterWorlded == false)
 	{
 		return true;
@@ -407,6 +412,8 @@ bool GameScene::ccTouchBegan(CCTouch* touch, CCEvent* event)
 
 void GameScene::ccTouchMoved(CCTouch* touch, CCEvent* event)
 {
+	CCLOG("ccTouchMoved");
+	
 	if(_bIsEnterWorlded == false)
 	{
 		return;
@@ -416,7 +423,7 @@ void GameScene::ccTouchMoved(CCTouch* touch, CCEvent* event)
     touchLocation = CCDirector::sharedDirector()->convertToGL(touchLocation);
 	
 	if (CCRect::CCRectContainsPoint(_dDown1, touchLocation) 
-		|| CCRect::CCRectContainsPoint(_dDown2, touchLocation)) 
+		|| CCRect::CCRectContainsPoint(_dDown2, touchLocation))
 	{
 		_playerChar->_moveState = kStateDown;
 	}
