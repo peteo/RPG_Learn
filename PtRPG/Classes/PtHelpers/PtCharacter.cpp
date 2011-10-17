@@ -44,15 +44,15 @@ PtCharacter::PtCharacter(CCString *spriteName,PtMap * currentMap)
 	_spriteName    =  new CCString(spriteName->toStdString().c_str());
 	_lookDirection =  1;
 	
-	char pTempSpriteName[32] = {0};
+	char pTempSpriteName[64] = {0};
 	
 	ZeroMemory(pTempSpriteName,sizeof(pTempSpriteName));
-	sprintf(pTempSpriteName,"%s.plist",spriteName->toStdString().c_str());
+	sprintf(pTempSpriteName,"Resources/%s.plist",spriteName->toStdString().c_str());
 	
 	CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile(pTempSpriteName);
 	
 	ZeroMemory(pTempSpriteName,sizeof(pTempSpriteName));
-	sprintf(pTempSpriteName,"%s.png",spriteName->toStdString().c_str());
+	sprintf(pTempSpriteName,"Resources/%s.png",spriteName->toStdString().c_str());
 	_spriteSheet = CCSpriteBatchNode::batchNodeWithFile(pTempSpriteName);
 	
 	// Create the Sprite itself

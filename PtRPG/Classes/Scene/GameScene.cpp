@@ -60,7 +60,7 @@ bool GameScene::init()
 	_Link->InitLib(this);
 	
 	// Load Tilemap	
-	_tileMap = new PtMap("testmapFinal");
+	_tileMap = new PtMap("Resources/testmapFinal");
 	addChild(_tileMap->_tileMap);
 	
 	// Load Playersprite
