@@ -10,7 +10,7 @@
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
-#include "cocos2d.h"
+#include "CCPlatformConfig.h "
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "PtLink_Android.h"
@@ -26,6 +26,7 @@
 
 #include "PtMap.h"
 #include "PtCharacter.h"
+#include "cocos2d.h"
 
 USING_NS_CC;
 

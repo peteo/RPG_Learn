@@ -189,13 +189,26 @@ void GameScene::gameLoop(ccTime dt)
 			default:
 				break;
 		}
-		
+
 		float pRotation[1];
 		pRotation[0] = _playerChar->_moveState;
 		
 		//转换为右上角为原点的坐标系
-		pPos[0] = (640 - pPos[0]);
-		pPos[1] = (640 - pPos[1]);
+
+		if(_tileMap->checkCollisionForPosition(ccp(pPos[0],pPos[1])))
+		{
+			//有障碍物，只改变人物方向
+			pPos[0] = (640 - _playerChar->_characterSprite->getPosition().x);
+			pPos[1] = (640 - _playerChar->_characterSprite->getPosition().y);
+		}
+		else
+		{
+			//没有障碍物
+			pPos[0] = (640 - pPos[0]);
+			pPos[1] = (640 - pPos[1]);
+		}
+
+		
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)	
 		_Link->MoveAbsolute(pPos,pRotation,_playerChar->getItemID());
