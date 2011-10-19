@@ -8,6 +8,8 @@ LOCAL_SRC_FILES := main.cpp \
 ../../../Classes/PtHelpers/PtCharacter.cpp \
 ../../../Classes/PtHelpers/PtCode.cpp \
 ../../../Classes/PtHelpers/PtMap.cpp \
+../../../Classes/PtHelpers/PtLink_Android.cpp \
+../../../Classes/PtHelpers/org_photon_lib_PhotonHelper.cpp \
 ../../../Classes/Scene/GameScene.cpp \
 ../../../Classes/Scene/MenuScene.cpp
 

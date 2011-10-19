@@ -57,7 +57,9 @@ bool GameScene::init()
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 	
 	_Link = new PtLink();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	_Link->InitLib(this);
+#endif
 	
 	// Load Tilemap	
 	_tileMap = new PtMap("titilemap/testmapFinal");
@@ -195,7 +197,9 @@ void GameScene::gameLoop(ccTime dt)
 		pPos[0] = (640 - pPos[0]);
 		pPos[1] = (640 - pPos[1]);
 		
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)	
 		_Link->MoveAbsolute(pPos,pRotation,_playerChar->getItemID());
+#endif
 	}
 }
 
@@ -468,6 +472,8 @@ void GameScene::textBoxUpdate(ccTime dt)
 }
 */
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+
 void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID)
 {
 	switch(opCode)
@@ -602,7 +608,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 						case kStateDown:
 							// Move Down
 							pCharacter->lookInDirection(1);
-							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]) 
+					    if(!_tileMap->checkCollisionForPosition(ccp(pCharacter->_characterSprite->getPosition().x,pCharacter->_characterSprite->getPosition().y-32))) 
 						{
 							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
 							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y-32)]];
@@ -614,7 +620,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 						case kStateUp:
 							// Move Up
 							pCharacter->lookInDirection(2);
-							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]) 
+						if(!_tileMap->checkCollisionForPosition(ccp(pCharacter->_characterSprite->getPosition().x,pCharacter->_characterSprite->getPosition().y+32))) 
 						{
 							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
 							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x,_characterSprite.position.y+32)]];
@@ -626,7 +632,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 						case kStateLeft:
 							// Move Left
 							pCharacter->lookInDirection(3);
-							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]) 
+						if(!_tileMap->checkCollisionForPosition(ccp(pCharacter->_characterSprite->getPosition().x-32,pCharacter->_characterSprite->getPosition().y))) 
 						{
 							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
 							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x-32,_characterSprite.position.y)]];
@@ -638,7 +644,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 						case kStateRight:
 							// Move Right
 							pCharacter->lookInDirection(4);
-							//if (![_currentMap checkCollisionForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]) 
+						if(!_tileMap->checkCollisionForPosition(ccp(pCharacter->_characterSprite->getPosition().x+32,pCharacter->_characterSprite->getPosition().y))) 
 						{
 							//[_currentMap.metaLayer setTileGID:_previousGID at:[_currentMap tileCoordForPosition:_characterSprite.position]];
 							//_previousGID = [_currentMap.metaLayer tileGIDAt:[_currentMap tileCoordForPosition:ccp(_characterSprite.position.x+32,_characterSprite.position.y)]];
@@ -933,3 +939,5 @@ void GameScene::PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JS
 {
 	
 }
+
+#endif

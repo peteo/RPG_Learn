@@ -54,6 +54,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import org.photon.lib.PhotonHelper;
 
 public class Cocos2dxActivity extends Activity{
 	public static int screenWidth;
@@ -61,6 +62,7 @@ public class Cocos2dxActivity extends Activity{
     private static Cocos2dxMusic backgroundMusicPlayer;
     private static Cocos2dxSound soundPlayer;
     private static Cocos2dxAccelerometer accelerometer;
+    private static PhotonHelper photonHelper;
     private static boolean accelerometerEnabled = false;
     private static Handler handler;
     private final static int HANDLER_SHOW_DIALOG = 1;
@@ -72,6 +74,8 @@ public class Cocos2dxActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        Log.d("onCreate","1111111111111111111111111111111111111111");
+        
         // get frame size
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -82,6 +86,8 @@ public class Cocos2dxActivity extends Activity{
         // init media player and sound player
         backgroundMusicPlayer = new Cocos2dxMusic(this);
         soundPlayer = new Cocos2dxSound(this);
+        
+        photonHelper = new PhotonHelper();
         
         // init bitmap context
         Cocos2dxBitmap.setContext(this);

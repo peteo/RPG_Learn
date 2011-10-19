@@ -230,7 +230,8 @@ void PtCharacter::update()
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
 				_previousGID = _currentMap->_metaLayer->tileGIDAt(_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y-32)));
-				_currentMap->setTileCollidable(true,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y-32)));
+				//设置人物是否为Collidable
+				_currentMap->setTileCollidable(false,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y-32)));
 				_characterSprite->runAction(CCMoveBy::actionWithDuration(_moveSpeed,ccp(0,-32)));
 				_characterSprite->runAction(CCAnimate::actionWithAnimation(_walkDownAnim));
 			}
@@ -262,8 +263,8 @@ void PtCharacter::update()
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
 				_previousGID = _currentMap->_metaLayer->tileGIDAt(_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y+32)));
-				_currentMap->setTileCollidable(true,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y+32)));
-				
+				//设置人物是否为Collidable
+				_currentMap->setTileCollidable(false,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x,_characterSprite->getPosition().y+32)));
 				
 				_characterSprite->runAction(CCMoveBy::actionWithDuration(_moveSpeed,ccp(0,32)));
 				_characterSprite->runAction(CCAnimate::actionWithAnimation(_walkUpAnim));
@@ -279,7 +280,8 @@ void PtCharacter::update()
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
 				_previousGID = _currentMap->_metaLayer->tileGIDAt(_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x-32,_characterSprite->getPosition().y)));
-				_currentMap->setTileCollidable(true,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x-32,_characterSprite->getPosition().y)));
+				//设置人物是否为Collidable
+				_currentMap->setTileCollidable(false,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x-32,_characterSprite->getPosition().y)));
 				
 				_characterSprite->runAction(CCMoveBy::actionWithDuration(_moveSpeed,ccp(-32,0)));
 				_characterSprite->runAction(CCAnimate::actionWithAnimation(_walkLeftAnim));
@@ -295,7 +297,8 @@ void PtCharacter::update()
 			{
 				_currentMap->_metaLayer->setTileGID(_previousGID,_currentMap->tileCoordForPosition(_characterSprite->getPosition()));
 				_previousGID = _currentMap->_metaLayer->tileGIDAt(_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x+32,_characterSprite->getPosition().y)));
-				_currentMap->setTileCollidable(true,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x+32,_characterSprite->getPosition().y)));
+				//设置人物是否为Collidable
+				_currentMap->setTileCollidable(false,_currentMap->tileCoordForPosition(ccp(_characterSprite->getPosition().x+32,_characterSprite->getPosition().y)));
 				
 				_characterSprite->runAction(CCMoveBy::actionWithDuration(_moveSpeed,ccp(32,0)));
 				_characterSprite->runAction(CCAnimate::actionWithAnimation(_walkRightAnim));

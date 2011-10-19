@@ -10,15 +10,38 @@
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
-#include "PtLink.h"
 #include "cocos2d.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "PtLink_Android.h"
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#include "PtLink.h"
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#include "PtLink.h"
+#endif
 
 #include "PtMap.h"
 #include "PtCharacter.h"
 
 USING_NS_CC;
 
+
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+class GameScene : public CCLayer
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 class GameScene : public CCLayer ,public PhotonListener
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+class GameScene : public CCLayer ,public PhotonListener
+#endif
 {
 public:
 	
@@ -81,12 +104,14 @@ private:
 	// Loops and Tick Methods
 	void gameLoop(ccTime dt);
 	void textBoxUpdate(ccTime dt);
-	
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 public:
 	void PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID);
 	void PhotonPeerStatus(int statusCode);
 	void PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent);
 	void PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string);
+#endif
 };
 
 #endif // __GAME_SCENE_H__
