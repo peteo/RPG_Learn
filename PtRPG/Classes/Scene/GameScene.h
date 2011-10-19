@@ -10,7 +10,7 @@
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
-#include "CCPlatformConfig.h "
+#include "CCPlatformConfig.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "PtLink_Android.h"

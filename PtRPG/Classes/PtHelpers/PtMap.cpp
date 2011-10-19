@@ -113,6 +113,16 @@ CCPoint PtMap::tileCoordForPosition(CCPoint position)
 {
     int x = position.x / _tileMap->getTileSize().width;
     int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - position.y) / _tileMap->getTileSize().height;
+	
+	if(x < 0)
+		x = 0;
+	if(y < 0)
+		y = 0;
+	if(x >= _tileMap->getMapSize().width)
+		x = _tileMap->getMapSize().width - 1;
+	if(y >= _tileMap->getMapSize().height)
+		y = _tileMap->getMapSize().height - 1;
+		
     return ccp(x, y);
 }
 
