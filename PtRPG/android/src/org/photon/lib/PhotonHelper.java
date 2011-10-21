@@ -87,6 +87,17 @@ public class PhotonHelper extends Service implements IPhotonPeerListener
 	{
 		Log.d("CLIENT", message);
 	}
+	
+	public static void printHasptable(Hashtable<Object, Object> hashtable)
+	{
+		/*
+	    Set<String> keys = hashtable.keySet();
+	    for(String key: keys) 
+	    {
+	    	System.out.println(key+"--"+hashtable.get(key));
+	    }
+	    */
+	}
 
 	public void eventAction(final byte eventCode, final Hashtable<Byte, Object> ev)  
 	{
@@ -158,6 +169,9 @@ public class PhotonHelper extends Service implements IPhotonPeerListener
 		startTime = System.currentTimeMillis();
 		
 		Log.d("connect","333333333333333333333333333333333333");
+		
+		//test
+		
 		
 		timer = new Timer("main loop");
 		TimerTask timerTask = new TimerTask()

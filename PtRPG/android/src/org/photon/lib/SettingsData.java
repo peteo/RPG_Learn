@@ -22,7 +22,8 @@ public class SettingsData
 	public String color = "#2222FF";
 	
 	public static final String SERVER_URL = "SERVER_URL"; 
-	public String server = "172.18.19.73:5055";
+	//public String server = "172.18.19.73:5055";
+	public String server = "114.80.197.41:5055";
 
 	public static final String USE_TCP = "USE_TCP"; 
     public boolean useTcp = false;

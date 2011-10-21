@@ -14,7 +14,9 @@
 #include "PtCode.h"
 #include "cocos2d.h"
 
-#define URL_TEST_SERVER	 L"172.18.19.73:5055"
+//#define URL_TEST_SERVER	 L"172.18.19.73:5055"
+
+#define URL_TEST_SERVER	 L"114.80.197.41:5055"
 
 //#define URL_TEST_SERVER	 L"172.18.19.117:5055"
 
