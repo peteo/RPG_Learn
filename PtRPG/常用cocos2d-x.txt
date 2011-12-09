@@ -99,7 +99,8 @@ sprintf(pTempMap,"%s.tmx",mapName.c_str());
 CCMutableArray<CCSpriteFrame*> *walkRightFrames = new CCMutableArray<CCSpriteFrame*>();
 
 
-5.CCArray
+5.CCARRAY_FOREACH使用
+(1)
 CCArray::arrayWithCapacity(10);
 
 CCObject    * pObject;
@@ -113,8 +114,118 @@ CCARRAY_FOREACH(_RemoteplayerArray, pObject)
 	}
 }
 
+(2)
+CCNode   * child;
+CCArray  * pArray  = menu->getChildren();
+CCObject * pObject = NULL;
+CCARRAY_FOREACH(pArray, pObject)
+{
+	if(pObject == NULL)
+		break;
+
+	child = (CCNode*)pObject;
+}
+
 
 6. win32内存检测工具Visual Leak Detector , CRT
+
+7. 相反的动作 actionBy->reverse();
+
+8. 相同的动作第二次使用，actionTo0->copy()->autorelease()
+
+9. 动作Sequence ： CCSequence::actions(actionBy, actionByBack, NULL)
+
+10. 重复动作: CCRepeatForever::actionWithAction(actionUp)
+
+11. Iterator使用
+CCMutableArray<CCObject *>::CCMutableArrayIterator it;
+for(it = m_paddles->begin(); it != m_paddles->end(); it++)
+	{
+		paddle = (Paddle*)(*it);
+
+		if(!paddle)
+			break;
+	}
+
+
+12. CCLayerMultiplex与switchTo使用
+CCLayer* pLayer1 = new MenuLayer1();
+CCLayer* pLayer2 = new MenuLayer2();
+CCLayer* pLayer3 = new MenuLayer3();
+CCLayer* pLayer4 = new MenuLayer4();
+
+CCLayerMultiplex* layer = CCLayerMultiplex::layerWithLayers(pLayer1, pLayer2, pLayer3, pLayer4, NULL);
+addChild(layer, 0);
+
+((CCLayerMultiplex*)m_pParent)->switchTo(0);
+
+
+13. 添加触摸
+setIsTouchEnabled( true );
+
+void Parallax2::registerWithTouchDispatcher()
+{
+    CCTouchDispatcher::sharedDispatcher()->addTargetedDelegate(this, 0, true);
+}
+
+bool Parallax2::ccTouchBegan(CCTouch* touch, CCEvent* event)
+{
+	return true;
+}
+
+void Parallax2::ccTouchEnded(CCTouch* touch, CCEvent* event)
+{
+}
+
+void Parallax2::ccTouchCancelled(CCTouch* touch, CCEvent* event)
+{
+}
+
+void Parallax2::ccTouchMoved(CCTouch* touch, CCEvent* event)
+{
+	CCPoint touchLocation = touch->locationInView( touch->view() );	
+	CCPoint prevLocation = touch->previousLocationInView( touch->view() );	
+
+	touchLocation = CCDirector::sharedDirector()->convertToGL( touchLocation );
+	prevLocation = CCDirector::sharedDirector()->convertToGL( prevLocation );
+
+	CCPoint diff = ccpSub(touchLocation,prevLocation);
+	
+	CCNode* node = getChildByTag(kTagNode);
+	CCPoint currentPos = node->getPosition();
+	node->setPosition( ccpAdd(currentPos, diff) );
+}
+
+14. 反锯齿
+child->getTexture()->setAntiAliasTexParameters();
+
+15. Accelerometer
+setIsAccelerometerEnabled(true);
+
+void AccelerometerTest::didAccelerate(CCAcceleration* pAccelerationValue)
+{
+
+}
+
+16. 
+
+
+
+
+
+
+
+
+
+
+
+
+西蒙iphone-OpenGL ES
+
+1. glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  清除了屏幕
+
+
+
 
 
 
