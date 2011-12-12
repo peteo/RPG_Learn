@@ -220,9 +220,81 @@ void AccelerometerTest::didAccelerate(CCAcceleration* pAccelerationValue)
 
 
 
-西蒙iphone-OpenGL ES
+西蒙iphone-OpenGL ES 学习
 
-1. glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  清除了屏幕
+1. 清除屏幕
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+2. 画三角
+const GLfloat triangleVertices[] = 
+{
+	 50.0,   50.0,  -6.0,                    // Triangle top centre
+	100.0,   50.0,  -6.0,                    // bottom left
+	 75.0,  100.0,  -6.0                     // bottom right
+};
+
+glDisable(GL_TEXTURE_2D);
+glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+glDisableClientState(GL_COLOR_ARRAY);
+
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+glVertexPointer(3, GL_FLOAT, 0, triangleVertices);
+glEnableClientState(GL_VERTEX_ARRAY);
+glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+// restore default state
+glEnableClientState(GL_COLOR_ARRAY);
+glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+glEnable(GL_TEXTURE_2D);
+
+3. 画矩形
+const GLfloat squareVertices[] = 
+{
+	 0.0, 50.0,  -6.0,            // Top left
+	 0.0,  0.0,  -6.0,            // Bottom left
+	50.0,  0.0,  -6.0,            // Bottom right
+	50.0, 50.0,  -6.0             // Top right
+};
+
+glVertexPointer(3, GL_FLOAT, 0, squareVertices);
+glEnableClientState(GL_VERTEX_ARRAY);
+glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+4. glLoadIdentity()
+只是一个覆盖（重置）函数，它只是基本重置所有的条件（重置所有状态）
+
+5. 多重颜色
+const GLfloat squareVertices[] = 
+{
+	0.0,  50.0,   0.0,            // Top left
+	0.0,   0.0,   0.0,            // Bottom left
+	50.0,  0.0,   0.0,            // Bottom right
+	50.0, 50.0,   0.0             // Top right
+};
+
+const GLfloat squareColours[] = 
+{
+	1.0, 0.0, 0.0, 1.0,   // Red - top left - colour for squareVertices[0]
+	0.0, 1.0, 0.0, 1.0,   // Green - bottom left - squareVertices[1]
+	0.0, 0.0, 1.0, 1.0,   // Blue - bottom right - squareVerticies[2]
+	0.5, 0.5, 0.5, 1.0    // Grey - top right- squareVerticies[3]
+};
+
+
+//glLoadIdentity();
+//glTranslatef(1.5, 0.0, -6.0);
+//glRotatef(0, 0.0, 0.0, -1.0);
+glVertexPointer(3, GL_FLOAT, 0, squareVertices);
+glEnableClientState(GL_VERTEX_ARRAY);
+glColorPointer(4, GL_FLOAT, 0, squareColours);      // NEW
+glEnableClientState(GL_COLOR_ARRAY);                // NEW
+glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+glDisableClientState(GL_COLOR_ARRAY);               // NEW
+
+
+
 
 
 
