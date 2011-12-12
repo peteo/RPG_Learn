@@ -31,35 +31,39 @@ namespace ExitGames
 	   dealing with Objects !</i>
 	   See Also
 	   <link _EG_Object, EG_Object> , <link KeyObject> , <link ValueObject>     */
-	class Object:protected Base
+	class Object : protected Base
 	{
 	public:
-		bool operator==(const Object &toCompare) const;
-		bool operator!=(const Object &toCompare) const;
-
 		Object(void);
-		Object(void* data, nByte type, bool makeCopy);
-		Object(void* data, nByte type, short size, bool makeCopy);
-		Object(void* data, nByte type, unsigned int dimensions, const short* const size, bool makeCopy);
-		Object(const Object &toCopy);
-		Object& operator=(const Object &toCopy);
+		Object(void* data, nByte type, nByte customType, bool makeCopy);
+		Object(void* data, nByte type, nByte customType, short size, bool makeCopy);
+		Object(void* data, nByte type, nByte customType, unsigned int dimensions, const short* const size, bool makeCopy);
 		~Object(void);
+
+		Object(const Object& toCopy);
+		Object& operator=(const Object& toCopy);
+
+		bool operator==(const Object& toCompare) const;
+		bool operator!=(const Object& toCompare) const;
+
 		const void* getData(void) const;
 		nByte getType(void) const;
+		nByte getCustomType(void) const;
 		const short* getSize(void) const;
 		unsigned int getDimensions(void) const;
-		void set(void* data, nByte type, bool makeCopy=true);
-		void set(void* data, nByte type, short size, bool makeCopy=true);
-		void set(void* data, nByte type, unsigned int dimensions, const short* const size, bool makeCopy=true);
+		void set(void* data, nByte type, nByte customType, bool makeCopy);
+		void set(void* data, nByte type, nByte customType, short size, bool makeCopy);
+		void set(void* data, nByte type, nByte customType, unsigned int dimensions, const short* const size, bool makeCopy);
 
 	protected:
-		void setWithoutCleanup(void* data, nByte type, bool makeCopy);
-		void setWithoutCleanup(void* data, nByte type, short size, bool makeCopy);
-		void setWithoutCleanup(void* data, nByte type, unsigned int dimensions, const short* const sizes, bool makeCopy);
+		void setWithoutCleanup(void* data, nByte type, nByte customType, bool makeCopy);
+		void setWithoutCleanup(void* data, nByte type, nByte customType, short size, bool makeCopy);
+		void setWithoutCleanup(void* data, nByte type, nByte customType, unsigned int dimensions, const short* const sizes, bool makeCopy);
 
 		void* _data;
 		short* _size;
 		nByte _type;
+		nByte _customType;
 		unsigned int _dimensions;
 
 	private:
@@ -68,9 +72,10 @@ namespace ExitGames
 		void setData(void* data);
 		void setDataNoCopy(void* data);
 		void setType(nByte type);
+		void setCustomType(nByte customType);
 		void cleanup(void* pData = 0, unsigned int recursionDepth=0);
-		void copyObjectArray(void* pDataIn, void** pDataOut, unsigned int recursionDepth=0) const;
-		bool equalsObjectArray(const void* const pData1, const void* const pData2, unsigned int recursionDepth=0) const;
+		void copyArray(void* pDataIn, void** pDataOut, unsigned int recursionDepth=0) const;
+		bool equalsArray(const void* const pData1, const void* const pData2, unsigned int recursionDepth=0) const;
 	};
 #ifndef _EG_BREW_PLATFORM
 }

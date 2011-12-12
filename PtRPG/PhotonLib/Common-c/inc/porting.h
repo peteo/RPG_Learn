@@ -14,7 +14,7 @@
 #define __STR1__(x) __STR2__(x)
 #define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
 
-#ifdef _EG_BREW_PLATFORM
+#if defined(_EG_BREW_PLATFORM)
 #   include <AEE.h>
 #   include <AEEShell.h>	
 #   include <AEEAppgen.h>	
@@ -33,10 +33,8 @@
 //# include "AEEMenu.h"
 //# include "AEEDisp.h"		// AEE Display Services
 //# include "AEEGraphics.h"
-#endif //_EG_BREW_PLATFORM
-
-#ifdef _EG_WINDOWS_PLATFORM
-#   ifdef _EG_WIN32_PLATFORM
+#elif defined(_EG_WINDOWS_PLATFORM)
+#   if defined(_EG_WIN32_PLATFORM)
 #       define WIN32_LEAN_AND_MEAN
 #       define _WIN32_WINNT 0x0500
 #       include <process.h>
@@ -51,25 +49,20 @@
 #   include <wininet.h>
 #   include <urlmon.h>
 #   include <string.h>
-#endif //_EG_WINDOWS_PLATFORM
-
-#ifdef _EG_APPLE_PLATFORM
-	#include <AvailabilityMacros.h>
-	#import <CoreFoundation/CFString.h>
-	#import <CoreFoundation/CoreFoundation.h>
-	#include <sys/time.h>
+#elif defined(_EG_UNIX_PLATFORM)
+#	if defined(_EG_APPLE_PLATFORM)
+#		include <AvailabilityMacros.h>
+#		import <CoreFoundation/CFString.h>
+#		import <CoreFoundation/CoreFoundation.h>
+#		include <sys/time.h>
+#	elif defined(_EG_MEEGO_PLATFORM)
+#		include <iconv.h>
+#		include <sys/time.h>
+#		include <limits.h>
+#	elif defined(_EG_MARMALADE_PLATFORM)
+#		include "C_IwUTF8.h"
+#		include <limits.h>
+#	endif
 #endif
 
-#if defined(_EG_UNIX_PLATFORM) && !defined(_EG_APPLE_PLATFORM) && !defined(_EG_MARMALADE_PLATFORM)
-	#include <iconv.h>
 #endif
-
-#ifdef _EG_MEEGO_PLATFORM
-	#include <sys/time.h>
-#endif
-
-#ifdef _EG_MARMALADE_PLATFORM
-	#include "C_IwUTF8.h"
-#endif
-
-#endif //__PORTING_H__

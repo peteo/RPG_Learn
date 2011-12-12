@@ -72,21 +72,21 @@ namespace ExitGames
 		#ifdef _EG_BREW_PLATFORM
 		LitePeer(PhotonListener* listener, PlatformSpecific* pPlatform);
 		#else
-		LitePeer(PhotonListener* listener);
+		LitePeer(PhotonListener* listener, bool useTcp = false);
 		#endif
 		~LitePeer(void);
-		short opRaiseEvent(bool sendReliable, const Hashtable& evData, nByte eventCode, nByte channelID=0, int* targetActors=NULL, short numTargetActors=0);
-		short opJoin(const JString& gameId, const Hashtable& gameProperties=Hashtable(), const Hashtable& actorProperties=Hashtable(), bool broadcastActorProperties=false);
-		short opLeave(const JString& gameId);
-		short opSetPropertiesOfActor(int actorNr, const Hashtable& properties, bool broadcast, nByte channelID=0);
-		short opSetPropertiesOfGame(const Hashtable& properties, bool broadcast, nByte channelID=0);
-		short opGetProperties(nByte channelID=0);
-		short opGetPropertiesOfActor(const int* const actorNrList=NULL, short numActors=0, const JString* const properties=NULL, short numProperties=0, nByte channelID=0);
-		short opGetPropertiesOfActor(const int* const actorNrList=NULL, short numActors=0, const nByte* const properties=NULL, short numProperties=0, nByte channelID=0);
-		short opGetPropertiesOfGame(const JString* const properties=NULL, short numProperties=0, nByte channelID=0);
-		short opGetPropertiesOfGame(const nByte* const properties=NULL, short numProperties=0, nByte channelID=0);
+		bool opRaiseEvent(bool sendReliable, const Hashtable& evData, nByte eventCode, nByte channelID=0, int* targetActors=NULL, short numTargetActors=0);
+		bool opJoin(const JString& gameId, const Hashtable& gameProperties=Hashtable(), const Hashtable& actorProperties=Hashtable(), bool broadcastActorProperties=false);
+		bool opLeave(const JString& gameId);
+		bool opSetPropertiesOfActor(int actorNr, const Hashtable& properties, bool broadcast, nByte channelID=0);
+		bool opSetPropertiesOfGame(const Hashtable& properties, bool broadcast, nByte channelID=0);
+		bool opGetProperties(nByte channelID=0);
+		bool opGetPropertiesOfActor(const JString* const properties, short numProperties, const int* const actorNrList=NULL, short numActors=0, nByte channelID=0);
+		bool opGetPropertiesOfActor(const nByte* const properties, short numProperties, const int* const actorNrList=NULL, short numActors=0, nByte channelID=0);
+		bool opGetPropertiesOfGame(const JString* const properties, short numProperties, nByte channelID=0);
+		bool opGetPropertiesOfGame(const nByte* const properties, short numProperties, nByte channelID=0);
 	};
 #ifndef _EG_BREW_PLATFORM
 }
 #endif
-#endif // _LITE_PEER_H
+#endif

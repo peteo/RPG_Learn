@@ -34,8 +34,7 @@ inline void* operator new(unsigned int size)
 
 inline void operator delete(void *ptr)
 {
-	if(ptr)
-		FREE(ptr);
+	FREE(ptr);
 }
 
 inline void* operator new[](unsigned int size)
@@ -45,8 +44,7 @@ inline void* operator new[](unsigned int size)
 
 inline void operator delete[](void *ptr)
 {
-	if(ptr)
-		FREE(ptr);
+	FREE(ptr);
 }
 #endif
 

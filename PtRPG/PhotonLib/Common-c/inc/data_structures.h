@@ -19,7 +19,6 @@ details.                                               */
 
 	#include "platformLayer.h"
 
-
 	/* <title EG_Object structure>
 	   <toctitle EG_Object structure>
 	   
@@ -32,11 +31,15 @@ details.                                               */
 	   
 	   <c>{</c>
 	   
-	   <c> void *obj_data;</c>
+	   <c> void* obj_data;</c>
 	   
 	   <c> nByte type;</c>
 	   
-	   <c> int size;</c>
+	   <c> nByte customType;</c>
+	   
+	   <c> unsigned int dimensions;</c>
+	   
+	   <c> short* size;</c>
 	   
 	   <c>} EG_Object;</c>
 	   
@@ -61,6 +64,8 @@ details.                                               */
 	   EG_CHAR* EG_STRING
 	   EG_Vector EG_VECTOR
 	   EG_HashTable EG_HASHTABLE
+	   EG_Object EG_OBJECT
+	   someOtherType EG_CUSTOM
 	   </table>
 	   * ------------- --------------- *
 	   
@@ -79,7 +84,7 @@ details.                                               */
 	   \2. Use <link EG_Object_createFromArray@void*@nByte@short@bool, EG_Object_createFromArray()>
 	   for creating objects holding single-dimensional arrays
 	   
-	   \2. Use <link EG_Object_createFromMultiDimensionalArray@void*@nByte@int@short*@bool, EG_Object_createFromMultiDimensionalArray()>
+	   \2. Use <link EG_Object_createFromMultiDimensionalArray@void*@nByte@unsigned int@short*@bool, EG_Object_createFromMultiDimensionalArray()>
 	   for creating objects holding multi-dimensional arrays.
 	   
 	   
@@ -95,15 +100,15 @@ details.                                               */
 	   
 	   <code lang="c++">
 	   EG_CHAR* data = L"fifteen cans of Stella !";
-	   EG_Object* sample = EG_Object_create(&data, EG_STRING, true); // creates an object with its own copy of the data
+	   EG_Object* sample = EG_Object_create(&amp;data, EG_STRING, true); // creates an object with its own copy of the data
 	     // ...
 	     // usage of the object
 	     // ...
 	   EG_Object_delete(sample); // this frees the object and releases the memory allocated for the internal copy
 	   
-	   EG_CHAR* data = (EG_CHAR*)MALLOC(sizeof(EG_CHAR)*((WCSLEN(L"fifteen cans of Stella !"))+1));
+	   EG_CHAR* data = MALLOC(sizeof(EG_CHAR)*((WCSLEN(L"fifteen cans of Stella !"))+1));
 	   WCSCPY(data, L"fifteen cans of Stella !");
-	   EG_Object* sample = EG_Object_create(&data, EG_STRING, false);  // false = no copy! we store the pointer to the original data instead
+	   EG_Object* sample = EG_Object_create(&amp;data, EG_STRING, false);  // false = no copy! we store the pointer to the original data instead
 	   // ...
 	   // usage of the object
 	   // ...
@@ -112,12 +117,13 @@ details.                                               */
 	   See Also
 	   <link MemoryManagement, Sending and receiving data> , <link EG_Object_create@void*@nByte@bool, EG_Object_create()>
 	   , <link EG_Object_createFromArray@void*@nByte@short@bool, EG_Object_createFromArray()>
-	   , <link EG_Object_createFromMultiDimensionalArray@void*@nByte@int@short*@bool, EG_Object_createFromMultiDimensionalArray()>,
-	   <link EG_Object_delete@EG_Object*, EG_Object_delete()> , <link EG_Object_compare@EG_Object*@EG_Object*, EG_Object_compare()>                */
+	   , <link EG_Object_createFromMultiDimensionalArray@void*@nByte@unsigned int@short*@bool, EG_Object_createFromMultiDimensionalArray()>,
+	   <link EG_Object_delete@EG_Object*, EG_Object_delete()> , <link EG_Object_compare@EG_Object*@EG_Object*, EG_Object_compare()>               */
 	typedef struct _EG_Object
 	{
 		void* obj_data; //  The data to be hold by the object.
 		nByte type; //  The data type of the data
+		nByte customType; // only used, if type is EG_CUSTOM
 		unsigned int dimensions; // number of array dimensions for multidimensional arrays; this is always 1 for 1-dimensional arrays and 0 for non-array types
 		short* size; //  Nr. of elements of the type 'type' contained in obj_data. If 'dimensions' is 0, this is a pointer to 1, otherwise it is an array of 'dimensions' length, holding the size of the array in every dimension
 	} EG_Object;
@@ -128,19 +134,34 @@ details.                                               */
 	#endif
 
 			nByte EG_Object_getType(EG_Object* obj);
-			int EG_Object_getDimensions(EG_Object* obj);
+			nByte EG_Object_getCustomType(EG_Object* obj);
+			unsigned int EG_Object_getDimensions(EG_Object* obj);
 			short* EG_Object_getSize(EG_Object* obj);
+			void* EG_Object_getData(EG_Object* obj);
 			EG_Object* EG_Object_create(void* obj_data, nByte type, bool cloneData);
+			EG_Object* EG_Object_init(EG_Object* obj, void* obj_data, nByte type, bool cloneData);
 			EG_Object* EG_Object_createFromArray(void* obj_data, nByte type, short arraySize, bool cloneData);
+			EG_Object* EG_Object_initFromArray(EG_Object* obj, void* obj_data, nByte type, short arraySize, bool cloneData);
 			EG_Object* EG_Object_createFromMultiDimensionalArray(void* obj_data, nByte type, unsigned int dimensions, short* arraySizes, bool cloneData);
+			EG_Object* EG_Object_initFromMultiDimensionalArray(EG_Object* obj, void* obj_data, nByte type, unsigned int dimensions, short* arraySizes, bool cloneData);
+			EG_Object* EG_Object_customType_create(void* obj_data, nByte type, bool cloneData);
+			EG_Object* EG_Object_customType_init(EG_Object* obj, void* obj_data, nByte type, bool cloneData);
+			EG_Object* EG_Object_customType_createFromArray(void* obj_data, nByte type, short arraySize, bool cloneData);
+			EG_Object* EG_Object_customType_initFromArray(EG_Object* obj, void* obj_data, nByte type, short arraySize, bool cloneData);
+			EG_Object* EG_Object_customType_createFromMultiDimensionalArray(void* obj_data, nByte type, unsigned int dimensions, short* arraySizes, bool cloneData);
+			EG_Object* EG_Object_customType_initFromMultiDimensionalArray(EG_Object* obj, void* obj_data, nByte type, unsigned int dimensions, short* arraySizes, bool cloneData);
+			EG_Object* EG_Object_internal_create(void* obj_data, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, bool cloneData);
+			EG_Object* EG_Object_internal_init(EG_Object* obj, void* obj_data, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, bool cloneData);
 			void EG_Object_delete(EG_Object* obj);
-			void EG_Object_internal_deleteHelper(void* pData, nByte type, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+			void EG_Object_clean(EG_Object* obj);
+			void EG_Object_internal_cleanHelper(void* pData, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
 			bool EG_Object_compare(EG_Object* obj1, EG_Object* obj2);
-			bool EG_Object_internal_compareHelper(void* pData1, void* pData2, nByte type, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
-			void* EG_duplicateData(void* pData, nByte type);
-			void* EG_duplicateDataArray(void* pData, nByte type, short arraySize);
-			void* EG_duplicateMultiDimensionalDataArray(void* pData, nByte type, unsigned int dimensions, short* arraySizes);
-			void* EG_internal_duplicateMultiDimensionalDataArray_Helper(void* pArrayOut, void* pArrayIn, nByte type, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+			bool EG_Object_internal_compareHelper(void* pData1, void* pData2, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+			void* EG_Object_internal_duplicateData(void* pData, nByte type, nByte customType);
+			void* EG_Object_internal_duplicateDataArray(void* pData, nByte type, nByte customType, short arraySize);
+			void* EG_Object_internal_duplicateMultiDimensionalDataArray(void* pData, nByte type, nByte customType, unsigned int dimensions, short* arraySizes);
+			void* EG_Object_internal_duplicateMultiDimensionalDataArray_Helper(void* pArrayOut, void* pArrayIn, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+			void EG_Object_internal_freeData(void* pData, nByte type, nByte customType);
 			// internal
 			typedef struct _SPhotonCommand IPhotonCommand;
 			extern unsigned int PhotonCommand_Release(IPhotonCommand* pCommand);
@@ -148,28 +169,6 @@ details.                                               */
 	#ifdef __cplusplus
 		}
 	#endif
-	#define CREATE_OBJECT(obj_data, type) EG_Object_create(obj_data, type, false)
-	#define CREATE_OBJECT_FROM_ARRAY(obj_data, type, arraySize) EG_Object_createFromArray(obj_data, type, arraySize, false)
-
-	#define addHashTableEntry					 EG_HashTable_addEntry
-	#define addVectorElement                     EG_Vector_addElement
-	#define clearHashTable                       EG_HashTable_clear
-	#define compareEGObjects                     EG_Object_compare 
-	#define createObject                         EG_Object_create
-	#define createObjectFromArray                EG_Object_createFromArray
-	#define deleteObject                         EG_Object_delete
-	#define duplicateDataArray                   EG_duplicateDataArray
-	#define duplicateData                        EG_duplicateData
-	#define getLastVectorElement                 EG_Vector_getLastElement
-	#define getLastVectorIndex                   EG_Vector_getLastIndex
-	#define getObjectType                        EG_Object_getType
-	#define getValFromKey                        EG_HashTable_getValFromKey
-	#define initializeHashTable                  EG_HashTable_initialize
-	#define initializeVector                     EG_Vector_initialize
-	#define releaseVector                        EG_Vector_release
-	#define removeHashTableEntry                 EG_HashTable_removeEntry
-	#define removeVectorElement                  EG_Vector_removeElement
-	#define toString                             EG_HashTable_toString
 
 	/* <title EG_Vector structure>
 	   <toctitle EG_Vector structure>
@@ -221,14 +220,14 @@ details.                                               */
 	typedef struct _EG_Vector
 	{
 		EG_Object** elements; // Elements contained in the vector. Implemented as a dynamic array.
-		uint16 totalElements; // Total number of elements in the elements array.
+		unsigned short totalElements; // Total number of elements in the elements array.
 
 	} EG_Vector;
 
 	#ifdef __cplusplus
 		extern "C"
 		{
-	#endif 
+	#endif
 
 		bool EG_Vector_initialize(EG_Vector** sv);
 		void EG_Vector_release(EG_Vector** sv);
@@ -239,7 +238,7 @@ details.                                               */
 
 	#ifdef __cplusplus
 		}
-	#endif 
+	#endif
 
 	/* <title EG_HashTable structure>
 	   <toctitle EG_HashTable structure>
@@ -326,18 +325,16 @@ details.                                               */
 		EG_Object* EG_HashTable_getValFromKey(EG_HashTable* hashtable, void* key, nByte type, int* hashIndex);
 		EG_CHAR* EG_HashTable_toString(EG_HashTable* hashtable);
 		EG_CHAR* EG_HashTable_toStringWithTypes(EG_HashTable* hashtable, bool withTypes);
-		EG_CHAR* EG_HashTable_internal_appendData(EG_CHAR* data, bool withTypes, void* pData, nByte type, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+		EG_CHAR* EG_HashTable_internal_appendData(EG_CHAR* data, bool withTypes, void* pData, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
 
 	#ifdef __cplusplus
 		}
 	#endif
 
-
-
 	#ifdef __cplusplus
 		extern "C"
 		{
-	#endif 
+	#endif
 		bool EG_Time_Less(unsigned int firstTime, unsigned int secondTime);
 		bool EG_Time_Greater(unsigned int firstTime, unsigned int secondTime);
 		bool EG_Time_LessOrEqual(unsigned int firstTime, unsigned int secondTime);
@@ -348,12 +345,45 @@ details.                                               */
 		}
 	#endif
 
+		typedef void (*CB_CLEANUP)(void* pData);
+		typedef bool (*CB_COMPARE)(void* pData1, void* pData2);
+		typedef void (*CB_DUPLICATE)(void* pData, void* retVal);
+		typedef void (*CB_DESERIALIZE)(nByte* pData, short length, void* retVal);
+		typedef short (*CB_SERIALIZE)(void* pData, nByte* retVal);
+		typedef int (*CB_TOSTRING)(void* pData, EG_CHAR* buffer);
+		typedef void* (*CB_CALLOC)(short count, nByte customTypeCode);
+		typedef void (*CB_FREE)(void* pData, nByte customTypeCode);
+		typedef unsigned int (*CB_SIZEOF)(nByte customTypeCode);
+		typedef struct _EG_CustomType
+		{
+			bool registered;
+			CB_CLEANUP CB_cleanup;
+			CB_COMPARE CB_compare;
+			CB_DUPLICATE CB_duplicate;
+			CB_DESERIALIZE CB_deserialize;
+			CB_SERIALIZE CB_serialize;
+			CB_TOSTRING CB_toString;
+			CB_CALLOC CB_calloc;
+			CB_FREE CB_free;
+			CB_SIZEOF CB_sizeOf;
+		} EG_CustomType;
 
+	#ifdef __cplusplus
+		extern "C"
+		{
+	#endif
+			EG_CustomType EG_CustomType_create(CB_CLEANUP cbCleanup, CB_COMPARE cbCompare, CB_DUPLICATE cbDuplicate, CB_DESERIALIZE cbDeserialize, CB_SERIALIZE cbSerialize, CB_TOSTRING cbToString, CB_CALLOC cbCalloc, CB_FREE cbFree, CB_SIZEOF cbSizeOf);
+			void EG_CustomType_register(nByte id, EG_CustomType type);
+			const EG_CustomType* EG_CustomType_getForID(nByte id);
+	#ifdef __cplusplus
+		}
+	#endif
+
+	// internal
 	typedef struct _EG_GpOperation
 	{
 		nByte opType; // The type of the operation.
 		nByte opCode; // The operation code.
-		short invocID; // Invocation Id
 		bool doDeserialize; // Flag for Deserialization
 		int returnCode; // return code of the operation.
 		int debugOpCount;

@@ -22,12 +22,17 @@ extern "C"
 	int getTimeUnix(void);
 #endif
 
-#ifdef  __cplusplus
-}
+#if defined _EG_MARMALADE_PLATFORM && defined I3D_ARCH_ARM
+	int EG_vswprintf(EG_CHAR* wcs, size_t maxlen, const EG_CHAR* format, va_list args);
+	int EG_swprintf(EG_CHAR* wcs, size_t maxlen, const EG_CHAR* format, ...);
 #endif
 
 #ifdef _EG_APPLE_PLATFORM
 	void clientCB(CFReadStreamRef stream, CFStreamEventType eventType, void* clientCallBackInfo);
 #endif
 
-#endif  // _PLATFORM_LAYER_
+#ifdef  __cplusplus
+}
+#endif
+
+#endif

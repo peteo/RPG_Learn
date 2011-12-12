@@ -85,4 +85,4 @@ struct _PlatformSpecific
 
 #endif // !_EG_BREW_PLATFORM
 
-#endif// __EG_TYPES_H__
+#endif

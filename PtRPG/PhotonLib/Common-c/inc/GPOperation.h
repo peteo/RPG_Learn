@@ -21,7 +21,7 @@
 		void EG_writeLong(EG_GpOperation* op, int64 lng);
 		void EG_writeFloat(EG_GpOperation* op, float val);
 		void EG_writeDouble(EG_GpOperation* op, double val);
-		bool EG_serialize(EG_GpOperation* op, EG_Object* serObject, bool setType, bool protocolOneFive);
+		bool EG_serialize(EG_GpOperation* op, EG_Object* serObject, bool setType, bool protocolOneFive, bool initEncryption);
 		void EG_serializeString(EG_GpOperation* op, EG_CHAR** str, bool setType);
 		void EG_serializeStringArray(EG_GpOperation* op, EG_CHAR** strArr, short length, bool setType);
 		void EG_serializeByteArray(EG_GpOperation* op, nByte* byteArr, short length, bool setType);
@@ -35,8 +35,10 @@
 		void EG_serializeLong(EG_GpOperation* op, int64* lng, bool setType);
 		void EG_serializeFloat(EG_GpOperation* op, float* flt, bool setType);
 		void EG_serializeDouble(EG_GpOperation* op, double* dbl, bool setType);
-		bool EG_serializeArrayObject_15(EG_GpOperation* op, EG_Object* obj);
-		bool EG_serializeArrayObject_15Helper(EG_GpOperation* op, void* pData, nByte type, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+		bool EG_serializeArray_15(EG_GpOperation* op, EG_Object* obj);
+		bool EG_serializeArray_15Helper(EG_GpOperation* op, void* pData, nByte type, nByte customType, unsigned int dimensions, short* arraySizes, unsigned int recursionDepth);
+		void EG_serializeArray_15Type(EG_GpOperation* op, void* pData, nByte type, nByte customType, short i);
+		void EG_serializeCustom(EG_GpOperation* op, void* data, nByte customType, bool setType);
 
 		bool EG_ReadBoolean(EG_GpOperation* op);
 		short EG_ReadShort(EG_GpOperation* op);
@@ -64,13 +66,16 @@
 		EG_Object* EG_DeserializeArray_15(EG_GpOperation* op);
 		EG_Object* EG_DeserializeFloat(EG_GpOperation* op);
 		EG_Object* EG_DeserializeDouble(EG_GpOperation* op);
+		EG_Object* EG_DeserializeObjectArray(EG_GpOperation* op);
+		EG_Object* EG_DeserializeCustom(EG_GpOperation* op, nByte customType);
+		void* EG_DeserializeCustomHelper(EG_GpOperation* op, nByte customType);
 
 
 
 		bool EG_GpserializeData(EG_GpOperation* op, bool protocolOneFive);
 		void EG_GpdeserializeData(EG_GpOperation* op);
 
-		void EG_setUrl(EG_GpOperation* op, char* url);
+		void EG_setUrl(EG_GpOperation* op, const char* url);
 		void EG_setOpType(EG_GpOperation* op, nByte opType);
 		void EG_setDoDeserialize(EG_GpOperation* op, bool doDeserialize);
 		void EG_setOperation(EG_GpOperation* op, nByte operation);

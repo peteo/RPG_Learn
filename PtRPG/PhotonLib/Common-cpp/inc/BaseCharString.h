@@ -26,14 +26,14 @@ namespace ExitGames
 	   Subclasses of this class should only be used to hold or pass strings and for
 	   conversions between string encodings.
 	   Please use class <link JString> for common string operations and modifications.*/
-	class BaseCharString : public Base
+	class BaseCharString : protected Base
 	{
 	public:
 		virtual operator const char* (void) const = 0;
 		virtual operator JString (void) const = 0;
+
 		virtual const char*	cstr(void) const = 0;
 		virtual JString JStringRepresentation(void) const = 0;
-
 	protected:
 		char* mBuffer;
 	};

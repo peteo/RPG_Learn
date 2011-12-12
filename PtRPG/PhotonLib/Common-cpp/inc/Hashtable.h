@@ -57,26 +57,29 @@ namespace ExitGames
 	   See Also
 	   <link Hashtable::put@Object &amp;@Object &amp;, put()> , <link Hashtable::getValue@Object &amp;@const, getValue()>
 	   , <link KeyObject> , <link ValueObject>                                                                            */
-	class Hashtable:protected Base
+	class Hashtable : protected Base
 	{
 	public:
 		Hashtable(void);
 		~Hashtable(void);
 
-		bool operator==(const Hashtable &toCompare) const;
-		bool operator!=(const Hashtable &toCompare) const;
-
 		Hashtable(const Hashtable& toCopy);
 		Hashtable& operator=(const Hashtable& toCopy);
+
+		bool operator==(const Hashtable &toCompare) const;
+		bool operator!=(const Hashtable &toCompare) const;
+		const Object& operator[](unsigned int index) const;
+		Object& operator[](unsigned int index);
+
 		void put(const Object& key, const Object& value);
-		const Object* getValue(const Object& key) const ;
+		const Object* getValue(const Object& key) const;
 		unsigned int size(void) const;
 		JVector<Object> keys(void) const;
 		void remove(const Object& key);
-		bool contains(const Object& key);
+		bool contains(const Object& key) const;
 		void removeAllElements(void);
-		JString& toString(JString& retStr, bool withTypes=false) const;
 		JString toString(bool withTypes=false) const;
+		JString& toString(JString& retStr, bool withTypes=false) const;
 	private:
 		static bool haveSameKey(const Object& one, const Object& two);
 		static JString toStringHelper(const Object& object, JString& retStr, bool withTypes=false, unsigned int recursionDepth=0);

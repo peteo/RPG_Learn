@@ -19,7 +19,7 @@ namespace ExitGames
 	   Description
 	   This is the current locale implementation of <link BaseCharString>.
 	   Please look at the doc of the abstract base class for more information.*/
-	class ANSIString : public BaseCharString
+	class ANSIString : protected BaseCharString
 	{
 	public:
 		ANSIString(void);
@@ -27,16 +27,19 @@ namespace ExitGames
 		ANSIString(const JString& wstr);
 		ANSIString(const char* str);
 		ANSIString(const EG_CHAR* wstr);
+		~ANSIString(void);
+
 		ANSIString& operator=(const ANSIString& Rhs);
 		ANSIString& operator=(const JString& Rhs);
 		ANSIString& operator=(const char* Rhs);
 		ANSIString& operator=(const EG_CHAR* Rhs);
+
 		operator const char* (void) const;
 		operator const EG_CHAR* (void) const;
 		operator JString (void) const;
+
 		const char*	cstr(void) const;
 		JString JStringRepresentation(void) const;
-		~ANSIString(void);
 	};
 
 #ifndef _EG_BREW_PLATFORM

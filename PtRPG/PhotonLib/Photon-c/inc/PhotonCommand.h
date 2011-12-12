@@ -22,9 +22,6 @@ typedef struct
 	int   ReliableSequenceNumber;
 } CommandHeader; 
 
-#define PhotonCommand_HEADER_LENGTH 12
-#define PhotonCommand_HEADER_FRAGMENT_LENGTH (PhotonCommand_HEADER_LENGTH + 20)
-
 typedef struct
 {
 	nByte  Ident;
@@ -94,6 +91,7 @@ extern "C"
   void PhotonCommand_CreateCopy(SPhotonCommand* pMe, SPhotonCommand* pSrc);
   void PhotonCommand_CreateCommand(SPhotonCommand* pMe, SPhotonPeer* pPeer, nByte cType, nByte* payload, unsigned int payloadSize);
   void PhotonCommand_CreateCommandFromBuffer(SPhotonCommand* pMe, SPhotonPeer* pPeer, nByte* pBuffer, unsigned int bufferSize, int* nRead, int sentTime);
+  void PhotonCommand_CreateCommandFromTcpBuffer(SPhotonCommand* pMe, SPhotonPeer* pPeer, nByte* pBuffer, unsigned int bufferSize, int* nRead);
   void PhotonCommand_createAck(SPhotonCommand* pMe, SPhotonPeer* pPeer, SPhotonCommand* commandToAck);
   void PhotonCommand_serialize(SPhotonCommand* pMe, nByte** buf, int* size);
 

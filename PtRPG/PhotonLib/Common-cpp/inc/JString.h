@@ -61,7 +61,7 @@ We made a few adjustments for Neutron/Photon and added some additional functiona
 
 namespace std
 {
-	template<class _Elem, class _Traits> class basic_ostream;
+	template<typename _Elem, typename _Traits> class basic_ostream;
 }
 
 #ifndef _EG_BREW_PLATFORM
@@ -82,7 +82,7 @@ namespace ExitGames
 	class JString 
 	{
 	public:
-		JString(void);
+		JString(unsigned int bufferlen=0);
 		JString(const char* const Value);
 		JString(const EG_CHAR* const Value);
 		JString(const JString& Value);
@@ -105,18 +105,18 @@ namespace ExitGames
 
 								operator const EG_CHAR* (void) const;
 
-		JString&			operator+=(const JString& Rhs);
-		JString&			operator+=(const char* const Rhs);
-		JString&			operator+=(const EG_CHAR* const Rhs);
-		JString&			operator+=(const UTF8String& Rhs);
-		JString&			operator+=(const ANSIString& Rhs);
-		JString&			operator+=(char aChar);
-		JString&			operator+=(EG_CHAR aWideChar);
-		JString&			operator+=(int aNum);
-		JString&			operator+=(int64 aNum);
-		JString&			operator+=(short aNum);
-		JString&			operator+=(float aNum);
-		JString&			operator+=(double aNum);
+		JString&				operator+=(const JString& Rhs);
+		JString&				operator+=(const char* const Rhs);
+		JString&				operator+=(const EG_CHAR* const Rhs);
+		JString&				operator+=(const UTF8String& Rhs);
+		JString&				operator+=(const ANSIString& Rhs);
+		JString&				operator+=(char aChar);
+		JString&				operator+=(EG_CHAR aWideChar);
+		JString&				operator+=(int aNum);
+		JString&				operator+=(int64 aNum);
+		JString&				operator+=(short aNum);
+		JString&				operator+=(float aNum);
+		JString&				operator+=(double aNum);
 
 		bool					operator==(const JString& Rhs) const;
 		bool					operator!=(const JString& Rhs) const;
@@ -128,12 +128,14 @@ namespace ExitGames
 		EG_CHAR					operator[](unsigned int Index) const;
 		EG_CHAR&				operator[](unsigned int Index);
 
+		unsigned int			capacity(void) const;
 		EG_CHAR					charAt(unsigned int index) const;
 		int						compareTo(const JString& anotherString) const;
 		const JString&			concat(const JString& str);
 		const EG_CHAR*			cstr(void) const;
 		JString					deleteChars(unsigned int start, unsigned int length);
 		bool					endsWith(const JString& suffix) const;
+		void					ensureCapacity(unsigned int minCapacity);
 		bool					equals(const JString& anotherString) const;
 		bool					equalsIgnoreCase(const JString& anotherString) const;
 		int						indexOf(char ch) const;
@@ -169,40 +171,15 @@ namespace ExitGames
 		unsigned int Length;	// Length of string
 
 		void GetBuffer(unsigned int MaxStrLen);
-		void Double( );
+		void Double(void);
 		void verifyIndex(unsigned int number) const;
-
-	private:
-		friend JString operator+(const JString& Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, const char* const Rsh);
-		friend JString operator+(const char* const Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, const EG_CHAR* const Rsh);
-		friend JString operator+(const EG_CHAR* const Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, const UTF8String& Rsh);
-		friend JString operator+(const UTF8String& Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, const ANSIString& Rsh);
-		friend JString operator+(const ANSIString& Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, char Rsh);
-		friend JString operator+(char Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, EG_CHAR Rsh);
-		friend JString operator+(EG_CHAR Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, int Rsh);
-		friend JString operator+(int Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, int64 Rsh);
-		friend JString operator+(int64 Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, short Rsh);
-		friend JString operator+(short Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, float Rsh);
-		friend JString operator+(float Lsh, const JString& Rsh);
-		friend JString operator+(const JString& Lsh, double Rsh);
-		friend JString operator+(double Lsh, const JString& Rsh);
 	};
 
 	/* Summary
 	   Operator<<.
 
 	   Used to print the JString to a std::wostream.*/
-	template<class _Elem, class _Traits>
+	template<typename _Elem, typename _Traits>
 	::std::basic_ostream<_Elem, _Traits>& operator<<(::std::basic_ostream<_Elem, _Traits>& stream, const JString& string)
 	{
 		return stream << string.cstr();
@@ -231,6 +208,60 @@ namespace ExitGames
 	JString operator+(float Lsh, const JString& Rsh);
 	JString operator+(const JString& Lsh, double Rsh);
 	JString operator+(double Lsh, const JString& Rsh);
+
+	bool operator==(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator==(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator==(const JString& LSh, const char* const Rsh);
+	bool operator==(const char* const LSh, const JString& Rsh);
+	bool operator==(const JString& LSh, const UTF8String& Rsh);
+	bool operator==(const UTF8String& LSh, const JString& Rsh);
+	bool operator==(const JString& LSh, const ANSIString& Rsh);
+	bool operator==(const ANSIString& LSh, const JString& Rsh);
+
+	bool operator!=(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator!=(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator!=(const JString& LSh, const char* const Rsh);
+	bool operator!=(const char* const LSh, const JString& Rsh);
+	bool operator!=(const JString& LSh, const UTF8String& Rsh);
+	bool operator!=(const UTF8String& LSh, const JString& Rsh);
+	bool operator!=(const JString& LSh, const ANSIString& Rsh);
+	bool operator!=(const ANSIString& LSh, const JString& Rsh);
+
+	bool operator<(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator<(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator<(const JString& LSh, const char* const Rsh);
+	bool operator<(const char* const LSh, const JString& Rsh);
+	bool operator<(const JString& LSh, const UTF8String& Rsh);
+	bool operator<(const UTF8String& LSh, const JString& Rsh);
+	bool operator<(const JString& LSh, const ANSIString& Rsh);
+	bool operator<(const ANSIString& LSh, const JString& Rsh);
+
+	bool operator>(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator>(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator>(const JString& LSh, const char* const Rsh);
+	bool operator>(const char* const LSh, const JString& Rsh);
+	bool operator>(const JString& LSh, const UTF8String& Rsh);
+	bool operator>(const UTF8String& LSh, const JString& Rsh);
+	bool operator>(const JString& LSh, const ANSIString& Rsh);
+	bool operator>(const ANSIString& LSh, const JString& Rsh);
+
+	bool operator<=(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator<=(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator<=(const JString& LSh, const char* const Rsh);
+	bool operator<=(const char* const LSh, const JString& Rsh);
+	bool operator<=(const JString& LSh, const UTF8String& Rsh);
+	bool operator<=(const UTF8String& LSh, const JString& Rsh);
+	bool operator<=(const JString& LSh, const ANSIString& Rsh);
+	bool operator<=(const ANSIString& LSh, const JString& Rsh);
+
+	bool operator>=(const JString& LSh, const EG_CHAR* const Rsh);
+	bool operator>=(const EG_CHAR* const LSh, const JString& Rsh);
+	bool operator>=(const JString& LSh, const char* const Rsh);
+	bool operator>=(const char* const LSh, const JString& Rsh);
+	bool operator>=(const JString& LSh, const UTF8String& Rsh);
+	bool operator>=(const UTF8String& LSh, const JString& Rsh);
+	bool operator>=(const JString& LSh, const ANSIString& Rsh);
+	bool operator>=(const ANSIString& LSh, const JString& Rsh);
 
 #ifndef _EG_BREW_PLATFORM
 }

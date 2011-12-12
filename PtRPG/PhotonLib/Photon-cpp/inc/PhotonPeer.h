@@ -7,13 +7,15 @@
 #ifndef __PHOTON_PEER_H
 #define __PHOTON_PEER_H
 
-#include "Photon.h"
 #include "PhotonListener.h"
 #include "Utils.h"
 #include "Hashtable.h"
 #include "JVector.h"
 #include "UTF8String.h"
 #include "ANSIString.h"
+#include "CustomType.h"
+#include "OperationResponse.h"
+#include "EventData.h"
 
 #ifndef _EG_BREW_PLATFORM
 namespace ExitGames
@@ -78,7 +80,7 @@ namespace ExitGames
 		#ifdef _EG_BREW_PLATFORM
 		PhotonPeer(PhotonListener* listener, PlatformSpecific* pPlatform);
 		#else
-		PhotonPeer(PhotonListener* listener);
+		PhotonPeer(PhotonListener* listener, bool useTcp = false);
 		#endif
 		~PhotonPeer(void);
 
@@ -86,14 +88,13 @@ namespace ExitGames
 		void Disconnect(void);
 		void service(bool dispatchIncomingCommands = true);
 		void serviceBasic(void);
-		short opCustom(nByte customOpCode, const Hashtable& customOpParameters, bool sendReliable, nByte channelID=0, bool encrypt=false);
+		bool opCustom(nByte customOpCode, const Hashtable& customOpParameters, bool sendReliable, nByte channelID=0, bool encrypt=false);
 		void sendOutgoingCommands(void);
 		bool dispatchIncomingCommands(void);
-		short opExchangeKeysForEncryption(void);
-		void deriveSharedKey(nByte* serverPublicKey);
+		bool establishEncryption(void);
 		void fetchServerTimestamp(void);
 
-		PhotonListener* getListener(void);
+		const PhotonListener* getListener(void);
 		int getServerTimeOffset(void);
 		int getServerTime(void);
 		int getBytesOut(void);
@@ -105,27 +106,28 @@ namespace ExitGames
 		void setTimePingInterval(int setTimePingInterval);
 		int getRoundTripTime(void);
 		int getRoundTripTimeVariance(void);
-		bool setDebugOutputLevel(PhotonPeer_DebugLevel debugLevel);
 		PhotonPeer_DebugLevel getDebugOutputLevel(void);
+		bool setDebugOutputLevel(PhotonPeer_DebugLevel debugLevel);
 		int getIncomingReliableCommandsCount(void);
 		short getPeerId(void);
 		int getSentTimeAllowance(void);
 		void setSentTimeAllowance(int setSentTimeAllowance);
-		unsigned int getQueuedIncomingCommands(void);
-		unsigned int getQueuedOutgoingCommands(void);
+		int getQueuedIncomingCommands(void);
+		int getQueuedOutgoingCommands(void);
 		JString getServerAddress(void);
 		bool getIsEncryptionAvailable(void);
+		short getPeerCount(void);
 	protected:
 		SPhotonPeer* m_pPhotonPeer;
 	private:
 		PhotonListener* m_pListener;
 
-		static void OnOperationResult(PhotonPeer* pPeer, nByte opCode, int returnCode, EG_HashTable* returnValues, short invocID);
+		static void OnOperationResult(PhotonPeer* pPeer, COperationResponse* cOperationResponse);
 		static void OnPeerStatus(PhotonPeer* pPeer, int statusCode);
-		static void OnEventAction(PhotonPeer* pPeer, nByte eventCode, EG_HashTable* returnValues);
+		static void OnEventAction(PhotonPeer* pPeer, CEventData* cEventData);
 		static void OnDebugReturn(PhotonPeer* pPeer, PhotonPeer_DebugLevel debugLevel, EG_CHAR* szDebugString);
 	};
 #ifndef _EG_BREW_PLATFORM
 }
 #endif
-#endif // _PHOTON_PEER_H
+#endif

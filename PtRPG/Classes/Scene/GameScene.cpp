@@ -487,13 +487,13 @@ void GameScene::textBoxUpdate(ccTime dt)
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
-void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID)
+void GameScene::onOperationResponse(const ExitGames::OperationResponse& operationResponse)
 {
-	switch(opCode)
+	switch(operationResponse.getOperationCode())
 	{
 		case ExitGameCode::CreateWorld:
 		{
-			if(returnCode == ExitGameCode::Ok)
+			if(operationResponse.getReturnCode() == ExitGameCode::Ok)
 			{
 				_Link->_state = stateCreateWorlded;
 				//创建世界成功
@@ -504,11 +504,11 @@ void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Ha
 			
 		case ExitGameCode::EnterWorld:
 		{
-			if(returnCode == ExitGameCode::WorldNotFound)
+			if(operationResponse.getReturnCode() == ExitGameCode::WorldNotFound)
 			{
 				_Link->CreateWorld();
 			}
-			else if(returnCode == ExitGameCode::Ok)
+			else if(operationResponse.getReturnCode() == ExitGameCode::Ok)
 			{
 				_Link->_state = stateEnterWorlded;
 				//加入世界成功
@@ -531,7 +531,7 @@ void GameScene::PhotonPeerOperationResult(nByte opCode, int returnCode, const Ha
 	}
 }
 
-void GameScene::PhotonPeerStatus(int statusCode)
+void GameScene::onStatusChanged(int statusCode)
 {
 	switch(statusCode)
 	{
@@ -549,18 +549,29 @@ void GameScene::PhotonPeerStatus(int statusCode)
 	}
 }
 
-void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent)
+void GameScene::onEvent(const ExitGames::EventData& eventData)
 {
-	switch (eventCode)
+	ExitGames::Hashtable testHash = eventData.getParameters();
+
+	switch (eventData.getCode())
 	{
 		case ExitGameCode::ItemMoved:
 		{
 			CCString * pItemID = NULL;
 			ExitGames::JString pStrItemID;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			/*
+			if(eventData.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
 			{
-				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(eventData.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
+				pItemID->autorelease();
+			}
+			*/
+
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			{
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
 				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
 				pItemID->autorelease();
 			}
@@ -574,14 +585,14 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			float* PositionArry    = NULL;
 			float* RotationArry    = NULL;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))
-				OldPositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))).getDataCopy();
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))
+				OldPositionArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::OldPosition)))).getDataCopy();
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
-				PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+				PositionArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
-				RotationArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
+				RotationArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
 			
 			float Pos[2];
 			//坐标X
@@ -673,9 +684,9 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 				}
 			}
 			
-			FREEIF(OldPositionArry);
-			FREEIF(PositionArry);
-			FREEIF(RotationArry);
+			FREE(OldPositionArry);
+			FREE(PositionArry);
+			FREE(RotationArry);
 		}
 			break;
 		case ExitGameCode::ItemDestroyed:
@@ -685,9 +696,9 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			CCString * pItemID = NULL;
 			ExitGames::JString pStrItemID;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
 			{
-				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
 				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
 				pItemID->autorelease();
 			}
@@ -732,9 +743,9 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			CCString * pItemID = NULL;
 			ExitGames::JString pStrItemID;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
 			{
-				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
 				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
 				pItemID->autorelease();
 			}
@@ -744,11 +755,11 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 				float* PositionArry    = NULL;
 				float* RotationArry    = NULL;
 				
-				if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
-					PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+				if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+					PositionArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
 				
-				if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
-					RotationArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
+				if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))
+					RotationArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Rotation)))).getDataCopy();
 				
 				float Pos[2];
 				Pos[0] = PositionArry[0];
@@ -866,8 +877,8 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 				
 				CC_SAFE_DELETE(pSpritName);
 				
-				FREEIF(PositionArry);
-				FREEIF(RotationArry);
+				FREE(PositionArry);
+				FREE(RotationArry);
 			}
 		}
 			break;
@@ -878,9 +889,9 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			CCString * pItemID = NULL;
 			ExitGames::JString pStrItemID;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
 			{
-				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
 				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
 				pItemID->autorelease();
 			}
@@ -912,16 +923,16 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			CCString * pItemID = NULL;
 			ExitGames::JString pStrItemID;
 			
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))
 			{
-				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
+				pStrItemID = (ExitGames::ValueObject<ExitGames::JString>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::ItemId)))).getDataCopy();
 				pItemID = new CCString(pStrItemID.ANSIRepresentation().cstr());
 				pItemID->autorelease();
 			}
 			
 			float* PositionArry    = NULL;
-			if(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
-				PositionArry = (ExitGames::ValueObject<float*>(photonEvent.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
+			if(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))
+				PositionArry = (ExitGames::ValueObject<float*>(testHash.getValue(ExitGames::KeyObject<nByte>((nByte)ExitGameCode::Position)))).getDataCopy();
 			
 			/*
 			for(NVRemotePlayRadar * pRemotePlayRadar in _RadarView.RemotePlayRadarArray)
@@ -940,7 +951,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 			}
 			*/
 			
-			FREEIF(PositionArry);
+			FREE(PositionArry);
 		}
 			break;
 		default:
@@ -948,7 +959,7 @@ void GameScene::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEve
 	}
 }
 
-void GameScene::PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string)
+void GameScene::debugReturn(PhotonPeer_DebugLevel debugLevel, const ExitGames::JString& string)
 {
 	
 }

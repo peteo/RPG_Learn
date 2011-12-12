@@ -7,43 +7,39 @@
 #ifndef __KEY_OBJECT_H
 #define __KEY_OBJECT_H
 
-#include "Object.h"
+#include "ConfirmAllowedKey.h"
 
 #ifndef _EG_BREW_PLATFORM
 namespace ExitGames
 {
 #endif
+
 	/* Summary
 	   Container class template for objects to be stored as keys in
 	   a Hashtable.
 	   Description
 	   Please refer to <link Hashtable> for more information and an
 	   \example.                                                    */
-	template <class Etype>
-	class KeyObject:public Object
+	template <typename Etype>
+	class KeyObject : public Object
 	{
 	public:
 		KeyObject(const KeyObject<Etype> &toCopy);
-
+		KeyObject(const Object& obj);
 		KeyObject(const Object* const obj);
-
-		KeyObject(nByte data);
-		KeyObject(short data);
-		KeyObject(int data);
-		KeyObject(int64 data);
-		KeyObject(const JString& data);
-		KeyObject(const char* data);
-		KeyObject(const wchar_t* data);
-
+		KeyObject(typename ConfirmAllowedKey<Etype>::type data);
 		~KeyObject(void);
+
+		KeyObject<Etype>& operator=(const KeyObject<Etype>& toCopy);
+		KeyObject<Etype>& operator=(const Object& toCopy);
 
 		Etype getDataCopy(void);
 		Etype* getDataAddress(void);
 
 	private:
-		void convert(const Object* const obj, nByte type);
+		typedef Object super;
 
-		KeyObject<Etype>& operator=(const KeyObject<Etype>& notToUse);
+		void convert(const Object* const obj, nByte type);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +55,7 @@ namespace ExitGames
 	   \object, you want to create.
 	   Parameters
 	   toCopy :  The object to copy.                                */
-	template<class Etype>
+	template<typename Etype>
 	KeyObject<Etype>::KeyObject(const KeyObject<Etype>& toCopy) : Object(toCopy)
 	{
 	}
@@ -69,7 +65,7 @@ namespace ExitGames
 	/* Summary
 	   Constructor.
 	   
-	   Creates an object out of a deep copy of the passed <link Object>.
+	   Creates an object out of a deep copy of the passed <link Object>&.
 	   
 	   If the type of the content of the passed object does not
 	   match the template overload of the object to create, an empty
@@ -78,35 +74,11 @@ namespace ExitGames
 	   and <link KeyObject::getDataAddress, getDataAddress()> return
 	   0.
 	   Parameters
-	   obj :  The <link Object> to copy.                                 */
-	template<>
-	inline KeyObject<nByte>::KeyObject(const Object* const obj)
+	   obj :  The <link Object>& to copy.                                 */
+	template <typename Etype>
+	KeyObject<Etype>::KeyObject(const Object& obj)
 	{
-		convert(obj, EG_BYTE);
-	}
-
-	template<>
-	inline KeyObject<short>::KeyObject(const Object* const obj)
-	{
-		convert(obj, EG_SHORT);
-	}
-
-	template<>
-	inline KeyObject<int>::KeyObject(const Object* const obj)
-	{
-		convert(obj, EG_INTEGER);
-	}
-
-	template<>
-	inline KeyObject<int64>::KeyObject(const Object* const obj)
-	{
-		convert(obj, EG_LONG);
-	}
-
-	template<>
-	inline KeyObject<JString>::KeyObject(const Object* const obj)
-	{
-		convert(obj, EG_STRING);
+		convert(&obj, ConfirmAllowedKey<Etype>::typeName);
 	}
 
 
@@ -114,104 +86,35 @@ namespace ExitGames
 	/* Summary
 	   Constructor.
 	   
-	   Creates an object out of a deep copy of the passed nByte.
+	   Creates an object out of a deep copy of the passed <link Object>*.
 	   
-	   Exists only for the nByte template overload of this class.
+	   If the type of the content of the passed object does not
+	   match the template overload of the object to create, an empty
+	   \object is created instead of a copy of the passed object,
+	   which leads to <link KeyObject::getDataCopy, getDataCopy()>
+	   and <link KeyObject::getDataAddress, getDataAddress()> return
+	   0.
 	   Parameters
-	   data :  The nByte to copy.                                 */
-	template <>
-	inline KeyObject<nByte>::KeyObject(nByte data)
+	   obj :  The <link Object>* to copy.                                 */
+	template <typename Etype>
+	KeyObject<Etype>::KeyObject(const Object* const obj)
 	{
-		set((void*)&data, EG_BYTE, true);
+		convert(obj, ConfirmAllowedKey<Etype>::typeName);
 	}
+
+
 
 	/* Summary
 	   Constructor.
 	   
-	   Creates an object out of a deep copy of the passed short.
+	   Creates an object out of a deep copy of the passed Etype.
 	   
-	   Exists only for the short template overload of this class.
 	   Parameters
-	   data :  The short to copy.                                 */
-	template <>
-	inline KeyObject<short>::KeyObject(short data)
+	   data :  The value to copy. Has to be of a supported type.         */
+	template <typename Etype>
+	KeyObject<Etype>::KeyObject(typename ConfirmAllowedKey<Etype>::type data)
 	{
-		set((void*)&data, EG_SHORT, true);
-	}
-
-	/* Summary
-	   Constructor.
-	   
-	   Creates an object out of a deep copy of the passed int.
-	   
-	   Exists only for the int template overload of this class.
-	   Parameters
-	   data :  The int to copy.                                 */
-	template <>
-	inline KeyObject<int>::KeyObject(int data)
-	{
-		set((void*)&data, EG_INTEGER, true);
-	}
-
-	/* Summary
-	   Constructor.
-	   
-	   Creates an object out of a deep copy of the passed int64.
-	   
-	   Exists only for the int64 template overload of this class.
-	   Parameters
-	   data :  The int64 to copy.                                 */
-	template <>
-	inline KeyObject<int64>::KeyObject(int64 data)
-	{
-		set((void*)&data, EG_LONG, true);
-	}
-
-	/* Summary
-	   Constructor.
-	   
-	   Creates an object out of a deep copy of the passed <link JString>.
-	   
-	   Exists only for the <link JString> template overload of this
-	   class.
-	   Parameters
-	   data :  The <link JString> to copy.                                */
-	template <>
-	inline KeyObject<JString>::KeyObject(const JString& data)
-	{
-		set((void*)&data, EG_STRING, true);
-	}
-
-	/* Summary
-	   Constructor.
-	   
-	   Creates an object out of a deep copy of the passed char*, which is implicitly converted into a <link JString>.
-	   
-	   Exists only for the <link JString> template overload of this
-	   class.
-	   Parameters
-	   data :  The <link JString> to copy.                                */
-	template <>
-	inline KeyObject<JString>::KeyObject(const char* data)
-	{
-		JString temp = data;
-		set((void*)&temp, EG_STRING, true);
-	}
-
-	/* Summary
-	   Constructor.
-	   
-	   Creates an object out of a deep copy of the passed wchar_t*, which is implicitly converted into a <link JString>.
-	   
-	   Exists only for the <link JString> template overload of this
-	   class.
-	   Parameters
-	   data :  The <link JString> to copy.                                */
-	template <>
-	inline KeyObject<JString>::KeyObject(const wchar_t* data)
-	{
-		JString temp = data;
-		set((void*)&temp, EG_STRING, true);
+		set(&data, ConfirmAllowedKey<Etype>::typeName, 0, true);
 	}
 
 
@@ -222,9 +125,39 @@ namespace ExitGames
 
 	/* Summary
 	   Destructor. */
-	template <class Etype>
+	template <typename Etype>
 	KeyObject<Etype>::~KeyObject(void)
 	{
+	}
+
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// OPERATORS                                                                                                   //
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/* Summary
+	   Operator = : Makes a deep copy of its right operand into its
+	   left operand. This overwrites old data in the left operand.  */
+	template<typename Etype>
+	KeyObject<Etype>& KeyObject<Etype>::operator=(const KeyObject<Etype>& toCopy)
+	{
+		return super::operator=(toCopy);
+	}
+
+	/* Summary
+	   Operator = : Makes a deep copy of its right operand into its
+	   left operand. This overwrites old data in the left operand.
+
+	   If the type of the content of the right operand does not
+	   match the template overload of the left operand, then the left
+	   operand stays unchanged.  */
+	template<typename Etype>
+	KeyObject<Etype>& KeyObject<Etype>::operator=(const Object& toCopy)
+	{
+		if(ConfirmAllowedKey<Etype>::typeName == toCopy.getType())
+			*this = super::operator=(toCopy);
+		return *this;
 	}
 
 
@@ -253,38 +186,11 @@ namespace ExitGames
 	   Returns
 	   a deep copy of the content of the object if successful, 0 or
 	   an empty object otherwise.                                             */
-	template <>
-	inline nByte KeyObject<nByte>::getDataCopy(void)
+	template <typename Etype>
+	inline Etype KeyObject<Etype>::getDataCopy(void)
 	{
-		if(_type == EG_BYTE)
-			return *(nByte*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline short KeyObject<short>::getDataCopy(void)
-	{
-		if(_type == EG_SHORT)
-			return *(short*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline int KeyObject<int>::getDataCopy(void)
-	{
-		if(_type == EG_INTEGER)
-			return *(int*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline int64 KeyObject<int64>::getDataCopy(void)
-	{
-		if(_type == EG_LONG)
-			return *(int64*)_data;
+		if(_type == ConfirmAllowedKey<Etype>::typeName)
+			return *(Etype*)_data;
 		else
 			return 0;
 	}
@@ -317,47 +223,11 @@ namespace ExitGames
 	   Returns
 	   the address of the original content of the object, if
 	   successful, 0 otherwise.                                      */
-	template <>
-	inline nByte* KeyObject<nByte>::getDataAddress(void)
+	template <typename Etype>
+	inline Etype* KeyObject<Etype>::getDataAddress(void)
 	{
-		if(_type == EG_BYTE)
-			return (nByte*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline short* KeyObject<short>::getDataAddress(void)
-	{
-		if(_type == EG_SHORT)
-			return (short*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline int* KeyObject<int>::getDataAddress(void)
-	{
-		if(_type == EG_INTEGER)
-			return (int*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline int64* KeyObject<int64>::getDataAddress(void)
-	{
-		if(_type == EG_LONG)
-			return (int64*)_data;
-		else
-			return 0;
-	}
-
-	template <>
-	inline JString* KeyObject<JString>::getDataAddress(void)
-	{
-		if(_type == EG_STRING)
-			return (JString*)_data;
+		if(_type == ConfirmAllowedKey<Etype>::typeName)
+			return (Etype*)_data;
 		else
 			return 0;
 	}
@@ -368,31 +238,17 @@ namespace ExitGames
 	// INTERNALS                                                                                                   //
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	template<class Etype>
+	template<typename Etype>
 	void KeyObject<Etype>::convert(const Object* const obj, nByte type)
 	{
-		if(obj)
-		{
-			if(type == obj->getType())
-			{
-				_type = 0;
-				Object* temp = this;
-				*temp = *obj;
-			}
-			else
-			{
-				_type = 0;
-				_size = 0;
-				_dimensions = 0;
-				_data = 0;
-			}
-		}
+		if(obj && type == obj->getType())
+			*this = *obj;
 		else
 		{
 			_type = 0;
-			_size = 0;
+			_size = NULL;
 			_dimensions = 0;
-			_data = 0;
+			_data = NULL;
 		}
 	}
 

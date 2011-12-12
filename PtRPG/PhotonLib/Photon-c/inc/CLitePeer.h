@@ -15,23 +15,23 @@ extern "C"
 {
 #endif
 	// public API functions
-	short LitePeer_opRaiseEvent(SPhotonPeer* p, bool sendReliable, EG_HashTable* evData, nByte eventCode, nByte channelId, int* targetActors, short numTargetActors);
-	short LitePeer_opJoin(SPhotonPeer* p, EG_CHAR* gameId);
-	short LitePeer_opJoinWithProperties(SPhotonPeer* p, EG_CHAR* gameId, EG_HashTable* gameProperties, EG_HashTable* actorProperties, bool broadcastActorProperties);
-	short LitePeer_opLeave(SPhotonPeer* p, EG_CHAR* gameId);
-	short LitePeer_opSetPropertiesOfActor(SPhotonPeer* pSPeer, int actorNr, EG_HashTable* properties, bool broadcast, nByte channelId);
-	short LitePeer_opSetPropertiesOfGame(SPhotonPeer* pSPeer, EG_HashTable* properties, bool broadcast, nByte channelId);
-	short LitePeer_opGetProperties(SPhotonPeer* pSPeer, nByte channelId);
-	short LitePeer_opGetPropertiesOfActorByStringKeys(SPhotonPeer* pSPeer, int* actorNrList, short numActors, EG_CHAR** actorProperties, short numActorProperties, nByte channelId);
-	short LitePeer_opGetPropertiesOfActorByByteKeys(SPhotonPeer* pSPeer, int* actorNrList, short numActors, nByte* actorProperties, short numActorProperties, nByte channelId);
-	short LitePeer_opGetPropertiesOfGameByStringKeys(SPhotonPeer* pSPeer, EG_CHAR** gameProperties, short numGameProperties, nByte channelId);
-	short LitePeer_opGetPropertiesOfGameByByteKeys(SPhotonPeer* pSPeer, nByte* gameProperties, short numGameProperties, nByte channelId);
+	bool LitePeer_opRaiseEvent(SPhotonPeer* pPeer, bool sendReliable, EG_HashTable* evData, nByte eventCode, nByte channelId, int* targetActors, short numTargetActors);
+	bool LitePeer_opJoin(SPhotonPeer* pPeer, EG_CHAR* gameId);
+	bool LitePeer_opJoinWithProperties(SPhotonPeer* pPeer, EG_CHAR* gameId, EG_HashTable* gameProperties, EG_HashTable* actorProperties, bool broadcastActorProperties);
+	bool LitePeer_opLeave(SPhotonPeer* pPeer, EG_CHAR* gameId);
+	bool LitePeer_opSetPropertiesOfActor(SPhotonPeer* pPeer, int actorNr, EG_HashTable* properties, bool broadcast, nByte channelId);
+	bool LitePeer_opSetPropertiesOfGame(SPhotonPeer* pPeer, EG_HashTable* properties, bool broadcast, nByte channelId);
+	bool LitePeer_opGetProperties(SPhotonPeer* pPeer, nByte channelId);
+	bool LitePeer_opGetPropertiesOfActorByStringKeys(SPhotonPeer* pPeer, EG_CHAR** actorProperties, short numActorProperties, int* actorNrList, short numActors, nByte channelId);
+	bool LitePeer_opGetPropertiesOfActorByByteKeys(SPhotonPeer* pPeer, nByte* actorProperties, short numActorProperties, int* actorNrList, short numActors, nByte channelId);
+	bool LitePeer_opGetPropertiesOfGameByStringKeys(SPhotonPeer* pPeer, EG_CHAR** gameProperties, short numGameProperties, nByte channelId);
+	bool LitePeer_opGetPropertiesOfGameByByteKeys(SPhotonPeer* pPeer, nByte* gameProperties, short numGameProperties, nByte channelId);
 
 	// internals
-	short LitePeer_internal_opRaiseEvent(SPhotonPeer* p, bool sendReliable, EG_HashTable* evData, nByte eventCode, nByte channelId, int* targetActors, short numTargetActors, bool copy);
-	short LitePeer_internal_opJoin(SPhotonPeer* p, EG_CHAR* gameId, EG_HashTable* gameProperties, EG_HashTable* actorProperties, bool broadcastActorProperties, bool copy);
-	short LitePeer_internal_opSetPropertiesOfActor(SPhotonPeer* pSPeer, int actorNr, EG_HashTable* properties, bool broadcast, nByte channelId, bool copy);
-	short LitePeer_internal_opSetPropertiesOfGame(SPhotonPeer* pSPeer, EG_HashTable* properties, bool broadcast, nByte channelId, bool copy);
+	bool LitePeer_internal_opRaiseEvent(SPhotonPeer* pPeer, bool sendReliable, EG_HashTable* evData, nByte eventCode, nByte channelId, int* targetActors, short numTargetActors, bool copy);
+	bool LitePeer_internal_opJoin(SPhotonPeer* pPeer, EG_CHAR* gameId, EG_HashTable* gameProperties, EG_HashTable* actorProperties, bool broadcastActorProperties, bool copy);
+	bool LitePeer_internal_opSetPropertiesOfActor(SPhotonPeer* pPeer, int actorNr, EG_HashTable* properties, bool broadcast, nByte channelId, bool copy);
+	bool LitePeer_internal_opSetPropertiesOfGame(SPhotonPeer* pPeer, EG_HashTable* properties, bool broadcast, nByte channelId, bool copy);
 #ifdef __cplusplus
 }
 #endif 

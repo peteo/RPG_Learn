@@ -8,8 +8,6 @@
 #define __UTILS_H
 
 //////////////////////////////////////////////////////////////////////////
-// Utils
-//
 // For internal use only
 //////////////////////////////////////////////////////////////////////////
 
@@ -20,20 +18,24 @@
 namespace ExitGames
 {
 #endif
-	/* \internal */
-	class Utils:protected Base
+	// internal
+	class Utils : protected Base
 	{
 	private:
 		friend class NeutronSession;
 		friend class NeutronGame;
 		friend class PhotonPeer;
 		friend class LitePeer;
+		friend class EventData;
+		friend class OperationResponse;
 
 	protected:
 		static EG_HashTable* convertToEGHash(const Hashtable* const origHash, EG_HashTable* convHash=NULL);
 		static EG_Vector* convertToEGVector(const JVector<Object>* const origVec);
+		static EG_Object* convertToEGObject(const Object* const origObj, EG_Object* convObj=NULL);
 		static Hashtable* convertToOOPHash(const EG_HashTable* const origHash, Hashtable* convHash=NULL);
 		static JVector<Object>* convertToOOPVector(const EG_Vector* const origVec);
+		static Object* convertToOOPObject(const EG_Object* const origObj, Object* convObj=NULL);
 		static void convertObjectsInArrayToC(const Object& cppObj, void** cData, unsigned int recursionDepth=0);
 		static void convertObjectsInCArrayToCPP(const EG_Object& cObj, void** cppData);
 	};
@@ -41,4 +43,4 @@ namespace ExitGames
 }
 #endif
 
-#endif // _UTILS_H_
+#endif

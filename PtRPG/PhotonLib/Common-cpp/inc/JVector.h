@@ -95,43 +95,40 @@ namespace ExitGames
 	   to be of type Object, and all of these Objects have to
 	   contain the same data type, e.g. Object\<int\>. </i></b>      */
 	template <class Etype>
-	class JVector:protected Base
+	class JVector : protected Base
 	{
 	public:
-		JVector(bool isObject=true, unsigned int initialCapacity=40, unsigned int capacityIncrement=10);
-		JVector(const JVector<Etype>& rhv);
-		JVector& operator=(const JVector<Etype> &rhv);
+		JVector(unsigned int initialCapacity=40, unsigned int capacityIncrement=10);
 		/* Summary
 		Destructor. */
 		~JVector(void);
 
-		
-		unsigned int capacity() const;
+		JVector(const JVector<Etype>& rhv);
+		JVector& operator=(const JVector<Etype> &rhv);
+
+		const Etype & operator[](unsigned int index) const;
+		Etype & operator[](unsigned int index);
+
+		unsigned int capacity(void) const;
 		bool contains(const Etype& elem) const;
-		const Etype& firstElement() const;
+		const Etype& firstElement(void) const;
 		int indexOf(const Etype& elem) const;
-		bool isEmpty() const;
+		bool isEmpty(void) const;
 		const Etype& lastElement() const;
 		int lastIndexOf(const Etype& elem) const;
-		unsigned int size() const;
+		unsigned int size(void) const;
 		void copyInto(Etype* array) const;
 
-		
 		void addElement(const Etype& obj);
 		void ensureCapacity(unsigned int minCapacity);
 		void removeAllElements(void);
 		bool removeElement(const Etype& obj);
-		void trimToSize();
+		void trimToSize(void);
 
 		Etype & elementAt(unsigned int index) const;		  
 		void insertElementAt(const Etype &obj, unsigned int index); 
 		void removeElementAt(unsigned int index);				   
 		void setElementAt(const Etype &obj, unsigned int index);	
-
-
-		
-		const Etype & operator[](unsigned int index) const;
-		Etype & operator[](unsigned int index);
 
 	protected:
 		int min(unsigned int left, unsigned int right) const;
@@ -140,7 +137,6 @@ namespace ExitGames
 		unsigned int m_capacity;
 		unsigned int m_increment;
 		Etype** m_pData;
-		bool m_isObject;
 	};
 
 
@@ -178,17 +174,11 @@ namespace ExitGames
 	                        more often, if you choose a too big one,
 	                        possibly memory is wasted. The default is
 	                        10.                                         */
-	template <class Etype>
-	JVector<Etype>::JVector(bool isObject, unsigned int initialCapacity, unsigned int capacityIncrement) 
+	template <class Etype> JVector<Etype>::JVector(unsigned int initialCapacity, unsigned int capacityIncrement) 
 	{
 		m_size = 0;
 		m_capacity = initialCapacity;
-		m_isObject = isObject;
-		/*if (m_isObject) 
-			m_pData = new Etype*[m_capacity];
-		else*/
-		m_pData = (Etype**)MALLOC(m_capacity*sizeof(void*));
-
+		m_pData = new Etype*[m_capacity];
 		m_increment = capacityIncrement;
 	}
 
@@ -201,30 +191,15 @@ namespace ExitGames
 	   \object, you want to create.
 	   Parameters
 	   toCopy :  The object to copy.                                */
-	template <class Etype>
-	JVector<Etype>::JVector(const JVector<Etype>& rhv)
+	template <class Etype> JVector<Etype>::JVector(const JVector<Etype>& rhv)
 	{
 		m_size = rhv.m_size;
 		m_capacity = rhv.m_capacity;
-		m_isObject = rhv.m_isObject;
-		/*if(m_isObject)
-			m_pData = new Etype*[m_capacity];
-		else*/
-		m_pData = (Etype**)MALLOC(m_capacity*sizeof(void*));
+		m_pData = new Etype*[m_capacity];
 		m_increment = rhv.m_increment;
 
 		for(unsigned int i=0; i<m_size; i++)
-		{
-			if(m_isObject)
-				m_pData[i] = new Etype(*(rhv.m_pData[i]));
-			else
-			{
-				Etype* temp = (Etype*)MALLOC(sizeof(Etype));
-				*temp=*(rhv.m_pData[i]);
-				m_pData[i] = temp;
-			}
-			
-		}
+			m_pData[i] = new Etype(*(rhv.m_pData[i]));
 	}
 
 	/* Summary
@@ -234,45 +209,29 @@ namespace ExitGames
 	   Both operands have to be of the same template overload.
 	   
 	   This overwrites old data in the left operand.                 */
-	template <class Etype>
-	JVector<Etype>& JVector<Etype>::operator=(const JVector<Etype> &rhv)
+	template <class Etype> JVector<Etype>& JVector<Etype>::operator=(const JVector<Etype> &rhv)
 	{
-		/*if(m_isObject)
-			m_pData = new Etype*[ m_capacity ];
-		else*/
-
 		if(m_pData)
 		{
 			removeAllElements();
-			FREE(m_pData);
+			delete[] m_pData;
 		}
 
 		m_size = rhv.m_size;
 		m_capacity = rhv.m_capacity;
-		m_isObject = rhv.m_isObject;
 
-		m_pData = (Etype**)MALLOC(m_capacity*sizeof(void*));
+		m_pData = new Etype*[m_capacity];
 		m_increment = rhv.m_increment;
 
 		for(unsigned int i=0; i<m_size; i++)
-		{
-			if(m_isObject)
-				m_pData[i] = new Etype(*(rhv.m_pData[i]));
-			else
-			{
-				Etype* temp = (Etype*)MALLOC(sizeof(Etype));
-				*temp=*(rhv.m_pData[i]);
-				m_pData[i] = temp;
-			}
-		}
+			m_pData[i] = new Etype(*(rhv.m_pData[i]));
 		return *this;
 	}
 
-	template <class Etype>
-	JVector<Etype>::~JVector()
+	template <class Etype> JVector<Etype>::~JVector()
 	{
 		removeAllElements();
-		FREE(m_pData);
+		delete[] m_pData;
 	}
 
 	/* Summary
@@ -280,8 +239,7 @@ namespace ExitGames
 	   Returns
 	   the current capacity.                                */
 	template <class Etype>
-	unsigned int
-	JVector<Etype>::capacity() const
+	unsigned int JVector<Etype>::capacity(void) const
 	{
 		return m_capacity;
 	}
@@ -296,8 +254,7 @@ namespace ExitGames
 	   Returns
 	   true, if the element was found, false otherwise.             */
 	template <class Etype>
-	bool
-	JVector<Etype>::contains(const Etype &elem) const
+	bool JVector<Etype>::contains(const Etype &elem) const
 	{
 		for(unsigned int i=0; i<m_size; i++)
 		{
@@ -319,8 +276,7 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                     */
 	template <class Etype>
-	void
-	JVector<Etype>::copyInto(Etype* array) const
+	void JVector<Etype>::copyInto(Etype* array) const
 	{
 		for(unsigned int i=0; i<m_size; i++)
 			array[i] = *m_pData[i];
@@ -337,8 +293,7 @@ namespace ExitGames
 	   Returns
 	   the element at the passed index.                            */
 	template <class Etype>
-	Etype &
-	JVector<Etype>::elementAt(unsigned int index) const
+	Etype& JVector<Etype>::elementAt(unsigned int index) const
 	{
 		verifyIndex(index);
 		return *m_pData[index];
@@ -350,8 +305,7 @@ namespace ExitGames
 	   Returns
 	   the first element.                                      */
 	template <class Etype>
-	const Etype &
-	JVector<Etype>::firstElement() const
+	const Etype& JVector<Etype>::firstElement(void) const
 	{
 		verifyIndex(0);
 		return *m_pData[0];
@@ -367,14 +321,11 @@ namespace ExitGames
 	   the index of the first found of the passed element or -1, if
 	   the element could not be found at all.                        */
 	template <class Etype>
-	int
-	JVector<Etype>::indexOf(const Etype &elem) const
+	int JVector<Etype>::indexOf(const Etype &elem) const
 	{
 		for(unsigned int i=0; i<m_size; i++)
-		{
 			if(*m_pData[i] == elem)
 				return i;
-		}
 		return -1;
 	}
 
@@ -384,8 +335,7 @@ namespace ExitGames
 	   true, if the JVector is empty, or false, if it contains at
 	   least one element.                                         */
 	template <class Etype>
-	bool
-	JVector<Etype>::isEmpty() const
+	bool JVector<Etype>::isEmpty(void) const
 	{
 		return m_size == 0;
 	}
@@ -396,8 +346,7 @@ namespace ExitGames
 	   Returns
 	   the last element.                                      */
 	template <class Etype>
-	const Etype &
-	JVector<Etype>::lastElement() const
+	const Etype& JVector<Etype>::lastElement() const
 	{
 		verifyIndex(0);
 		return *m_pData[m_size - 1];
@@ -413,24 +362,11 @@ namespace ExitGames
 	   the index of the first found of the passed element or -1, if
 	   the element could not be found at all.                        */
 	template <class Etype>
-	int
-	JVector<Etype>::lastIndexOf(const Etype &elem) const
+	int JVector<Etype>::lastIndexOf(const Etype &elem) const
 	{
-		//check for empty vector
-		if(m_size == 0)
-			return -1;
-
-		unsigned int i = m_size;
-		
-		do
-		{
-			i -= 1;
+		for(unsigned int i=m_size; i; i--)
 			if(*m_pData[i] == elem)
 				return i;
-
-		}
-		while(i);
-
 		return -1;
 	}
 
@@ -439,8 +375,7 @@ namespace ExitGames
 	   Returns
 	   the size.                              */
 	template <class Etype>
-	unsigned int
-	JVector<Etype>::size() const
+	unsigned int JVector<Etype>::size(void) const
 	{
 		return m_size;
 	}
@@ -459,20 +394,12 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                      */
 	template <class Etype>
-	void
-	JVector<Etype>::addElement(const Etype &obj)
+	void JVector<Etype>::addElement(const Etype &obj)
 	{
 		if(m_size == m_capacity)
 			ensureCapacity(m_capacity+m_increment);
-
-		if(m_isObject)
-			m_pData[m_size++] = new Etype(obj);
-		else
-		{
-			Etype* temp = (Etype*)MALLOC(sizeof(Etype));
-			*temp = obj;
-			m_pData[m_size++] = temp;
-		}
+		m_pData[m_size++] = new Etype;
+		*m_pData[m_size-1] = obj;
 	}
 
 	/* Summary
@@ -487,30 +414,21 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                      */
 	template <class Etype>
-	void
-	JVector<Etype>::ensureCapacity(unsigned int minCapacity)
+	void JVector<Etype>::ensureCapacity(unsigned int minCapacity)
 	{
 		if(minCapacity > m_capacity)
 		{
 			unsigned int i;
 			m_capacity = minCapacity;
-			//Etype** temp = NULL;
-			/*if (m_isObject)
-				temp = new Etype*[ m_capacity ];
-			else*/
-			Etype**	temp = (Etype**) MALLOC(m_capacity*sizeof(void*));
-			
+			Etype** temp = new Etype*[m_capacity];
+
 			//copy all the elements over upto newsize
 			for(i=0; i<m_size; i++)
 				temp[i] = m_pData[i];
 
-			/*if (m_isObject)
-				delete [] m_pData;
-			else*/
-			FREE(m_pData);
-			
-			m_pData = temp;
+			delete[] m_pData;
 
+			m_pData = temp;
 		}
 	}
 
@@ -527,28 +445,21 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                      */
 	template <class Etype>
-	void
-	JVector<Etype>::insertElementAt(const Etype &obj, unsigned int index)
+	void JVector<Etype>::insertElementAt(const Etype &obj, unsigned int index)
 	{
-		if (index == m_size)
+		if(index == m_size)
 			addElement(obj);
 		else
 		{
-			verifyIndex(index);	//this will throw if true
+			verifyIndex(index);
 
 			if(m_size == m_capacity)
 				ensureCapacity(m_capacity + m_increment);
 
-			Etype* newItem;
-			if (m_isObject)
-				newItem = new Etype(obj); //pointer to new item
-			else
-			{
-				newItem = (Etype*) MALLOC(sizeof(obj));
-				*newItem=obj;
-			}
+			Etype* newItem = new Etype;
+			*newItem=obj;
+
 			Etype* tmp; //temp to hold item to be moved over.
-			
 			for(unsigned int i=index; i<=m_size; i++)
 			{
 				tmp = m_pData[i];
@@ -568,15 +479,10 @@ namespace ExitGames
 	   Returns
 	   nothing.                   */
 	template <class Etype>
-	void
-	JVector<Etype>::removeAllElements()
+	void JVector<Etype>::removeAllElements()
 	{
-		//avoid memory leak
 		for(unsigned int i=0; i<m_size; i++)
-			if(m_isObject)
-				delete m_pData[i];
-			else
-				FREE(m_pData[i]);
+			delete m_pData[i];
 
 		m_size = 0;
 	}
@@ -589,8 +495,7 @@ namespace ExitGames
 	   true, if the element has been removed, false, if it could not
 	   be found.                                                     */
 	template <class Etype>
-	bool
-	JVector<Etype>::removeElement(const Etype &obj)
+	bool JVector<Etype>::removeElement(const Etype &obj)
 	{
 		for(unsigned int i=0; i<m_size; i++)
 		{
@@ -600,7 +505,6 @@ namespace ExitGames
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -612,16 +516,11 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                         */
 	template <class Etype>
-	void
-	JVector<Etype>::removeElementAt(unsigned int index)
+	void JVector<Etype>::removeElementAt(unsigned int index)
 	{
 		verifyIndex(index);
 
-		if(m_isObject)
-			delete m_pData[index];
-		else
-			FREE(m_pData[index]);
-		
+		delete m_pData[index];
 
 		for(unsigned int i=index+1; i<m_size; i++)
 			m_pData[i-1] = m_pData[i];
@@ -640,8 +539,7 @@ namespace ExitGames
 	   Returns
 	   nothing.                                                      */
 	template <class Etype>
-	void
-	JVector<Etype>::setElementAt(const Etype &obj, unsigned int index)
+	void JVector<Etype>::setElementAt(const Etype &obj, unsigned int index)
 	{
 		verifyIndex(index);
 		
@@ -657,22 +555,17 @@ namespace ExitGames
 	   vectors. If you only add one element to the JVector later,
 	   it's copied again.                                           */
 	template <class Etype>
-	void
-	JVector<Etype>::trimToSize()
+	void JVector<Etype>::trimToSize(void)
 	{
 		if(m_size != m_capacity)
 		{
-			//Etype** temp = new Etype*[m_size];
-			Etype** temp = (Etype**) MALLOC(m_size*sizeof(void*));
+			Etype** temp = new Etype*[m_size];
 			unsigned int i;
 
 			for(i=0; i<m_size; i++)
 				temp[i] = m_pData[i];
 
-			/*if (m_isObject)
-				delete [] m_pData;
-			else*/
-			FREE(m_pData);
+			delete[] m_pData;
 
 			m_pData = temp;
 			m_capacity = m_size;
@@ -680,15 +573,13 @@ namespace ExitGames
 	}
 
 	template <class Etype>
-	int
-	JVector<Etype>::min(unsigned int left, unsigned int right) const
+	int JVector<Etype>::min(unsigned int left, unsigned int right) const
 	{
 		return left<right?left:right;
 	}
 	  
 	template <class Etype>
-	void
-	JVector<Etype>::verifyIndex(unsigned int index) const
+	void JVector<Etype>::verifyIndex(unsigned int index) const
 	{
 		if(index >= m_size)
 			debugReturn("JVector: Index Out Of Bounds");
@@ -698,8 +589,7 @@ namespace ExitGames
 	   \operator[]. Wraps the method <link JVector::elementAt@unsigned int@const, elementAt>(),
 	   so you have same syntax like for arrays.                                                 */
 	template <class Etype>
-	const Etype &
-	JVector<Etype>::operator[](unsigned int index) const
+	const Etype& JVector<Etype>::operator[](unsigned int index) const
 	{
 		return elementAt(index);
 	}
@@ -708,8 +598,7 @@ namespace ExitGames
 	   \operator[]. Wraps the method <link JVector::elementAt@unsigned int@const, elementAt>(),
 	   so you have same syntax like for arrays.                                                 */
 	template <class Etype>
-	Etype &
-	JVector<Etype>::operator[](unsigned int index)
+	Etype& JVector<Etype>::operator[](unsigned int index)
 	{
 		verifyIndex(index);
 		return *m_pData[index];

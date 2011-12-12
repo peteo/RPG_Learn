@@ -19,7 +19,7 @@ namespace ExitGames
 	   Description
 	   This is the UTF8 implementation of <link BaseCharString>.
 	   Please look at the doc of the abstract base class for more information.*/
-	class UTF8String : public BaseCharString
+	class UTF8String : protected BaseCharString
 	{
 	public:
 		UTF8String(void);
@@ -27,15 +27,19 @@ namespace ExitGames
 		UTF8String(const JString& wstr);
 		UTF8String(const char* str);
 		UTF8String(const EG_CHAR* wstr);
+		~UTF8String(void);
+
 		UTF8String& operator=(const UTF8String& Rhs);
 		UTF8String& operator=(const JString& Rhs);
 		UTF8String& operator=(const char* Rhs);
 		UTF8String& operator=(const EG_CHAR* Rhs);
+
 		operator const char* (void) const;
+		operator const EG_CHAR* (void) const;
 		operator JString (void) const;
+
 		const char*	cstr(void) const;
 		JString JStringRepresentation(void) const;
-		~UTF8String(void);
 	};
 
 #ifndef _EG_BREW_PLATFORM

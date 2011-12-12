@@ -27,8 +27,6 @@
 		#define _EG_UNIX_PLATFORM true
 	#endif
 
-
-
 	#ifndef __cplusplus
 		#define false 0
 		#define true 1
@@ -70,7 +68,7 @@
 
 
 	// Just Dummy String which stores value as ""
-	#define EMPTY_STRING ""
+	#define EMPTY_STRING L""
 
 	#define SHORT_SIZE		2
 	#define INTEGER_SIZE	4
@@ -80,10 +78,6 @@
 
 	#define EG_DEFAULT_OBJECTSIZE 1
 
-	#define P_ERR		((nByte) 0)
-	#define P_EVENTS	((nByte)30)
-	#define P_MSG		((nByte)51)
-
 	#define EG_BYTE					((nByte)'b')
 	#define EG_SHORT				((nByte)'k')
 	#define EG_INTEGER				((nByte)'i')
@@ -92,14 +86,17 @@
 	#define EG_DOUBLE				((nByte)'d') // Photon only
 	#define EG_BOOLEAN				((nByte)'o')
 	#define EG_STRING				((nByte)'s')
-	#define EG_VECTOR				((nByte)'v') // Neutron only
+	#define EG_VECTOR				((nByte)'v') // Neutron only, not allowed for arrays!
 	#define EG_HASHTABLE			((nByte)'h')
 	#define EG_INTERNAL_BYTEARRAY	((nByte)'x') // Neutron internal only
 	#define EG_INTERNAL_INTARRAY	((nByte)'n') // Neutron internal only
 	#define EG_INTERNAL_STRINGARRAY	((nByte)'a') // Neutron internal only
 	#define EG_ARRAY				((nByte)'y') // Photon internal only
 	#define EG_GPOPERATION			((nByte)'g') // This is internally used for gp operations.
-	#define EG_PHOTON_COMMAND		((nByte)'c') // This is internally used for photon commands.
+	#define EG_PHOTON_COMMAND		((nByte)'p') // This is internally used for photon commands.
+	#define EG_OBJECT				((nByte)'z') // for EG_Object (C) / Object (C++) / NSObject (objC), only allowed for arrays!
+	#define EG_NULL					((nByte)'*') // Photon internal only, for adding NULL as a value to a HashTable
+	#define EG_CUSTOM				((nByte)'c') // Photon internal only, for custom data, (de-)serialized by callbacks, implemented by the application
 
 	// 24hours in ms
 	#define EG_TIME_OVERFLOW 86400000

@@ -48,20 +48,20 @@ bool PtLink::InitLib(PhotonListener * pListener)
 	return true;
 }
 
-
-void PtLink::PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID)
+void PtLink::onOperationResponse(const ExitGames::OperationResponse& operationResponse)
 {
-	CCLOG("OperationResult called, opCode = [%d] , returnCode = [%d] invocID = [%d]",opCode, returnCode, invocID);
-	
-	//CCLOG("%s", returnValues.toString(true).ANSIRepresentation().cstr());
-	
+	//if(operationResponse.getReturnCode() == -1)
+	//	return;
+
+	CCLOG("-----onOperationResponse = %s",operationResponse.toString(true, true, true).UTF8Represantation().cstr());
+
 	if(m_pListener)
 	{
-		m_pListener->PhotonPeerOperationResult(opCode,returnCode,returnValues,invocID);
+		m_pListener->onOperationResponse(operationResponse);
 	}
 }
 
-void PtLink::PhotonPeerStatus(int statusCode)
+void PtLink::onStatusChanged(int statusCode)
 {
 	switch(statusCode)
 	{
@@ -87,44 +87,42 @@ void PtLink::PhotonPeerStatus(int statusCode)
 	
 	if(m_pListener)
 	{
-		m_pListener->PhotonPeerStatus(statusCode);
+		m_pListener->onStatusChanged(statusCode);
 	}
 }
 
-void PtLink::PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent)
+void PtLink::onEvent(const ExitGames::EventData& eventData)
 {
-	CCLOG("-----Listener::EventAction called, eventCode = %d", eventCode);
-	
-	//CCLOG("%s", photonEvent.toString(true).cstr());
-	
+	CCLOG("-----onEvent = %s", eventData.toString(true, true).UTF8Represantation().cstr());
+
 	if(m_pListener)
 	{
-		m_pListener->PhotonPeerEventAction(eventCode,photonEvent);
+		m_pListener->onEvent(eventData);
 	}
 }
 
-void PtLink::PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string)
+void PtLink::debugReturn(PhotonPeer_DebugLevel debugLevel, const ExitGames::JString& string)
 {
 	ExitGames::JString lvlstr;
 	switch(debugLevel)
 	{
-		case DEBUG_LEVEL_OFF:
-			lvlstr = "FATAL ERROR: ";
-			break;
-		case DEBUG_LEVEL_ERRORS:
-			lvlstr = "ERROR: ";
-			break;
-		case DEBUG_LEVEL_WARNINGS:
-			lvlstr = "WARNING: ";
-			break;
-		case DEBUG_LEVEL_INFO:
-			lvlstr = "INFO: ";
-			break;
-		case DEBUG_LEVEL_ALL:
-			lvlstr = "DEBUG: ";
-			break;
-		default:
-			break;
+	case DEBUG_LEVEL_OFF:
+		lvlstr = "FATAL ERROR: ";
+		break;
+	case DEBUG_LEVEL_ERRORS:
+		lvlstr = "ERROR: ";
+		break;
+	case DEBUG_LEVEL_WARNINGS:
+		lvlstr = "WARNING: ";
+		break;
+	case DEBUG_LEVEL_INFO:
+		lvlstr = "INFO: ";
+		break;
+	case DEBUG_LEVEL_ALL:
+		lvlstr = "DEBUG: ";
+		break;
+	default:
+		break;
 	}
 	wprintf(L"%ls%ls\n", lvlstr.cstr(), string.cstr());
 }
@@ -194,7 +192,7 @@ void PtLink::CloseConnection()
 
 void PtLink::ExchangeKeys()
 {
-	m_pLitePeer->opExchangeKeysForEncryption();
+	//m_pLitePeer->opExchangeKeysForEncryption();
 }
 
 

@@ -108,10 +108,10 @@ private:
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 public:
-	void PhotonPeerOperationResult(nByte opCode, int returnCode, const Hashtable& returnValues,short invocID);
-	void PhotonPeerStatus(int statusCode);
-	void PhotonPeerEventAction(nByte eventCode,const Hashtable& photonEvent);
-	void PhotonPeerDebugReturn(PhotonPeer_DebugLevel debugLevel, const JString& string);
+	void onOperationResponse(const ExitGames::OperationResponse& operationResponse);
+	void onStatusChanged(int statusCode);
+	void onEvent(const ExitGames::EventData& eventData);
+	void debugReturn(PhotonPeer_DebugLevel debugLevel, const ExitGames::JString& string);
 #endif
 };
 

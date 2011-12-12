@@ -38,19 +38,14 @@ typedef  unsigned __int64   uint64;      /* Unsigned 64 bit value */
 #endif
 
 #define MALLOC(size)			memset(malloc(size), 0, size)
-#define FREE					free
+#define FREE(p)					(p?(free(p), p=NULL):((void*)0))
 #define REALLOC					realloc
-
-// other handy macros, or those defined in terms of raw GETHELPER versions above
-#define FREEIF(p)				{if(p)FREE(p);}
-#define FREE_SETNULL(p)			(FREE(p), p=NULL)
-#define FREE_SETNULL_IF(p)		{if(p)FREE_SETNULL(p);}
 
 // Definitions for memory management //////////////////////////////////////
 #include <memory.h>
-#define MEMCPY(dst, src, size)  memcpy(dst, src, size)
-#define MEMSET(dst, c, size)    memset(dst, c, size)
-#define ZEROAT(ptr) (void)MEMSET(ptr, 0, sizeof(*ptr))
+#define MEMCPY(dst, src, size)	memcpy(dst, src, size)
+#define MEMSET(dst, c, size)	memset(dst, c, size)
+#define ZEROAT(ptr)				(void)MEMSET(ptr, 0, sizeof(*ptr))
 
 // Definitions for string operations /////////////////////////////////////
 #include <string.h>
@@ -60,7 +55,7 @@ typedef  unsigned __int64   uint64;      /* Unsigned 64 bit value */
 
 /* ATTENTION:
 wchar_t is UTF16 on Windows, but UTF32 on UNIX and it's inheritors OSX/iOS, although OSX/iOS-NSString/CFString uses UTF16,
-so you have to convert wchar_t to/from NSString/CFString, but redefining wchar_t to be 16bit on UNIX or defining EG_CHAR to be always
+so you have to convert EG_CHAR to/from NSString/CFString, but redefining wchar_t to be 16bit on UNIX or defining EG_CHAR to be always
 16bit would have meant reimplementing standard wchar_t library on UNIX */
 typedef wchar_t EG_CHAR;
 
@@ -130,28 +125,7 @@ extern "C"
 #if defined(_EG_WINDOWS_PLATFORM)
 	#define VSNWPRINTF				_vsnwprintf
 #elif defined(_EG_MARMALADE_PLATFORM) && defined(I3D_ARCH_ARM)
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-	static __inline int __VSWPRINTF(wchar_t* wcs, size_t maxlen, const wchar_t* format, va_list args)
-	{
-		int utf8size = SizeOfWStrAsUTF8(format, WCSLEN(format))*sizeof(char);
-		char* utf8 = (char*)MALLOC(utf8size+1*sizeof(char));
-		size_t tmpsize = maxlen*sizeof(wchar_t);
-		char* tmpstr = (char*)MALLOC(tmpsize);
-		int retVal = 0;
-		WSTRTOUTF8(format, WCSLEN(format)+1, (unsigned char*)utf8, utf8size+1*sizeof(char));
-		retVal = VSNPRINTF(tmpstr, tmpsize, utf8, args);
-		FREE(utf8);
-		UTF8TOWSTR((unsigned char*)tmpstr, tmpsize, wcs, maxlen);
-		FREE(tmpstr);
-		return retVal;
-	}
-#ifdef  __cplusplus
-}
-#endif
-	#define VSNWPRINTF				__VSWPRINTF
+	#define VSNWPRINTF				EG_vswprintf // very expensive, use with care!
 #else
 	#define VSNWPRINTF				vswprintf
 #endif
@@ -159,21 +133,7 @@ extern "C"
 #if defined(_EG_WINDOWS_PLATFORM)
 	#define SNWPRINTF				_snwprintf
 #elif defined(_EG_MARMALADE_PLATFORM) && defined(I3D_ARCH_ARM)
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-	static __inline void __SWPRINTF(wchar_t* wcs, size_t maxlen, const wchar_t* format, ...)
-	{
-		va_list argptr;
-		va_start(argptr, format);
-		VSNWPRINTF(wcs, maxlen, format, argptr);
-		va_end(argptr);
-	}
-#ifdef  __cplusplus
-}
-#endif
-	#define SNWPRINTF				__SWPRINTF
+	#define SNWPRINTF				EG_swprintf
 #else
 	#define SNWPRINTF				swprintf
 #endif
@@ -183,6 +143,24 @@ extern "C"
 	#define WTOI(str)				_wtoi(str)
 #else
 	#define WTOI(str)				EG_wtoi(str)
+#endif
+
+// widestring versions of predefined macros
+// __WFILE__ and __WFUNCTION__ instead of __FILEW__ and __FUNCTIONW__, to avoid conflicts with MS sytem libs, which do not #ifdef their defines
+#ifndef WIDEN
+	#define WIDEN2(str) (L ## str)
+	#define WIDEN(str) WIDEN2(str)
+#endif
+#ifndef __WFILE__
+	#define __WFILE__ WIDEN(__FILE__)
+#endif
+#ifndef __WFUNCTION__
+	#if defined _MSC_VER
+		#define __WFUNCTION__ WIDEN(__FUNCTION__)
+	#else
+		extern EG_CHAR __EGGlobalwstr[1024];
+		#define __WFUNCTION__ STRTOWSTR(__FUNCTION__, __EGGlobalwstr, STRLEN(__FUNCTION__)) // we can't use preprocessor token pasting here, as on GCC __FUNCTION__ is not a macro like in VS
+	#endif
 #endif
 
 // Time access and control functions //////////////////////////////////////
@@ -196,7 +174,7 @@ extern "C"
 
 
 #if defined(_EG_WINDOWS_PLATFORM)
-#	ifdef _EG_WIN32_PLATFORM
+#	if defined(_EG_WIN32_PLATFORM)
 #		define WIN32_LEAN_AND_MEAN
 #		define _WIN32_WINNT 0x0500
 #		include <Windows.h>
@@ -205,7 +183,7 @@ extern "C"
 #   define GETTIMEMS	timeGetTime // returns the number of milliseconds for which the PC was powered on - accuracy: 1ms - overhead: medium
 #   define GETUPTIMEMS	GetTickCount // returns the number of milliseconds for which the PC was powered on - accuracy: 50ms - overhead. small
 #elif defined(_EG_UNIX_PLATFORM)
-	#include <time.h>
+#	include <time.h>
 #   define GETTIMEMS	getTimeUnix // returns the number of milliseconds passed since 1970
 #   define GETUPTIMEMS	getTimeUnix // returns the number of milliseconds passed since 1970
 #endif
@@ -323,51 +301,51 @@ extern "C"
 #endif
 
 // Error codes ///////////////////////////////////////////////////////////
-#define  SUCCESS              0        // No error
-#define  EFAILED              1        // General failure
-#define  ENOMEMORY            2        // Out of memory
-#define  ECLASSNOTSUPPORT     3        // Class not supported
+#define SUCCESS              0        // No error
+#define EFAILED              1        // General failure
+#define ENOMEMORY            2        // Out of memory
+#define ECLASSNOTSUPPORT     3        // Class not supported
 
 #ifndef _BOOLEAN
 // This has to be defined for C to be an unsigned type of the same size as the C++ builtin type bool.
 // That is 1 on all currently supported platforms.
 // The C++ wrapper is not compatible to platforms, which define bool to a different size in C99 than in C++
 #if !defined(__cplusplus) && !defined(bool) // bool is already defined in C99 (which is used in our xcode-projects), but not in the older C version used in VS (which is not conforming to any official standard, but more like C89 + parts of C99)
-typedef  unsigned char       bool;     /* Boolean value type. */
+typedef unsigned char       bool;	// Boolean value type.
 #endif
 #define _BOOLEAN
 #endif
 
 #ifndef _UINT32
-typedef  unsigned int		uint32;      /* Unsigned 32 bit value */
+typedef unsigned int		uint32;	// Unsigned 32 bit value
 #define _UINT32
 #endif
 
 #ifndef _UINT16
-typedef  unsigned short     uint16;      /* Unsigned 16 bit value */
+typedef unsigned short		uint16;	// Unsigned 16 bit value
 #define _UINT16
 #endif
 
 #ifndef _UINT8
 #ifndef _EG_MARMALADE_PLATFORM
-typedef  unsigned char      uint8;       /* Unsigned 8  bit value */
+typedef unsigned char		uint8;	// Unsigned 8  bit value
 #define _UINT8
 #endif
 #endif
 
 #ifndef _INT32
-typedef  signed int			int32;       /* Signed 32 bit value */
+typedef signed int			int32;	// Signed 32 bit value
 #define _INT32
 #endif
 
 #ifndef _INT16
-typedef  signed short       int16;       /* Signed 16 bit value */
+typedef signed short		int16;	// Signed 16 bit value
 #define _INT16
 #endif
 
 #ifndef _INT8
 #ifndef _EG_MARMALADE_PLATFORM
-typedef  signed char        int8;        /* Signed 8  bit value */
+typedef signed char			 int8;	// Signed 8  bit value
 #define _INT8
 #endif
 #endif
@@ -430,4 +408,4 @@ QINTERFACE(IModule)
 
 #endif // _EG_BREW_PLATFORM
 
-#endif//__DEFINES_H__
+#endif

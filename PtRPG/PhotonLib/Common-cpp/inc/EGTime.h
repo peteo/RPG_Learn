@@ -13,10 +13,14 @@
 namespace ExitGames
 {
 #endif
-	class EGTime:protected Base
+	class EGTime : protected Base
 	{
 	public:
 		EGTime(int time);
+		~EGTime(void);
+
+		EGTime(const EGTime& toCopy);
+		EGTime& operator=(const EGTime& toCopy);
 
 		EGTime& operator=(const int &time);
 		const EGTime& operator+=(const EGTime &time);

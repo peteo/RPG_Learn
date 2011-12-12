@@ -14,7 +14,7 @@
 		{
 	#endif 
 
-		bool EG_CreatePhotonGPOperation(EG_GpOperation** op, char* url, nByte opcode);
+		bool EG_CreatePhotonGPOperation(EG_GpOperation** op, const char* url, nByte opcode);
 
 	#ifdef __cplusplus
 		}

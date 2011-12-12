@@ -39,7 +39,7 @@ namespace ExitGames
 	   
 	   
 	   
-	   <c>class MyUtilsDebugListener:public ExitGames::BaseListener</c>
+	   <c>class MyUtilsDebugListener : public ExitGames::BaseListener</c>
 	   
 	   <c>{</c>
 	   
@@ -76,7 +76,7 @@ namespace ExitGames
 	public:
 		/* Summary
 		   This is the callback method for debug-messages from all
-		   Neutron Utility-classes except for <link JString>.
+		   Common-classes except for <link JString>.
 		   Description
 		   Please refer to <link BaseListener> for more information and
 		   a code example.
